@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Emercify</string>
 
+    <string name="google_map_api_key">AIzaSyAiR9RwPDRYLED6dN6EoCr-GLxLgitc_GE</string>
     <string name="edit_profile_fragment">Edit Profile</string>
     <string name="sign_out_fragment">Sign Out</string>
     <string name="profile_fragment">Profile</string>
