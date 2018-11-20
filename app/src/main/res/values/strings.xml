@@ -17,6 +17,8 @@
     <string name="dbname_user_photos">user_photos</string>
     <string name="dbname_following">following</string>
     <string name="dbname_followers">followers</string>
+    <string name="dbname_messages">messsages</string>
+    <string name="dbname_coversations">conversations</string>
     <string name="field_user_id">user_id</string>
 
 
