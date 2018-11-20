@@ -34,8 +34,8 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="C:\Users\DELL\Desktop\DESKTOP FILES\EMERCIFY\EMERCIFY.png" />
-                                      <entry key="outputName" value="ic_emercify_logo" />
+                                      <entry key="imageAsset" value="C:\Users\DELL\Desktop\map_icon.png" />
+                                      <entry key="outputName" value="ic_map" />
                                       <entry key="theme" value="CUSTOM" />
                                       <entry key="themeColor" value="000000" />
                                     </map>
@@ -60,6 +60,11 @@
                                 </PersistentState>
                               </value>
                             </entry>
+                          </map>
+                        </option>
+                        <option name="values">
+                          <map>
+                            <entry key="outputIconType" value="ACTIONBAR" />
                           </map>
                         </option>
                       </PersistentState>
