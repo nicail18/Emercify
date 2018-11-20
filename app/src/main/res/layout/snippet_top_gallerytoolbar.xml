@@ -15,12 +15,12 @@
                 android:layout_height="match_parent">
 
                 <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_marginEnd="20dp"
-                    android:layout_centerVertical="true"
-                    android:id="@+id/ivCloseShare"
-                    android:src="@drawable/ic_black_x"/>
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="20dp"
+                android:layout_centerVertical="true"
+                android:id="@+id/ivCloseShare"
+                android:src="@drawable/ic_black_x"/>
 
                 <Spinner
                     android:layout_width="wrap_content"
