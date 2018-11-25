@@ -33,6 +33,8 @@ public class NextActivity extends AppCompatActivity {
     private EditText mCaption;
     private Intent intent;
     private Bitmap bitmap;
+    private double latitude, longitude;
+    private String address;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -68,11 +70,11 @@ public class NextActivity extends AppCompatActivity {
 
                 if(intent.hasExtra(getString(R.string.selected_image))){
                     imgUrl = intent.getStringExtra(getString(R.string.selected_image));
-                    mFirebaseMethods.uploadNewPhoto("new_photo",caption,imageCount,imgUrl,null);
+                    mFirebaseMethods.uploadNewPhoto("new_photo",caption,imageCount,imgUrl,null,address,latitude,longitude);
                 }
                 else if(intent.hasExtra(getString(R.string.selected_bitmap))){
                     bitmap = (Bitmap) intent.getParcelableExtra(getString(R.string.selected_bitmap));
-                    mFirebaseMethods.uploadNewPhoto("new_photo",caption,imageCount,null,bitmap);
+                    mFirebaseMethods.uploadNewPhoto("new_photo",caption,imageCount,null,bitmap,address,latitude,longitude);
                 }
 
             }
@@ -84,17 +86,27 @@ public class NextActivity extends AppCompatActivity {
     private void setImage(){
         intent = getIntent();
         ImageView image = (ImageView) findViewById(R.id.imageShare);
+        Bundle b = intent.getExtras();
 
         if(intent.hasExtra(getString(R.string.selected_image))){
             imgUrl = intent.getStringExtra(getString(R.string.selected_image));
+            address = intent.getStringExtra(getString(R.string.image_address));
+            latitude =  b.getDouble(getString(R.string.image_latitude));
+            longitude =  b.getDouble(getString(R.string.image_longitude));
             Log.d(TAG, "setImage: got new image url " + imgUrl);
             UniversalImageLoader.setImage(intent.getStringExtra(getString(R.string.selected_image)),image,null,mAppend);
         }
         else if(intent.hasExtra(getString(R.string.selected_bitmap))){
             bitmap = (Bitmap) intent.getParcelableExtra(getString(R.string.selected_bitmap));
-            Log.d(TAG, "setImage: got new bitmap");
+            address = intent.getStringExtra(getString(R.string.image_address));
+            latitude =  b.getDouble(getString(R.string.image_latitude));
+            longitude =  b.getDouble(getString(R.string.image_longitude));
+            Log.d(TAG, "setImage: got new bitmap " + bitmap);
             image.setImageBitmap(bitmap);
         }
+        Log.d(TAG, "setImage: address " + address);
+        Log.d(TAG, "setImage: latitude " + latitude);
+        Log.d(TAG, "setImage: longitude " + longitude);
 
     }
 

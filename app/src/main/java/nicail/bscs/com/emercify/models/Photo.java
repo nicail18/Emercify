@@ -1,13 +1,18 @@
 package nicail.bscs.com.emercify.models;
 
+import android.annotation.SuppressLint;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.List;
 
+@SuppressLint("ParcelCreator")
 public class Photo implements Parcelable{
 
     private String caption;
+    private String address;
+    private double latitude;
+    private double longitude;
     private String date_created;
     private String image_path;
     private String photo_id;
@@ -16,8 +21,11 @@ public class Photo implements Parcelable{
     private List<Like> likes;
     private List<Comment> comments;
 
-    public Photo(String caption, String date_created, String image_path, String photo_id, String user_id, String tags, List<Like> likes, List<Comment> comments) {
+    public Photo(String caption, String address, double latitude, double longitude, String date_created, String image_path, String photo_id, String user_id, String tags, List<Like> likes, List<Comment> comments) {
         this.caption = caption;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.date_created = date_created;
         this.image_path = image_path;
         this.photo_id = photo_id;
@@ -28,28 +36,36 @@ public class Photo implements Parcelable{
     }
 
     public Photo() {
-
-    }
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
-
-    public static Creator<Photo> getCREATOR() {
-        return CREATOR;
     }
 
     protected Photo(Parcel in) {
         caption = in.readString();
+        address = in.readString();
+        latitude = in.readDouble();
+        longitude = in.readDouble();
         date_created = in.readString();
         image_path = in.readString();
         photo_id = in.readString();
         user_id = in.readString();
         tags = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(caption);
+        dest.writeString(address);
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
+        dest.writeString(date_created);
+        dest.writeString(image_path);
+        dest.writeString(photo_id);
+        dest.writeString(user_id);
+        dest.writeString(tags);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<Photo> CREATOR = new Creator<Photo>() {
@@ -70,6 +86,30 @@ public class Photo implements Parcelable{
 
     public void setCaption(String caption) {
         this.caption = caption;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     public String getDate_created() {
@@ -120,31 +160,28 @@ public class Photo implements Parcelable{
         this.likes = likes;
     }
 
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
     @Override
     public String toString() {
         return "Photo{" +
                 "caption='" + caption + '\'' +
+                ", address='" + address + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
                 ", date_created='" + date_created + '\'' +
                 ", image_path='" + image_path + '\'' +
                 ", photo_id='" + photo_id + '\'' +
                 ", user_id='" + user_id + '\'' +
                 ", tags='" + tags + '\'' +
                 ", likes=" + likes +
+                ", comments=" + comments +
                 '}';
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(caption);
-        dest.writeString(date_created);
-        dest.writeString(image_path);
-        dest.writeString(photo_id);
-        dest.writeString(user_id);
-        dest.writeString(tags);
     }
 }

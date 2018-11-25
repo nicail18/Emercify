@@ -63,7 +63,9 @@ public class FirebaseMethods {
         }
     }
 
-    public void uploadNewPhoto(String photoType, final String caption, int count, String imgUrl, Bitmap bm){
+    public void uploadNewPhoto(String photoType, final String caption,
+                               int count, String imgUrl, Bitmap bm,
+                               final String address, final double latitude, final double longitude){
         Log.d(TAG, "uploadNewPhoto: attempting to upload new photo");
         FilePaths filePaths = new FilePaths();
         if(photoType.equals("new_photo")){
@@ -88,7 +90,7 @@ public class FirebaseMethods {
                             Log.d(TAG, "onSuccess: Successfully Uploaded ");
                             Toast.makeText(mContext, "Successfully Uploaded ", Toast.LENGTH_SHORT).show();
 
-                            addPhotoToDatabase(caption,firebaseUrl);
+                            addPhotoToDatabase(caption,firebaseUrl,address,latitude,longitude);
 
                             Intent intent = new Intent(mContext, HomeActivity.class);
                             mContext.startActivity(intent);
@@ -188,7 +190,7 @@ public class FirebaseMethods {
         return sdf.format(new Date());
     }
 
-    private void addPhotoToDatabase(String caption, String url){
+    private void addPhotoToDatabase(String caption, String url, String address, double latitude, double longitude){
         Log.d(TAG, "addPhotoToDatabase: adding photo to database.");
         String tags = StringManipulation.getTags(caption);
         String newPhotoKey = myRef.child(mContext.getString(R.string.dbname_photos)).push().getKey();
@@ -199,6 +201,9 @@ public class FirebaseMethods {
         photo.setTags(tags);
         photo.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
         photo.setPhoto_id(newPhotoKey);
+        photo.setAddress(address);
+        photo.setLatitude(latitude);
+        photo.setLongitude(longitude);
 
         myRef.child(mContext.getString(R.string.dbname_user_photos))
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())

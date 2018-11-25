@@ -9,10 +9,14 @@ import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import nicail.bscs.com.emercify.Share.ShareActivity;
 
 public class FilePaths {
 
@@ -27,7 +31,6 @@ public class FilePaths {
 
     public ArrayList<String> getFilePaths(Activity context)
     {
-
 
         Uri u = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         Uri u1 = MediaStore.Images.Media.INTERNAL_CONTENT_URI;
@@ -110,9 +113,6 @@ public class FilePaths {
 
                         String path= imagePath.getAbsolutePath();
                         File file = new File(path);
-                        Date lastModDate = new Date(file.lastModified());
-                        Log.d(TAG, "getFilePaths: file last modified is " + lastModDate.toString());
-                        resultIAV.add(path);
                         filepaths.add(file);
 
                     }
@@ -124,12 +124,38 @@ public class FilePaths {
             }
         }
 
-        Collections.sort(filepaths);
+        Collections.sort(filepaths, new Comparator<File>() {
+            @Override
+            public int compare(File o1, File o2) {
+                if (o1.lastModified() > o2.lastModified()) {
+                    return -1;
+                } else if (o1.lastModified() < o2.lastModified()) {
+                    return +1;
+                } else {
+                    return 0;
+                }
+            }
+        });
 
 
+        for(File imagePath : filepaths){
+            try {
+                if ( imagePath.getName().contains(".jpg")|| imagePath.getName().contains(".JPG")
+                        || imagePath.getName().contains(".jpeg")|| imagePath.getName().contains(".JPEG")
+                        || imagePath.getName().contains(".png") || imagePath.getName().contains(".PNG")
+                        || imagePath.getName().contains(".gif") || imagePath.getName().contains(".GIF")
+                        || imagePath.getName().contains(".bmp") || imagePath.getName().contains(".BMP")
+                        )
+                {
+                    String path= imagePath.getAbsolutePath();
+                    resultIAV.add(path);
+                }
+            }
+            //  }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return resultIAV;
-
-
     }
-
 }

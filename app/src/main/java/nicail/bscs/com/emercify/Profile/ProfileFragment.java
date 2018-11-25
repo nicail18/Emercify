@@ -30,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -224,7 +225,8 @@ public class ProfileFragment extends Fragment {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         Query query = reference
                 .child(getString(R.string.dbname_user_photos))
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .orderByChild("photo_id");
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -263,6 +265,7 @@ public class ProfileFragment extends Fragment {
                         Log.e(TAG, "onDataChange: NullPointerException " + e.getMessage() );
                     }
                 }
+                Collections.reverse(photos);
                 int gridWidth = getResources().getDisplayMetrics().widthPixels;
                 int imageWidth = gridWidth/NUM_GRID_COLUMNS;
                 gridView.setColumnWidth(imageWidth);
@@ -270,6 +273,7 @@ public class ProfileFragment extends Fragment {
                 for(int i = 0; i < photos.size(); i++){
                     imgUrls.add(photos.get(i).getImage_path());
                 }
+
                 GridImageAdapter adapter = new GridImageAdapter(getActivity(),R.layout.layout_grid_imageview,"",imgUrls);
                 gridView.setAdapter(adapter);
 

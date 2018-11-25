@@ -15,25 +15,34 @@
             android:id="@+id/rellayout1">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:id="@+id/profile_photo"
                 app:civ_border_color="@color/black"
                 app:civ_border_width="0.5dp"
                 android:layout_marginTop="20dp"
-                android:layout_marginLeft="25dp"
+                android:layout_marginLeft="10dp"
                 android:layout_centerVertical="true"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:text="sample.text"
-                android:layout_toRightOf="@+id/profile_photo"
-                android:layout_marginLeft="10dp"
-                android:layout_centerVertical="true"
                 android:id="@+id/username"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/profile_photo"
                 android:textColor="@color/black"/>
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginEnd="20dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:id="@+id/ivEllipses"
+                android:src="@drawable/ic_ellipses"/>
 
         </RelativeLayout>
 
@@ -101,12 +110,36 @@
             android:layout_marginBottom="20dp"
             android:background="@color/white">
 
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/rellayout4">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_map_marker"
+                    android:id="@+id/map_marker"
+                    android:layout_centerVertical="true"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:text="address"
+                    android:id="@+id/address"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_toRightOf="@+id/map_marker"
+                    android:layout_centerVertical="true"/>
+            </RelativeLayout>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Liked by test, test1, test2 and 100 others"
                 android:textColor="@color/black"
                 android:textSize="14sp"
+                android:layout_below="@+id/rellayout4"
                 android:id="@+id/image_likes"/>
 
             <TextView
