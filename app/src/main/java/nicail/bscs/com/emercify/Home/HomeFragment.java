@@ -94,7 +94,10 @@ public class    HomeFragment extends Fragment {
                     for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
                         Photo photo = new Photo();
                         Map<String, Object> objectMap = (HashMap<String,Object>) singleSnapshot.getValue();
-                        
+                        Log.d(TAG, "onDataChange: " + objectMap.get("latitude"));
+                        photo.setAddress(objectMap.get("address").toString());
+                        photo.setLatitude((double) objectMap.get("latitude"));
+                        photo.setLongitude((double) objectMap.get("longitude"));
                         photo.setCaption(objectMap.get("caption").toString());
                         photo.setTags(objectMap.get("tags").toString());
                         photo.setPhoto_id(objectMap.get("photo_id").toString());

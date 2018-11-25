@@ -42,10 +42,10 @@ public class ViewCommentsFragment extends Fragment {
 
     private static final String TAG = "ViewCommentsFragment";
 
-    public ViewCommentsFragment(){
-        super();
-        setArguments(new Bundle());
-    }
+        public ViewCommentsFragment(){
+            super();
+            setArguments(new Bundle());
+        }
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -74,6 +74,7 @@ public class ViewCommentsFragment extends Fragment {
 
         try{
             mPhoto = getPhotoFromBundle();
+            Log.d(TAG, "onCreateView: " + mPhoto);
         }catch(NullPointerException e){
             Log.e(TAG, "onCreateView: NullPointerException" + e.getMessage());
         }

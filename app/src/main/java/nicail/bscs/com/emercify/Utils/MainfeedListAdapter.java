@@ -2,6 +2,8 @@ package nicail.bscs.com.emercify.Utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -33,6 +35,7 @@ import java.util.TimeZone;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import nicail.bscs.com.emercify.Home.HomeActivity;
+import nicail.bscs.com.emercify.Likes.MapActivity;
 import nicail.bscs.com.emercify.Profile.ProfileActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.models.Comment;
@@ -67,9 +70,9 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
     static class ViewHolder{
         CircleImageView mProfileImage;
         String likeString;
-        TextView username, timeStamp, caption, likes, comments;
+        TextView username, timeStamp, caption, likes, comments,address;
         SquareImageView image;
-        ImageView heartRed, heartWhite, comment;
+        ImageView heartRed, heartWhite, comment, map, ellipses;
 
         UserAccountSettings settings = new UserAccountSettings();
         User user = new User();
@@ -100,6 +103,9 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
             holder.caption = (TextView) convertView.findViewById(R.id.image_caption);
             holder.timeStamp = (TextView) convertView.findViewById(R.id.image_time_posted);
             holder.mProfileImage = (CircleImageView) convertView.findViewById(R.id.profile_photo);
+            holder.address = (TextView) convertView.findViewById(R.id.address);
+            holder.map = (ImageView) convertView.findViewById(R.id.ivMap);
+            holder.ellipses = (ImageView) convertView.findViewById(R.id.ivEllipses);
             holder.heart = new Heart(holder.heartWhite,holder.heartRed);
             holder.photo = getItem(position);
             holder.detector = new GestureDetector(mContext, new GestureListener(holder));
@@ -114,6 +120,18 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
         getCurrentUsername();
         getLikeString(holder);
         holder.caption.setText(getItem(position).getCaption());
+        holder.address.setText(getItem(position).getAddress());
+        holder.address.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle b = new Bundle();
+                b.putParcelable("PHOTO",getItem(position));
+                Log.d(TAG, "onClick: " + b.getParcelable("PHOTO"));
+                Intent intent = new Intent(mContext, MapActivity.class);
+                intent.putExtras(b);
+                mContext.startActivity(intent);
+            }
+        });
         List<Comment> comments = getItem(position).getComments();
         if(comments.size() > 0){
             holder.comments.setVisibility(View.VISIBLE);
