@@ -2,6 +2,7 @@ package nicail.bscs.com.emercify.Share;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,6 +22,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import nicail.bscs.com.emercify.Profile.AccountSettingsActivity;
@@ -100,7 +103,6 @@ public class GalleryFragment extends Fragment {
         FilePaths filePaths = new FilePaths();
         ArrayList<String> resultIAV = new ArrayList<String>();
         resultIAV = filePaths.getFilePaths(getActivity());
-        Log.d(TAG, "init: " + resultIAV);
         if(FileSearch.getDirectoryPaths(filePaths.PICTURES) != null){
             directories = FileSearch.getDirectoryPaths(filePaths.PICTURES);
         }
@@ -154,10 +156,59 @@ public class GalleryFragment extends Fragment {
 
                 setImage(imgURLs.get(position),galleryImage,mAppend);
                 mSelectedImage = imgURLs.get(position);
+                try {
+                    ExifInterface exif = new ExifInterface(mSelectedImage);
+                    double latitude, longitude;
+                    String attrLatRef = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+                    String attrLat = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                    String attrLonRef = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+                    String attrLon = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+                    if(attrLatRef.equals("N")){
+                        latitude = convertToDegree(attrLat);
+                    }
+                    else{
+                        latitude = 0 - convertToDegree(attrLat);
+                    }
+
+                    if(attrLonRef.equals("E")){
+                        longitude = convertToDegree(attrLon);
+                    }
+                    else{
+                        longitude = 0 - convertToDegree(attrLon);
+                    }
+                    Log.d(TAG, "onItemClick: latitude " + attrLatRef + " " + latitude);
+                    Log.d(TAG, "onItemClick: longitude " + attrLonRef + " " + longitude);
+                } catch (IOException e) {
+                    Log.e(TAG, "onItemClick: " + e.getMessage());
+                }
             }
         });
-
     }
+
+    private Double convertToDegree(String stringDMS){
+        double result = 0;
+        String[] DMS = stringDMS.split(",", 3);
+
+        String[] stringD = DMS[0].split("/", 2);
+        Double D0 = new Double(stringD[0]);
+        Double D1 = new Double(stringD[1]);
+        Double FloatD = D0/D1;
+
+        String[] stringM = DMS[1].split("/", 2);
+        Double M0 = new Double(stringM[0]);
+        Double M1 = new Double(stringM[1]);
+        Double FloatM = M0/M1;
+
+        String[] stringS = DMS[2].split("/", 2);
+        Double S0 = new Double(stringS[0]);
+        Double S1 = new Double(stringS[1]);
+        Double FloatS = S0/S1;
+
+
+        result = new Double(FloatD + (FloatM/60) + (FloatS/3600));
+
+        return result;
+    };
 
     private void setImage(String imgURL, ImageView image, String append){
         Log.d(TAG, "setImage: setting image");

@@ -29,7 +29,7 @@ import nicail.bscs.com.emercify.Utils.MainfeedListAdapter;
 import nicail.bscs.com.emercify.models.Comment;
 import nicail.bscs.com.emercify.models.Photo;
 
-public class HomeFragment extends Fragment {
+public class    HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
 
     private ArrayList<Photo> mPhotos;

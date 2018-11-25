@@ -33,8 +33,8 @@ import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
 
 public class MapActivity extends AppCompatActivity implements
-        OnMapReadyCallback,
-        LocationListener {
+        OnMapReadyCallback
+         {
 
     private static final String TAG = "MapActivity";
 
@@ -55,43 +55,32 @@ public class MapActivity extends AppCompatActivity implements
         Log.d(TAG, "onCreate: starting");
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        getLastKnownLocation();
         initGoogleMap(savedInstanceState);
 
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 400, 1000, this);
+//        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            return;
+//        }
+//        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 400, 1000, this);
 
         setupBottomNavigationView();
-        //getLastKnownLocation();
 
     }
 
     private void setCameraView() {
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            return;
-        }
-        mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
-            @Override
-            public void onComplete(@NonNull Task<Location> task) {
-                if (task.isSuccessful()) {
-                    Location location = task.getResult();
-                    latitude = location.getLatitude();
-                    longitude = location.getLongitude();
-                }
-            }
-        });
-
 
         double bottomBoundary = latitude - .1;
         double leftBoundary = longitude - .1;
         double topBoundary = latitude + .1;
         double rightBoundary = longitude + .1;
 
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mMapBoundary, 0));
+        LatLng latLng = new LatLng(latitude,longitude);
+
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,18);
+        mGoogleMap.animateCamera(cameraUpdate);
+
+        //mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mMapBoundary, 0));
     }
 
     private void getLastKnownLocation() {
@@ -101,19 +90,18 @@ public class MapActivity extends AppCompatActivity implements
 
             return;
         }
-        mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+        mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<android.location.Location>() {
             @Override
-            public void onComplete(@NonNull Task<Location> task) {
+            public void onComplete(@NonNull Task<android.location.Location> task) {
                 if(task.isSuccessful()){
                     Location location = task.getResult();
-                    double latitude = location.getLatitude();
-                    double longitude = location.getLongitude();
-                    Log.d(TAG, "onComplete: latitude " + latitude + "\n"
-                            + "longitute " + longitude);
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
+                    Log.d(TAG, "onComplete: latitude: " + latitude + "\n" + "longitude" + longitude);
+                    setCameraView();
                 }
             }
         });
-        setCameraView();
     }
 
 
@@ -203,27 +191,27 @@ public class MapActivity extends AppCompatActivity implements
         mMapView.onLowMemory();
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,25);
-        mGoogleMap.animateCamera(cameraUpdate);
-        locationManager.removeUpdates(this);
-        mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("This is you"));
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
+//    @Override
+//    public void onLocationChanged(Location location) {
+//        LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+//        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,25);
+//        mGoogleMap.animateCamera(cameraUpdate);
+//        locationManager.removeUpdates(this);
+//        mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("This is you"));
+//    }
+//
+//    @Override
+//    public void onStatusChanged(String provider, int status, Bundle extras) {
+//
+//    }
+//
+//    @Override
+//    public void onProviderEnabled(String provider) {
+//
+//    }
+//
+//    @Override
+//    public void onProviderDisabled(String provider) {
+//
+//    }
 }
