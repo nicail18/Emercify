@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.ExifInterface;
@@ -29,6 +31,8 @@ import com.google.android.gms.maps.model.LatLng;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import nicail.bscs.com.emercify.BuildConfig;
 import nicail.bscs.com.emercify.Profile.AccountSettingsActivity;
@@ -39,6 +43,8 @@ public class PhotoFragment extends Fragment {
     private static final String TAG = "HomeFragment";
     private static final int CAMERA_REQUEST_CODE = 5;
     private ExifInterface exif;
+    private double latitude, longitude;
+    private String mImageAddress;
 
     @Nullable
     @Override
@@ -78,69 +84,92 @@ public class PhotoFragment extends Fragment {
     }
 
     @Override
-        public void onActivityResult(int requestCode, int resultCode, Intent data) {
-            super.onActivityResult(requestCode, resultCode, data);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-            if (requestCode == CAMERA_REQUEST_CODE) {
-                Log.d(TAG, "onActivityResult: done taking a photo");
-                Log.d(TAG, "onActivityResult: attempting to navigate to final share screen");
+        if (requestCode == CAMERA_REQUEST_CODE) {
+            Log.d(TAG, "onActivityResult: done taking a photo");
+            Log.d(TAG, "onActivityResult: attempting to navigate to final share screen");
+            Bitmap bitmap;
+            bitmap = (Bitmap) data.getExtras().get("data");
 
-                File folder = new File(Environment.getExternalStorageDirectory() + "/Emercify");
-                if(!folder.exists()){
-                    folder.mkdirs();
+            LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                return;
+            }
+            Location location = (Location) lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+            LatLng latlng = new LatLng(location.getLatitude(),location.getLongitude());
+            latitude = latlng.latitude;
+            longitude = latlng.longitude;
+            mImageAddress = getCompleteAddressString(latitude,longitude);
+            String filename = getRealPathFromURI(data.getData());
+            geoTag(filename,latlng);
+            Log.d(TAG, "onActivityResult: address" + mImageAddress);
+            Log.d(TAG, "onActivityResult: " + exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
+            Log.d(TAG, "onActivityResult: " + exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
+
+
+            if(isRootTask()){
+                try{
+                    Log.d(TAG, "onActivityResult: received new bitmap from camera: " + bitmap);
+                    Intent intent = new Intent(getActivity(),NextActivity.class);
+                    Bundle b = new Bundle();
+                    b.putDouble(getString(R.string.image_latitude),latitude);
+                    b.putDouble(getString(R.string.image_longitude),longitude);
+                    intent.putExtra(getString(R.string.selected_bitmap),bitmap);
+                    intent.putExtra(getString(R.string.image_address),mImageAddress);
+                    intent.putExtras(b);
+                    startActivity(intent);
+                }catch(NullPointerException e){
+                    Log.e(TAG, "onActivityResult: NullPointerException" + e.getMessage() );
                 }
-                Bitmap bitmap;
-                bitmap = (Bitmap) data.getExtras().get("data");
-
-                LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED) {
-
-                    return;
-                }
-                Location location = (Location) lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-                LatLng latlng = new LatLng(location.getLatitude(),location.getLongitude());
-                String filename = getRealPathFromURI(data.getData());
-                geoTag(filename,latlng);
-                try {
-                    exif = new ExifInterface(filename);
-                    if(exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE) == null){
-                        geoTag(filename, latlng);
-                    }
-                    Log.d(TAG, "onActivityResult: " + exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
-                    Log.d(TAG, "onActivityResult: " + exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
-                if(isRootTask()){
-                    try{
-                        Log.d(TAG, "onActivityResult: received new bitmap from camera: " + bitmap);
-                        Intent intent = new Intent(getActivity(),NextActivity.class);
-                        intent.putExtra(getString(R.string.selected_bitmap),bitmap);
-                        startActivity(intent);
-                    }catch(NullPointerException e){
-                        Log.e(TAG, "onActivityResult: NullPointerException" + e.getMessage() );
-                    }
-                }
-                else{
-                    try{
-                        Log.d(TAG, "onActivityResult: received new bitmap from camera: " + bitmap);
-                        Intent intent = new Intent(getActivity(),AccountSettingsActivity.class);
-                        intent.putExtra(getString(R.string.selected_bitmap),bitmap);
-                        intent.putExtra(getString(R.string.return_to_fragment),getString(R.string.edit_profile_fragment));
-                        startActivity(intent);
-                        getActivity().finish();
-                    }catch(NullPointerException e){
-                        Log.e(TAG, "onActivityResult: NullPointerException" + e.getMessage() );
-                    }
+            }
+            else{
+                try{
+                    Log.d(TAG, "onActivityResult: received new bitmap from camera: " + bitmap);
+                    Intent intent = new Intent(getActivity(),AccountSettingsActivity.class);
+                    intent.putExtra(getString(R.string.selected_bitmap),bitmap);
+                    intent.putExtra(getString(R.string.image_address),mImageAddress);
+                    intent.putExtra(getString(R.string.image_latitude),latitude);
+                    intent.putExtra(getString(R.string.image_longitude),longitude);
+                    intent.putExtra(getString(R.string.return_to_fragment),getString(R.string.edit_profile_fragment));
+                    startActivity(intent);
+                    getActivity().finish();
+                }catch(NullPointerException e){
+                    Log.e(TAG, "onActivityResult: NullPointerException" + e.getMessage() );
                 }
             }
         }
+    }
+
+    private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
+        String strAdd = "";
+        Geocoder geocoder = new Geocoder(getActivity(), Locale.ENGLISH);
+        try {
+            List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
+            if (addresses != null) {
+                Address returnedAddress = addresses.get(0);
+                StringBuilder strReturnedAddress = new StringBuilder("");
+
+                for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
+                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
+                }
+                strAdd = strReturnedAddress.toString();
+                Log.d(TAG,"My Current loction address" + strReturnedAddress.toString());
+            } else {
+                Log.d(TAG,"My Current loction address" + "No Address returned!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(TAG, "getCompleteAddressString: My Current loction address" + "Canont get Address!");
+        }
+        return strAdd;
+    }
 
     public String getRealPathFromURI(Uri uri) {
         Cursor cursor = getActivity().getContentResolver().query(uri, null, null, null, null);

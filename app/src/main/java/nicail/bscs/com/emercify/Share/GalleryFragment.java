@@ -2,6 +2,8 @@ package nicail.bscs.com.emercify.Share;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.Address;
+import android.location.Geocoder;
 import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,7 +19,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
@@ -25,6 +29,8 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import nicail.bscs.com.emercify.Profile.AccountSettingsActivity;
 import nicail.bscs.com.emercify.R;
@@ -43,6 +49,8 @@ public class GalleryFragment extends Fragment {
 
     private ArrayList<String> directories;
     private String mSelectedImage;
+    private String mImageAddress;
+    private double latitude, longitude;
 
     @Nullable
     @Override
@@ -71,12 +79,22 @@ public class GalleryFragment extends Fragment {
                 Log.d(TAG, "onClick: navigating to final share screen");
                 if(isRootTask()){
                     Intent intent = new Intent(getActivity(),NextActivity.class);
+                    Bundle b = new Bundle();
+                    b.putDouble(getString(R.string.image_latitude),latitude);
+                    b.putDouble(getString(R.string.image_longitude),longitude);
                     intent.putExtra(getString(R.string.selected_image),mSelectedImage);
+                    intent.putExtra(getString(R.string.image_address),mImageAddress);
+                    intent.putExtras(b);
                     startActivity(intent);
                 }
                 else{
                     Intent intent = new Intent(getActivity(),AccountSettingsActivity.class);
+                    Bundle b = new Bundle();
+                    b.putDouble(getString(R.string.image_latitude),latitude);
+                    b.putDouble(getString(R.string.image_longitude),longitude);
                     intent.putExtra(getString(R.string.selected_image),mSelectedImage);
+                    intent.putExtra(getString(R.string.image_address),mImageAddress);
+                    intent.putExtras(b);
                     intent.putExtra(getString(R.string.return_to_fragment),getString(R.string.edit_profile_fragment));
                     startActivity(intent);
                     getActivity().finish();
@@ -148,7 +166,42 @@ public class GalleryFragment extends Fragment {
 
         setImage(imgURLs.get(0),galleryImage,mAppend);
         mSelectedImage = imgURLs.get(0);
+        try {
+            ExifInterface exif = new ExifInterface(mSelectedImage);
+            if(exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE) != null){
+                String attrLatRef = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+                String attrLat = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                String attrLonRef = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+                String attrLon = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+                if(attrLatRef.equals("N")){
+                    latitude = convertToDegree(attrLat);
+                }
+                else{
+                    latitude = 0 - convertToDegree(attrLat);
+                }
 
+                if(attrLonRef.equals("E")){
+                    longitude = convertToDegree(attrLon);
+                }
+                else{
+                    longitude = 0 - convertToDegree(attrLon);
+                }
+
+                mImageAddress = getCompleteAddressString(latitude,longitude);
+
+                Log.d(TAG, "onItemClick: address " + mImageAddress);
+
+                Log.d(TAG, "onItemClick: latitude " + attrLatRef + " " + latitude);
+                Log.d(TAG, "onItemClick: longitude " + attrLonRef + " " + longitude);
+            }
+            else{
+                Toast.makeText(getActivity(), "Your Photo Don't Have a Tagged Location" + "\n" +
+                        "Please enable location tag in your camera", Toast.LENGTH_LONG).show();
+                getActivity().finish();
+            }
+        } catch (IOException e) {
+            Log.e(TAG, "onItemClick: " + e.getMessage());
+        }
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -158,31 +211,67 @@ public class GalleryFragment extends Fragment {
                 mSelectedImage = imgURLs.get(position);
                 try {
                     ExifInterface exif = new ExifInterface(mSelectedImage);
-                    double latitude, longitude;
-                    String attrLatRef = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
-                    String attrLat = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
-                    String attrLonRef = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
-                    String attrLon = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
-                    if(attrLatRef.equals("N")){
-                        latitude = convertToDegree(attrLat);
-                    }
-                    else{
-                        latitude = 0 - convertToDegree(attrLat);
-                    }
+                    if(exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE) != null){
+                        String attrLatRef = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+                        String attrLat = exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
+                        String attrLonRef = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+                        String attrLon = exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
+                        if(attrLatRef.equals("N")){
+                            latitude = convertToDegree(attrLat);
+                        }
+                        else{
+                            latitude = 0 - convertToDegree(attrLat);
+                        }
 
-                    if(attrLonRef.equals("E")){
-                        longitude = convertToDegree(attrLon);
+                        if(attrLonRef.equals("E")){
+                            longitude = convertToDegree(attrLon);
+                        }
+                        else{
+                            longitude = 0 - convertToDegree(attrLon);
+                        }
+
+                        mImageAddress = getCompleteAddressString(latitude,longitude);
+
+
+                        Log.d(TAG, "onItemClick: address " + mImageAddress);
+
+                        Log.d(TAG, "onItemClick: latitude " + attrLatRef + " " + latitude);
+                        Log.d(TAG, "onItemClick: longitude " + attrLonRef + " " + longitude);
                     }
                     else{
-                        longitude = 0 - convertToDegree(attrLon);
+                        Toast.makeText(getActivity(), "Your Photo Don't Have a Tagged Location" + "\n" +
+                                "Please enable location tag in your camera", Toast.LENGTH_LONG).show();
+                        getActivity().finish();
                     }
-                    Log.d(TAG, "onItemClick: latitude " + attrLatRef + " " + latitude);
-                    Log.d(TAG, "onItemClick: longitude " + attrLonRef + " " + longitude);
                 } catch (IOException e) {
                     Log.e(TAG, "onItemClick: " + e.getMessage());
                 }
             }
         });
+    }
+
+    private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
+        String strAdd = "";
+        Geocoder geocoder = new Geocoder(getActivity(), Locale.ENGLISH);
+        try {
+            List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
+            if (addresses != null) {
+                Address returnedAddress = addresses.get(0);
+                StringBuilder strReturnedAddress = new StringBuilder("");
+
+                for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
+                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
+                }
+                strAdd = strReturnedAddress.toString();
+                Log.d(TAG,"My Current loction address" + strReturnedAddress.toString());
+            } else {
+                Log.d(TAG,"My Current loction address" + "No Address returned!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(TAG, "getCompleteAddressString: My Current loction address" + "Canont get Address!");
+        }
+        return strAdd;
     }
 
     private Double convertToDegree(String stringDMS){

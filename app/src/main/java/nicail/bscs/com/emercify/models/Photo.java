@@ -8,6 +8,9 @@ import java.util.List;
 public class Photo implements Parcelable{
 
     private String caption;
+    private String address;
+    private double latitude;
+    private double longitude;
     private String date_created;
     private String image_path;
     private String photo_id;
@@ -16,8 +19,11 @@ public class Photo implements Parcelable{
     private List<Like> likes;
     private List<Comment> comments;
 
-    public Photo(String caption, String date_created, String image_path, String photo_id, String user_id, String tags, List<Like> likes, List<Comment> comments) {
+    public Photo(String caption, String address, double latitude, double longitude, String date_created, String image_path, String photo_id, String user_id, String tags, List<Like> likes, List<Comment> comments) {
         this.caption = caption;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.date_created = date_created;
         this.image_path = image_path;
         this.photo_id = photo_id;
@@ -29,6 +35,30 @@ public class Photo implements Parcelable{
 
     public Photo() {
 
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     public List<Comment> getComments() {
@@ -124,12 +154,16 @@ public class Photo implements Parcelable{
     public String toString() {
         return "Photo{" +
                 "caption='" + caption + '\'' +
+                ", address='" + address + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
                 ", date_created='" + date_created + '\'' +
                 ", image_path='" + image_path + '\'' +
                 ", photo_id='" + photo_id + '\'' +
                 ", user_id='" + user_id + '\'' +
                 ", tags='" + tags + '\'' +
                 ", likes=" + likes +
+                ", comments=" + comments +
                 '}';
     }
 
@@ -146,5 +180,10 @@ public class Photo implements Parcelable{
         dest.writeString(photo_id);
         dest.writeString(user_id);
         dest.writeString(tags);
+        dest.writeString(address);
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
     }
+
+
 }

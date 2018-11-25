@@ -25,6 +25,9 @@
     <string name="calling_activity">calling_activity</string>
     <string name="selected_image">selected_image</string>
     <string name="selected_bitmap">selected_bitmap</string>
+    <string name="image_latitude">image_latitude</string>
+    <string name="image_longitude">image_longitude</string>
+    <string name="image_address">image_address</string>
     <string name="return_to_fragment">return_to_fragment</string>
 
     <string name="profile_activity">Profile Activity</string>

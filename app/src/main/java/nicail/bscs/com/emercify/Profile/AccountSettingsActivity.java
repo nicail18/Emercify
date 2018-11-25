@@ -34,8 +34,8 @@ public class AccountSettingsActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private RelativeLayout mRelativeLayout;
 
-
-
+    private String address;
+    private double latitude, longitude;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,17 +65,22 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
     private void getIncomingIntent(){
         Intent intent = getIntent();
+        Bundle b = intent.getExtras();
         if(intent.hasExtra(getString(R.string.selected_image)) || intent.hasExtra(getString(R.string.selected_bitmap))) {
             Log.d(TAG, "getIncomingIntent: new incoming image url");
+
+            address = intent.getStringExtra(getString(R.string.image_address));
+            latitude =  b.getDouble(getString(R.string.image_latitude));
+            longitude =  b.getDouble(getString(R.string.image_longitude));
             if (intent.getStringExtra(mContext.getString(R.string.return_to_fragment)).equals(getString(R.string.edit_profile_fragment))) {
                 if (intent.hasExtra(getString(R.string.selected_image))) {
                     FirebaseMethods firebaseMethods = new FirebaseMethods(AccountSettingsActivity.this);
                     firebaseMethods.uploadNewPhoto("profile_photo", null, 0,
-                            intent.getStringExtra(mContext.getString(R.string.selected_image)), null);
+                            intent.getStringExtra(mContext.getString(R.string.selected_image)), null,address,latitude,longitude);
                 } else if (intent.hasExtra(getString(R.string.selected_bitmap))) {
                     FirebaseMethods firebaseMethods = new FirebaseMethods(AccountSettingsActivity.this);
                     firebaseMethods.uploadNewPhoto("profile_photo", null, 0,
-                            null, (Bitmap) intent.getParcelableExtra(mContext.getString(R.string.selected_bitmap)));
+                            null, (Bitmap) intent.getParcelableExtra(mContext.getString(R.string.selected_bitmap)),address,latitude,longitude);
                 }
 
             }
