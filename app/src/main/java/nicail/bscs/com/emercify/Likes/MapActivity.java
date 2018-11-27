@@ -4,16 +4,25 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.Image;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -22,16 +31,42 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.ui.IconGenerator;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
+import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
 
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
+import nicail.bscs.com.emercify.Utils.DownloadImageTask;
+import nicail.bscs.com.emercify.Utils.MyClusterManagerRenderer;
+import nicail.bscs.com.emercify.models.ClusterMarker;
 import nicail.bscs.com.emercify.models.Photo;
+import nicail.bscs.com.emercify.models.User;
+import nicail.bscs.com.emercify.models.UserAccountSettings;
 
 public class MapActivity extends AppCompatActivity implements
         OnMapReadyCallback {
@@ -47,6 +82,12 @@ public class MapActivity extends AppCompatActivity implements
     private LatLngBounds mMapBoundary;
     private double latitude, longitude;
     private Photo mPhoto;
+    private ClusterManager mClusterManager;
+    private MyClusterManagerRenderer mClusterManagerRenderer;
+    private ArrayList<ClusterMarker> mClusterMarkers = new ArrayList<>();
+    private Bitmap bit;
+    private final String[] snippet = new String[1];
+    private ImageView ivBackArrow;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,6 +96,14 @@ public class MapActivity extends AppCompatActivity implements
         Log.d(TAG, "onCreate: starting");
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        ivBackArrow = (ImageView) findViewById(R.id.ivBackarrow);
+
+        ivBackArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         initGoogleMap(savedInstanceState);
 
         setupBottomNavigationView();
@@ -70,8 +119,8 @@ public class MapActivity extends AppCompatActivity implements
             Log.d(TAG, "checkIntent: " + mPhoto);
             latitude = mPhoto.getLatitude();
             longitude = mPhoto.getLongitude();
-            setCameraView();
-            mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(mPhoto.getCaption()));
+            addMapMarkers();
+            //mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(mPhoto.getCaption()));
         } else {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
@@ -79,6 +128,104 @@ public class MapActivity extends AppCompatActivity implements
             mGoogleMap.setMyLocationEnabled(true);
             mGoogleMap.getUiSettings().setMyLocationButtonEnabled(false);
             getLastKnownLocation();
+        }
+    }
+
+    private void addMapMarkers(){
+        if(mGoogleMap != null){
+            if(mClusterManager == null){
+                mClusterManager = new ClusterManager<ClusterMarker>(getApplicationContext(),mGoogleMap);
+            }
+            if(mClusterManagerRenderer == null){
+                mClusterManagerRenderer = new MyClusterManagerRenderer(
+                        MapActivity.this,
+                        mGoogleMap,
+                        mClusterManager
+                );
+                mClusterManager.setRenderer(mClusterManagerRenderer);
+            }
+
+            try{
+                Log.d(TAG, "addMapMarkers: " + FirebaseAuth.getInstance().getCurrentUser().getUid());
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+                Query query = reference
+                        .child(mContext.getString(R.string.dbname_users))
+                        .orderByChild("user_id")
+                        .equalTo(mPhoto.getUser_id());
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for(DataSnapshot ds: dataSnapshot.getChildren()){
+                            if(mPhoto.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                snippet[0] = "This is your Post";
+                            }
+                            else{
+                                snippet[0] = "This is " + ds.getValue(User.class).getUsername() +"'s post";
+                            }
+                            int avatar = R.mipmap.ic_emercify_launcher_round;
+                            Log.d(TAG, "onDataChange: " + avatar);
+                            new AsyncImageBitmap().execute(mPhoto.getImage_path());
+
+                            ClusterMarker newClusterMarker = new ClusterMarker(
+                                    new LatLng(mPhoto.getLatitude(),mPhoto.getLongitude()),
+                                    ds.getValue(User.class).getUsername(),
+                                    snippet[0],
+                                    avatar,
+                                    ds.getValue(User.class)
+                            );
+                            mClusterManager.addItem(newClusterMarker);
+                            mClusterMarkers.add(newClusterMarker);
+
+                        }
+                        mClusterManager.cluster();
+                        setCameraView();
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+            }catch(NullPointerException e){
+                Log.d(TAG, "addMapMarkers: NullPointerException " + e.getMessage());
+            }
+        }
+    }
+
+    public class AsyncImageBitmap extends AsyncTask<String, Void, Bitmap> {
+
+        @Override
+        public Bitmap doInBackground(String... urls) {
+            final String url = urls[0];
+            Bitmap bitmap = null;
+
+            try {
+                final InputStream inputStream = new URL(url).openStream();
+                bitmap = BitmapFactory.decodeStream(inputStream);
+            } catch (final MalformedURLException malformedUrlException) {
+                // Handle error
+            } catch (final IOException ioException) {
+                // Handle error
+            }
+            return bitmap;
+        }
+
+        @Override
+        public void onPostExecute(Bitmap bitmap) {
+            int markerWidth,markerHeight;
+            ImageView imageView = new ImageView(getApplicationContext());
+            IconGenerator iconGenerator = new IconGenerator(getApplicationContext());
+            markerWidth = (int) getResources().getDimension(R.dimen.custom_marker_image);
+            markerHeight = (int) getResources().getDimension(R.dimen.custom_marker_image);
+            imageView.setLayoutParams(new ViewGroup.LayoutParams(markerWidth,markerHeight));
+            int padding = (int) getResources().getDimension(R.dimen.custom_marker_padding);
+            imageView.setPadding(padding,padding,padding,padding);
+            iconGenerator.setContentView(imageView);
+            imageView.setImageBitmap(bitmap);
+            Bitmap bit = iconGenerator.makeIcon();
+            mGoogleMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(latitude,longitude))
+                    .title(snippet[0])
+                    .icon(BitmapDescriptorFactory.fromBitmap(bit)));
+            setCameraView();
         }
     }
 
