@@ -215,15 +215,6 @@ public class HomeActivity extends AppCompatActivity implements MainfeedListAdapt
         transaction.commit();
     }
 
-    public void OnAddressThreadSelected(Photo photo, String callingActivity){
-        Intent intent = new Intent(HomeActivity.this,MapActivity.class);
-        Bundle args = new Bundle();
-        args.putParcelable("PHOTO",photo);
-        args.putString(getString(R.string.home_activity),getString(R.string.home_activity));
-        intent.putExtras(args);
-        startActivity(intent);
-    }
-
     public void hideLayout(){
         Log.d(TAG, "hideLayout: hiding layout");
         mRelativeLayout.setVisibility(View.GONE);
