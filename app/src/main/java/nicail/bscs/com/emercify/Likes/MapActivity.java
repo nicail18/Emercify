@@ -87,6 +87,7 @@ public class MapActivity extends AppCompatActivity implements
     private ArrayList<ClusterMarker> mClusterMarkers = new ArrayList<>();
     private Bitmap bit;
     private final String[] snippet = new String[1];
+    private String username;
     private ImageView ivBackArrow;
 
     @Override
@@ -156,6 +157,7 @@ public class MapActivity extends AppCompatActivity implements
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for(DataSnapshot ds: dataSnapshot.getChildren()){
+                            username = ds.getValue(User.class).getUsername();
                             if(mPhoto.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                                 snippet[0] = "This is your Post";
                             }
@@ -221,9 +223,11 @@ public class MapActivity extends AppCompatActivity implements
             iconGenerator.setContentView(imageView);
             imageView.setImageBitmap(bitmap);
             Bitmap bit = iconGenerator.makeIcon();
+            mGoogleMap.clear();
             mGoogleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(latitude,longitude))
-                    .title(snippet[0])
+                    .title(username)
+                    .snippet(snippet[0])
                     .icon(BitmapDescriptorFactory.fromBitmap(bit)));
             setCameraView();
         }
