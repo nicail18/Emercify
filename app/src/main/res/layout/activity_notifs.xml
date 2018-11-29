@@ -23,6 +23,13 @@
             android:layout_below="@+id/rellayout1"
             android:layout_marginBottom="50dp">
 
+            <ListView
+                android:id="@+id/notif_listview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                >
+
+            </ListView>
         </RelativeLayout>
 
         <include layout="@layout/layout_bottom_navigation_view"/>
