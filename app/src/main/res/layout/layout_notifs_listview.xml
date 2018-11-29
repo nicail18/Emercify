@@ -9,53 +9,43 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/notif_list_item"
+            android:id="@+id/profile_photo"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="10dp"
-            android:src="@drawable/duterte"
             app:civ_border_width="2dp"
             app:civ_border_color="@color/grey"/>
 
-        <!--<ImageView-->
-            <!--android:id="@+id/notif_list_item"-->
-            <!--android:layout_marginTop="5dp"-->
-            <!--android:layout_marginLeft="10dp"-->
-            <!--android:layout_width="60dp"-->
-            <!--android:layout_height="60dp"-->
-
-            />
-
         <TextView
-            android:id="@+id/notif_text_name"
+            android:id="@+id/username"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/notif_list_item"
+            android:layout_toRightOf="@id/profile_photo"
             android:text="PAKYUPITS"
             android:textSize="12sp"
             android:textStyle="bold"
             android:textColor="@color/black"/>
 
         <TextView
-            android:id="@+id/notif_text_desc"
+            android:id="@+id/notif_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/notif_list_item"
-            android:layout_below="@+id/notif_text_name"
+            android:layout_toRightOf="@+id/profile_photo"
+            android:layout_below="@+id/username"
             android:layout_marginLeft="10dp"
             android:text="has reported an incident!"
             android:textSize="12sp"
             android:textColor="@color/black"/>
 
         <TextView
-            android:id="@+id/notif_text_time"
+            android:id="@+id/timestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/notif_list_item"
-            android:layout_below="@id/notif_text_desc"
+            android:layout_toRightOf="@id/profile_photo"
+            android:layout_below="@id/notif_message"
             android:layout_marginLeft="10dp"
             android:text="7 hours ago"/>
 
