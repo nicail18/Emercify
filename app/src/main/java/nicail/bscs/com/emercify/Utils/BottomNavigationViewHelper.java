@@ -43,7 +43,7 @@ public class BottomNavigationViewHelper {
                         Intent intent2 = new Intent(context, SearchActivity.class);
                         context.startActivity(intent2);
                         callingActivty.overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
-                        break;
+                        break;git
                     case R.id.ic_circle:
                         Intent intent3 = new Intent(context, ShareActivity.class);
                         context.startActivity(intent3);
