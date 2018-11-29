@@ -309,7 +309,7 @@ public class ProfileFragment extends Fragment {
         Log.d(TAG, "setupBottomNavigationView: setting up bottom navigation view");
 
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationView);
-        BottomNavigationViewHelper.enableNavigation(mContext,getActivity(),bottomNavigationView);
+        BottomNavigationViewHelper.enableNavigation(mContext,getActivity(),bottomNavigationView,ACTIVITY_NUM);
         Menu menu = bottomNavigationView.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
