@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -27,7 +28,15 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
+
+import org.json.JSONObject;
+
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import nicail.bscs.com.emercify.R;
@@ -38,17 +47,24 @@ public class LikesActivity extends AppCompatActivity {
     private static final String TAG = "LikesActivity";
 
     private static final int ACTIVITY_NUM = 3;
-    private static final int ERROR_DIALOG_REQUEST = 9001;
-    private static final int PERMISSIONS_REQUEST_ENABLE_GPS = 9002;
-    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 9003;
 
     private Context mContext = LikesActivity.this;
-    private ImageView ivMap;
-    private boolean mLocationPermissionGranted = false;
+    private ImageView ivMap,test;
+    private String token;
 
     ListView simpleList;
     String descList [] = {"has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!"};
-    String timeList [] = {"666 hours ago", "666 hours ago", "666 hours ago", "666 hours ago", "666 hours ago", "666 hours ago", "666 hours ago", "666 hours ago", "666 hours ago", "666 hours ago"};
+    String timeList [] = {
+            "7 hours ago",
+            "7 hours ago",
+            "7 hours ago",
+            "7 hours ago",
+            "7 hours ago",
+            "7 hours ago",
+            "7 hours ago",
+            "7 hours ago",
+            "7 hours ago",
+            "7 hours ago"};
     String countryList[] = {"Duterte", "Batman", "Flash", "Kuya Jobert", "Ferdinand", "Panot", "Pedro Pendukot", "Pokwang", "Superman", "Wonderwoman ko"};
     int flags[] = {
             R.drawable.duterte,
@@ -67,6 +83,7 @@ public class LikesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifs);
         ivMap = (ImageView) findViewById(R.id.ivMap);
+        test = (ImageView) findViewById(R.id.testNotif);
         Log.d(TAG, "onCreate: starting.");
 
 
@@ -78,18 +95,59 @@ public class LikesActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Notify().execute();
+            }
+        });
         simpleList = (ListView) findViewById(R.id.notif_listview);
         CustomAdapter customAdapter = new CustomAdapter(getApplicationContext(), countryList, flags);
         simpleList.setAdapter(customAdapter);
 
+        token = FirebaseInstanceId.getInstance().getToken();
+
         setupBottomNavigationView();
-
-
     }
 
+    public class Notify extends AsyncTask<Void, Void, Void>{
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try{
+                URL url = new URL("https://fcm.googleapis.com/fcm/send");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+                conn.setUseCaches(false);
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Authorization","key=AIzaSyCdzpykpnX8MkBg7pRCczUVI39IJhpni7M");
+                conn.setRequestProperty("Content-Type","application/json");
+
+                JSONObject json = new JSONObject();
+
+                json.put("to",token);
+
+                JSONObject info = new JSONObject();
+                info.put("title","Emercify");
+                info.put("body","Hello Test Notification");
+
+
+                json.put("notification",info);
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+                wr.write(json.toString());
+                wr.flush();
+                conn.getInputStream();
+            }catch(Exception e){
+                Log.d(TAG, "doInBackground: Exception" + e.getMessage());
+            }
+
+            return null;
+        }
+    }
 
     //Bottom Navigation View Setup
-
     private void setupBottomNavigationView() {
         Log.d(TAG, "setupBottomNavigationView: setting up bottom navigation view");
 
@@ -99,10 +157,6 @@ public class LikesActivity extends AppCompatActivity {
         Menu menu = bottomNavigationViewEx.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
-    }
-
-    private void loadImageByInternetUrl(){
-
     }
 
     public class CustomAdapter extends BaseAdapter {
@@ -137,10 +191,10 @@ public class LikesActivity extends AppCompatActivity {
         public View getView(int i, View view, ViewGroup viewGroup) {
             view = inflter.inflate(R.layout.layout_notifs_listview, null);
 
-            TextView country = (TextView) view.findViewById(R.id.notif_text_name);
-            TextView desc = (TextView) view.findViewById(R.id.notif_text_desc);
-            TextView time = (TextView) view.findViewById(R.id.notif_text_time);
-            CircleImageView icon = (CircleImageView) view.findViewById(R.id.notif_list_item);
+            TextView country = (TextView) view.findViewById(R.id.username);
+            TextView desc = (TextView) view.findViewById(R.id.notif_message);
+            TextView time = (TextView) view.findViewById(R.id.timestamp);
+            CircleImageView icon = (CircleImageView) view.findViewById(R.id.profile_photo);
 
             country.setText(countryList[i]);
             desc.setText(descList[i]);
