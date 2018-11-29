@@ -44,10 +44,8 @@ public class BottomNavigationViewHelper {
                         Intent intent2 = new Intent(context, SearchActivity.class);
                         intent2.putExtra("search","search");
                         context.startActivity(intent2);
-<<<<<<< HEAD
                         callingActivty.overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
-                        break;git
-=======
+                        break;
                         if(incoming == 0){
                             callingActivty.overridePendingTransition(R.anim.right_to_left,R.anim.right_to_left);
                         }
@@ -55,7 +53,6 @@ public class BottomNavigationViewHelper {
                             callingActivty.overridePendingTransition(R.anim.left_to_right,R.anim.left_to_right);
                         }
                         break;
->>>>>>> navigation_active_change_color
                     case R.id.ic_circle:
                         Intent intent3 = new Intent(context, ShareActivity.class);
                         intent3.putExtra("circle", "cicle");
