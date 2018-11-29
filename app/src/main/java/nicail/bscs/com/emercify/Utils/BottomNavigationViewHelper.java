@@ -28,6 +28,7 @@ public class BottomNavigationViewHelper {
         bottomNavigationViewEx.enableItemShiftingMode(false);
         bottomNavigationViewEx.enableShiftingMode(false);
         bottomNavigationViewEx.setTextVisibility(false);
+        Log.d(TAG, "setupBottomNavigationView: ");
     }
 
     public static void enableNavigation(final Context context, final Activity callingActivty, BottomNavigationViewEx view, final int incoming){
