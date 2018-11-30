@@ -18,14 +18,15 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
              />
-        <ImageView
+
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/id_convo"
-            android:layout_toRightOf="@+id/id_convo_backarrow"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:layout_marginStart="10dp"
-            android:background="@mipmap/ic_launcher"/>
+            android:layout_toRightOf="@+id/id_convo_backarrow"
+            android:background="@mipmap/ic_launcher_round" />
         <TextView
             android:id="@+id/chat_image_list"
             android:layout_toRightOf="@+id/id_convo"
@@ -46,35 +47,39 @@
         <ListView
             android:id="@+id/chat_listview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:divider="@null">
         </ListView>
     </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/rellayout_chat_bottom"
-        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="60dp">
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white">
 
         <EditText
             android:id="@+id/chat_sendmessage"
+            android:layout_width="280dp"
+            android:layout_height="30dp"
             android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"
+            android:background="@drawable/message_round"
             android:hint="Send a message..."
-            android:layout_width="320dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="10dp"
+            android:paddingLeft="10dp"
             android:textColor="@color/black"
             android:textColorHint="@color/black"
-            android:textSize="18sp"
-            android:background="@drawable/message_round"
-            />
+            android:textSize="15sp" />
+
         <ImageButton
             android:id="@+id/chat_sendarrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_arrow"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginEnd="10dp"/>
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/ic_arrow" />
     </RelativeLayout>
 
 </RelativeLayout>

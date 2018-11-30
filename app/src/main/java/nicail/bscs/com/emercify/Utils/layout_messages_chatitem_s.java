@@ -113,13 +113,13 @@ public class layout_messages_chatitem_s extends AppCompatActivity {
             }
             else{
                 view = getLayoutInflater().inflate(R.layout.layout_messages_sender, null);
+                ImageView mImageView =  (ImageView) view.findViewById(R.id.chat_image);
+                TextView mTextView = (TextView) view.findViewById(R.id.chat_name);
+                mImageView.setImageResource(images[position]);
+                mTextView.setText(Names[position]);
             }
-            ImageView mImageView =  (ImageView) view.findViewById(R.id.chat_image);
-            TextView mTextView = (TextView) view.findViewById(R.id.chat_name);
             TextView mTextView1 = (TextView) view.findViewById(R.id.chat_user);
             TextView mTextView2 = (TextView) view.findViewById(R.id.chat_time);
-            mImageView.setImageResource(images[position]);
-            mTextView.setText(Names[position]);
             mTextView1.setText(Send[position]);
             mTextView2.setText(time[position]);
             return view;
