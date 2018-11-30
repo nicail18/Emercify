@@ -26,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import nicail.bscs.com.emercify.R;
+import nicail.bscs.com.emercify.Utils.GlideApp;
 import nicail.bscs.com.emercify.Utils.MessageListAdapter;
 import nicail.bscs.com.emercify.Utils.layout_messages_chatitem_s;
 import nicail.bscs.com.emercify.models.Message;
@@ -137,10 +138,22 @@ public class MessagesFragment extends Fragment {
             TextView mTextView = (TextView) view.findViewById(R.id.username);
             TextView mTextView1 = (TextView) view.findViewById(R.id.tvMessage);
             TextView mTextView2 = (TextView) view.findViewById(R.id.timestamp);
+
             mImageView.setImageResource(images[position]);
             mTextView.setText(Names[position]);
             mTextView1.setText(Message[position]);
             mTextView2.setText(time[position]);
+
+            String internetUrl = "http://futurefemaleleader.com/wp-content/uploads/2017/08/150508211850-kim-jong-un-sub-missile-test-0905-full-169_clipped_rev_1.png";
+
+            GlideApp
+                    .with(getContext())
+                    .load(internetUrl)
+                    .placeholder(R.mipmap.ic_emercify_launcher)
+                    .error(R.drawable.ic_error)
+                    .centerCrop()
+                    .into(mImageView);
+
             return view;
         }
     }

@@ -117,11 +117,22 @@ public class layout_messages_chatitem_s extends AppCompatActivity {
                 TextView mTextView = (TextView) view.findViewById(R.id.chat_name);
                 mImageView.setImageResource(images[position]);
                 mTextView.setText(Names[position]);
+
+                String internetUrl = "http://futurefemaleleader.com/wp-content/uploads/2017/08/150508211850-kim-jong-un-sub-missile-test-0905-full-169_clipped_rev_1.png";
+
+                GlideApp
+                        .with(getApplicationContext())
+                        .load(internetUrl)
+                        .placeholder(R.mipmap.ic_emercify_launcher)
+                        .error(R.drawable.ic_error)
+                        .centerCrop()
+                        .into(mImageView);
             }
             TextView mTextView1 = (TextView) view.findViewById(R.id.chat_user);
             TextView mTextView2 = (TextView) view.findViewById(R.id.chat_time);
             mTextView1.setText(Send[position]);
             mTextView2.setText(time[position]);
+
             return view;
         }
     }
