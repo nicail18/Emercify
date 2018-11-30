@@ -32,6 +32,7 @@ import java.util.TimeZone;
 import nicail.bscs.com.emercify.Home.HomeActivity;
 import nicail.bscs.com.emercify.Profile.AccountSettingsActivity;
 import nicail.bscs.com.emercify.R;
+import nicail.bscs.com.emercify.models.Notifications;
 import nicail.bscs.com.emercify.models.Photo;
 import nicail.bscs.com.emercify.models.User;
 import nicail.bscs.com.emercify.models.UserAccountSettings;
@@ -452,5 +453,24 @@ public class FirebaseMethods {
             }
         }
         return new UserSettings(user,settings);
+    }
+
+    public void addNotification(String user_id, String from_id, String type, String message){
+        String notificationKey = myRef.child(mContext.getString(R.string.dbname_notification)).push().getKey();
+        Notifications notification = new Notifications();
+        notification.setUser_id(user_id);
+        notification.setFrom_id(from_id);
+        notification.setType(type);
+        notification.setTimestamp(getTimeStamp());
+        notification.setMessage(message);
+
+        myRef.child(mContext.getString(R.string.dbname_notification))
+                .child(notificationKey)
+                .setValue(notification);
+
+        myRef.child(mContext.getString(R.string.dbname_user_notification))
+                .child(user_id)
+                .child(notificationKey)
+                .setValue(notification);
     }
 }

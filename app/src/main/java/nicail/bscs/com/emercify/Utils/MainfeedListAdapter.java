@@ -3,6 +3,7 @@ package nicail.bscs.com.emercify.Utils;
 import android.content.Context;
 import android.content.Intent;
 import android.media.Image;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,6 +26,11 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import org.json.JSONObject;
+
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -40,6 +46,7 @@ import nicail.bscs.com.emercify.Profile.ProfileActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.models.Comment;
 import nicail.bscs.com.emercify.models.Like;
+import nicail.bscs.com.emercify.models.Notifications;
 import nicail.bscs.com.emercify.models.Photo;
 import nicail.bscs.com.emercify.models.User;
 import nicail.bscs.com.emercify.models.UserAccountSettings;
@@ -58,6 +65,8 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
     private Context mContext;
     private DatabaseReference mReference;
     private String currentUsername = "";
+    private String token;
+    private String likeMessage;
 
     public MainfeedListAdapter(@NonNull Context context, int resource, @NonNull List<Photo> objects) {
         super(context, resource, objects);
@@ -68,6 +77,8 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
     }
 
     static class ViewHolder{
+        FirebaseMethods firebaseMethods;
+
         CircleImageView mProfileImage;
         String likeString;
         TextView username, timeStamp, caption, likes, comments,address;
@@ -110,6 +121,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
             holder.photo = getItem(position);
             holder.detector = new GestureDetector(mContext, new GestureListener(holder));
             holder.users = new StringBuilder();
+            holder.firebaseMethods = new FirebaseMethods(getContext());
 
             convertView.setTag(holder);
         }
@@ -345,6 +357,53 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
 
         holder.heart.toggleLike();
         getLikeString(holder);
+
+        if(!holder.photo.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+            String user_id = holder.photo.getUser_id();
+            String from_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            String type = "like";
+            token = holder.settings.getDevice_token();
+            likeMessage = currentUsername + " liked your post";
+            holder.firebaseMethods.addNotification(user_id,from_id,type,likeMessage);
+            new Notify().execute();
+        }
+    }
+
+    public class Notify extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try{
+                URL url = new URL("https://fcm.googleapis.com/fcm/send");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+                conn.setUseCaches(false);
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Authorization","key=AIzaSyCdzpykpnX8MkBg7pRCczUVI39IJhpni7M");
+                conn.setRequestProperty("Content-Type","application/json");
+
+                JSONObject json = new JSONObject();
+
+                json.put("to",token);
+
+                JSONObject info = new JSONObject();
+                info.put("title","Emercify");
+                info.put("body",likeMessage);
+
+
+                json.put("notification",info);
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+                wr.write(json.toString());
+                wr.flush();
+                conn.getInputStream();
+            }catch(Exception e){
+                Log.d(TAG, "doInBackground: Exception" + e.getMessage());
+            }
+
+            return null;
+        }
     }
 
     private void getLikeString(final ViewHolder holder){
@@ -380,6 +439,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
                                     holder.likedByCurrentUser = true;
                                 } else {
                                     holder.likedByCurrentUser = false;
+
                                 }
 
                                 int length = splitUsers.length;

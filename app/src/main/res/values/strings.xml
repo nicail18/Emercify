@@ -20,6 +20,7 @@
     <string name="dbname_messages">messsages</string>
     <string name="dbname_coversations">conversations</string>
     <string name="dbname_notification">notification</string>
+    <string name="dbname_user_notification">user_notification</string>
     <string name="field_user_id">user_id</string>
 
 

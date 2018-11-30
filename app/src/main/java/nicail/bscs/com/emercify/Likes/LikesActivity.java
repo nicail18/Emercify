@@ -125,8 +125,6 @@ public class LikesActivity extends AppCompatActivity {
         simpleList = (ListView) findViewById(R.id.notif_listview);
         CustomAdapter customAdapter = new CustomAdapter(getApplicationContext(), countryList, flags);
         simpleList.setAdapter(customAdapter);
-
-
     }
 
     public class Notify extends AsyncTask<Void, Void, Void>{
