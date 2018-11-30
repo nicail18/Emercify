@@ -15,16 +15,6 @@ import nicail.bscs.com.emercify.R;
 public class layout_messages_chatitem_s extends AppCompatActivity {
 
     ListView mListView;
-    int[] images = {R.drawable.image1,
-            R.drawable.image2,
-            R.drawable.image3,
-            R.drawable.image4,
-            R.drawable.image5,
-            R.drawable.image6,
-            R.drawable.image7,
-            R.drawable.image8,
-            R.drawable.image9,
-            R.drawable.image10};
 
     String[] Names = {"Curry",
             "James",
@@ -88,10 +78,9 @@ public class layout_messages_chatitem_s extends AppCompatActivity {
     }
 
     class CustomAdapter extends BaseAdapter {
-
         @Override
         public int getCount() {
-            return images.length;
+            return 0;
         }
 
         @Override
@@ -115,7 +104,6 @@ public class layout_messages_chatitem_s extends AppCompatActivity {
                 view = getLayoutInflater().inflate(R.layout.layout_messages_sender, null);
                 ImageView mImageView =  (ImageView) view.findViewById(R.id.chat_image);
                 TextView mTextView = (TextView) view.findViewById(R.id.chat_name);
-                mImageView.setImageResource(images[position]);
                 mTextView.setText(Names[position]);
 
                 String internetUrl = "http://futurefemaleleader.com/wp-content/uploads/2017/08/150508211850-kim-jong-un-sub-missile-test-0905-full-169_clipped_rev_1.png";
