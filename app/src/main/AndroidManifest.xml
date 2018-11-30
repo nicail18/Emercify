@@ -63,6 +63,20 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
 
+        <service android:name=".Utils.FirebaseMessageService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <service android:name=".Utils.FireIDService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+
 
         <activity android:name=".Utils.layout_messages_chatitem_s" />
 
