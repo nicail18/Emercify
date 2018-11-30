@@ -463,6 +463,7 @@ public class FirebaseMethods {
         notification.setType(type);
         notification.setTimestamp(getTimeStamp());
         notification.setMessage(message);
+        notification.setNotification_id(notificationKey);
 
         myRef.child(mContext.getString(R.string.dbname_notification))
                 .child(notificationKey)

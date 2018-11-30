@@ -256,7 +256,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
     }
 
     private boolean reachedEndOfList(int position){
-        Log.d(TAG, "reachedEndOfList: " + position);
+         Log.d(TAG, "reachedEndOfList: " + position);
         return position == getCount() - 1;
     }
 
