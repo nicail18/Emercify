@@ -7,16 +7,26 @@ public class Notifications {
     private String type;
     private String timestamp;
     private String from_id;
+    private String message;
 
-    public Notifications(String user_id, String notification_id, String type, String timestamp, String from_id) {
+    public Notifications(String user_id, String notification_id, String type, String timestamp, String from_id, String message) {
         this.user_id = user_id;
         this.notification_id = notification_id;
         this.type = type;
         this.timestamp = timestamp;
         this.from_id = from_id;
+        this.message = message;
     }
 
     public Notifications() {
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public String getUser_id() {
@@ -67,6 +77,7 @@ public class Notifications {
                 ", type='" + type + '\'' +
                 ", timestamp='" + timestamp + '\'' +
                 ", from_id='" + from_id + '\'' +
+                ", message='" + message + '\'' +
                 '}';
     }
 }
