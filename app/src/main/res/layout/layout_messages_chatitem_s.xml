@@ -43,7 +43,8 @@
         android:id="@+id/rellayout_chat_convo"
         android:layout_below="@+id/rellayout_chat_user"
         android:layout_width="wrap_content"
-        android:layout_height="447dp">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="60dp">
         <ListView
             android:id="@+id/chat_listview"
             android:layout_width="match_parent"

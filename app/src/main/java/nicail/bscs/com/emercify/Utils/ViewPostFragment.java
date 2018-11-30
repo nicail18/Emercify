@@ -1,6 +1,7 @@
 package nicail.bscs.com.emercify.Utils;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,6 +27,11 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
+import org.json.JSONObject;
+
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -74,6 +80,7 @@ public class ViewPostFragment extends Fragment {
     private StringBuilder mUsers;
     private String mLikeString = "";
     private User mCurrentUser;
+    private String token, likeMessage;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -347,6 +354,53 @@ public class ViewPostFragment extends Fragment {
 
         mHeart.toggleLike();
         getLikeString();
+
+        if(!mPhoto.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+            String user_id = mPhoto.getUser_id();
+            String from_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            String type = "like";
+            token = mUserAccountSettings.getDevice_token();
+            likeMessage = photoUsername + " liked your post";
+            mFirebaseMethods.addNotification(user_id,from_id,type,likeMessage);
+            new Notify().execute();
+        }
+    }
+
+    public class Notify extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try{
+                URL url = new URL("https://fcm.googleapis.com/fcm/send");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+                conn.setUseCaches(false);
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Authorization","key=AIzaSyCdzpykpnX8MkBg7pRCczUVI39IJhpni7M");
+                conn.setRequestProperty("Content-Type","application/json");
+
+                JSONObject json = new JSONObject();
+
+                json.put("to",token);
+
+                JSONObject info = new JSONObject();
+                info.put("title","Emercify");
+                info.put("body",likeMessage);
+
+
+                json.put("notification",info);
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+                wr.write(json.toString());
+                wr.flush();
+                conn.getInputStream();
+            }catch(Exception e){
+                Log.d(TAG, "doInBackground: Exception" + e.getMessage());
+            }
+
+            return null;
+        }
     }
 
     private void getPhotoDetails(){
@@ -557,5 +611,27 @@ public class ViewPostFragment extends Fragment {
         if(mAuthListener != null){
             mAuth.removeAuthStateListener(mAuthListener);
         }
+    }
+
+    private void getCurrentUsername(){
+        Log.d(TAG, "getCurrentUsername: retrieving user account settings");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference
+                .child(getActivity().getString(R.string.dbname_users))
+                .orderByChild("user_id")
+                .equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot singleSnapshot: dataSnapshot.getChildren()){
+                    photoUsername = singleSnapshot.getValue(UserAccountSettings.class).getUsername();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }
