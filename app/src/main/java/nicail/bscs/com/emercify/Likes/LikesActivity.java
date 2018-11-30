@@ -44,16 +44,31 @@ import org.json.JSONObject;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import nicail.bscs.com.emercify.Home.HomeFragment;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.GlideApp;
+import nicail.bscs.com.emercify.Utils.NotifListAdapter;
+import nicail.bscs.com.emercify.models.Notifications;
 import nicail.bscs.com.emercify.models.UserAccountSettings;
 import nicail.bscs.com.emercify.models.UserSettings;
 
-public class LikesActivity extends AppCompatActivity {
+public class LikesActivity extends AppCompatActivity implements NotifListAdapter.OnLoadMoreItemListener {
+
+    @Override
+    public void onLoadMoreItems() {
+        Log.d(TAG, "onLoadMoreItems: displaying more photos");
+        this.displayMoreNotifs();
+    }
+
     private static final String TAG = "LikesActivity";
 
     private static final int ACTIVITY_NUM = 3;
@@ -68,6 +83,10 @@ public class LikesActivity extends AppCompatActivity {
     private FirebaseMethods mFirebaseMethods;
     private UserSettings userSettings;
     private String userID;
+    private ArrayList<Notifications> notifications;
+    private ArrayList<Notifications> paginatedNotif;
+    private NotifListAdapter mAdapter;
+    private int mResults;
 
     ListView simpleList;
     String descList [] = {"has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!"};
@@ -101,6 +120,7 @@ public class LikesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_notifs);
         ivMap = (ImageView) findViewById(R.id.ivMap);
         test = (ImageView) findViewById(R.id.testNotif);
+        notifications = new ArrayList<>();
         Log.d(TAG, "onCreate: starting.");
 
 
@@ -122,9 +142,109 @@ public class LikesActivity extends AppCompatActivity {
                 new Notify().execute();
             }
         });
+
+        getNotifications();
         simpleList = (ListView) findViewById(R.id.notif_listview);
-        CustomAdapter customAdapter = new CustomAdapter(getApplicationContext(), countryList, flags);
-        simpleList.setAdapter(customAdapter);
+        /*CustomAdapter customAdapter = new CustomAdapter(getApplicationContext(), countryList, flags);
+        simpleList.setAdapter(customAdapter);*/
+
+
+
+    }
+
+    public void getNotifications(){
+        Log.d(TAG, "getNotifications: getting notifications");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        final int[] count = {0};
+        Query query = reference
+                .child(getString(R.string.dbname_user_notification))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds: dataSnapshot.getChildren()){
+                    Log.d(TAG, "onDataChange: " + ds.child("user_id").getValue());
+                    Notifications notification = new Notifications();
+                    Map<String, Object> objectMap = (HashMap<String, Object>) ds.getValue();
+                    notification.setMessage(objectMap.get("message").toString());
+                    notification.setTimestamp(objectMap.get("timestamp").toString());
+                    notification.setFrom_id(objectMap.get("from_id").toString());
+                    notification.setUser_id(objectMap.get("user_id").toString());
+                    notification.setType(objectMap.get("type").toString());
+                    notification.setNotification_id(objectMap.get("notification_id").toString());
+
+                    notifications.add(notification);
+                    count[0]++;
+                }
+                if(count[0] > notifications.size()-1){
+                    displayNotifs();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void displayNotifs(){
+        paginatedNotif = new ArrayList<>();
+        if(notifications != null){
+            try{
+                Collections.sort(notifications, new Comparator<Notifications>() {
+                    @Override
+                    public int compare(Notifications o1, Notifications o2) {
+                        return o2.getTimestamp().compareTo(o1.getTimestamp());
+                    }
+                });
+
+                int iterations = notifications.size();
+
+                if(iterations > 10){
+                    iterations = 10;
+                }
+                mResults = 10;
+                for(int i = 0; i<iterations; i++){
+                    paginatedNotif.add(notifications.get(i));
+                }
+
+                mAdapter = new NotifListAdapter(LikesActivity.this,R.layout.layout_notifs_listview,paginatedNotif);
+                simpleList.setAdapter(mAdapter);
+
+            }catch(NullPointerException e){
+                Log.e(TAG, "displayNotifs: " + e.getMessage() );
+            }catch(IndexOutOfBoundsException e){
+                Log.e(TAG, "displayNotifs: " + e.getMessage() );
+            }
+        }
+    }
+
+    public void displayMoreNotifs(){
+        Log.d(TAG, "displayMorePhotos: displaying more photos");
+        try{
+            if(notifications.size() > mResults && notifications.size() > 0){
+                int iterations;
+                if(notifications.size() > (mResults+10)){
+                    Log.d(TAG, "displayMorePhotos: there are greater than 10 photos");
+                    iterations = 10;
+                }else{
+                    Log.d(TAG, "displayMorePhotos: there is less than photos");
+                    iterations = notifications.size() - mResults;
+                }
+
+                for(int i = mResults; i<mResults + iterations; i++){
+                    paginatedNotif.add(notifications.get(i));
+                }
+                mResults = mResults + iterations;
+                mAdapter.notifyDataSetChanged();
+            }
+        }catch(NullPointerException e){
+            Log.e(TAG, "displayPhotos: NullPointerException" + e.getMessage() );
+        }catch(IndexOutOfBoundsException e){
+            Log.e(TAG, "displayPhotos: IndexOutOfBoundsException" + e.getMessage() );
+        }
     }
 
     public class Notify extends AsyncTask<Void, Void, Void>{

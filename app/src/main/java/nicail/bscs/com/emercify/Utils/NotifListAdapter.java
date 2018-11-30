@@ -35,6 +35,11 @@ import nicail.bscs.com.emercify.models.UserAccountSettings;
 
 public class NotifListAdapter extends ArrayAdapter<Notifications> {
 
+    public interface OnLoadMoreItemListener{
+        void onLoadMoreItems();
+    }
+    NotifListAdapter.OnLoadMoreItemListener mOnLoadMoreItemListener;
+
     private static final String TAG = "NotifListAdapter";
 
     private LayoutInflater mLayoutInflater;
@@ -83,7 +88,7 @@ public class NotifListAdapter extends ArrayAdapter<Notifications> {
         String timestampDiff = getTimeStampDifference(getItem(position));
         holder.timestamp.setText(timestampDiff);
 
-        holder.notif_message.setText(getItem(position).getTimestamp());
+        holder.notif_message.setText(getItem(position).getMessage());
 
         Query query = mReference
                 .child(mContext.getString(R.string.dbname_user_account_settings))
@@ -111,8 +116,30 @@ public class NotifListAdapter extends ArrayAdapter<Notifications> {
             }
         });
 
+        if(reachedEndOfList(position)){
+            loadMoreData();
+        }
 
         return convertView;
+    }
+
+    private boolean reachedEndOfList(int position){
+        Log.d(TAG, "reachedEndOfList: " + position);
+        return position == getCount() - 1;
+    }
+
+    private void loadMoreData(){
+        try{
+            mOnLoadMoreItemListener = (NotifListAdapter.OnLoadMoreItemListener) getContext();
+        }catch(ClassCastException e){
+            Log.e(TAG, "loadMoreData: ClassCastException" + e.getMessage() );
+        }
+
+        try{
+            mOnLoadMoreItemListener.onLoadMoreItems();
+        }catch(NullPointerException e){
+            Log.e(TAG, "loadMoreData: NullPointerException" + e.getMessage() );
+        }
     }
 
     private String getTimeStampDifference(Notifications notification){
