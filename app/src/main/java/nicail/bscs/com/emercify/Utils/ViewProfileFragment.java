@@ -440,7 +440,20 @@ public class ViewProfileFragment extends Fragment {
         Log.d(TAG, "setupBottomNavigationView: setting up bottom navigation view");
 
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationView);
-        BottomNavigationViewHelper.enableNavigation(mContext,getActivity(),bottomNavigationView,ACTIVITY_NUM);
+
+        int incoming = 0;
+
+        Intent intent = getActivity().getIntent();
+        if(intent.hasExtra("home")){
+            incoming = 0;
+        }else if(intent.hasExtra("search")){
+            incoming = 1;
+        }else  if(intent.hasExtra("circle")){
+            incoming = 2;
+        }else if(intent.hasExtra("alert"))
+            incoming = 3;
+
+        BottomNavigationViewHelper.enableNavigation(mContext,getActivity(),bottomNavigationView,incoming);
         Menu menu = bottomNavigationView.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
