@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import nicail.bscs.com.emercify.Home.HomeActivity;
 import nicail.bscs.com.emercify.R;
@@ -70,6 +71,7 @@ public class LoginActivity extends AppCompatActivity{
 
     private void init(){
         //initialize the button for logging in
+
         Button btnLogin = (Button) findViewById(R.id.btn_login);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,6 +104,10 @@ public class LoginActivity extends AppCompatActivity{
                                         try {
                                             if(user.isEmailVerified()){
                                                 Log.d(TAG, "onComplete: success email is verified");
+                                                Log.d(TAG, "onComplete: " + FirebaseInstanceId.getInstance().getToken());
+                                                String user_id = mAuth.getCurrentUser().getUid();
+                                                mFirebaseMethods.updateDevice_token(
+                                                        FirebaseInstanceId.getInstance().getToken());
                                                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                                 startActivity(intent);
                                             }
@@ -150,6 +156,7 @@ public class LoginActivity extends AppCompatActivity{
                 if(user != null){
                     //User is signed in
                     Log.d(TAG, "onAuthStateChanged: signed_in: " + user.getUid());
+                    mFirebaseMethods = new FirebaseMethods(LoginActivity.this);
                 }
                 else{
                     //User is signed out

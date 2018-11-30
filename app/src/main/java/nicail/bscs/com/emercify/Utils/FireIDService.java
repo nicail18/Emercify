@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 
@@ -20,19 +21,20 @@ import nicail.bscs.com.emercify.R;
 
 
 public class FireIDService extends FirebaseInstanceIdService {
-
+    private static final String TAG = "FireIDService";
 
     @Override
     public void onTokenRefresh() {
 
-
+            
         String tkn = FirebaseInstanceId.getInstance().getToken();
-        Log.d("Not","Token ["+tkn+"]");
-
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        if(mAuth.getCurrentUser() != null){
+            FirebaseMethods firebaseMethods = new FirebaseMethods(getApplicationContext());
+            firebaseMethods.updateDevice_token(tkn);
+        }
+        Log.d(TAG, "onTokenRefresh: " + tkn);
         sendRegistrationToServer(tkn);
-
-
-
     }
 
 
@@ -47,7 +49,7 @@ public class FireIDService extends FirebaseInstanceIdService {
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle("FCM Message")
+                .setContentTitle("Welcome to Emercify")
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);

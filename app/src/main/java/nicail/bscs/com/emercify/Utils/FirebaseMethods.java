@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -190,6 +191,12 @@ public class FirebaseMethods {
         return sdf.format(new Date());
     }
 
+    public void updateDevice_token(String token){
+        Log.d(TAG, "updateDevice_token: updating token to: " + token);
+        myRef.child("users").child(userID).child("device_token").setValue(token);
+        myRef.child("user_account_settings").child(userID).child("device_token").setValue(token);
+    }
+
     private void addPhotoToDatabase(String caption, String url, String address, double latitude, double longitude){
         Log.d(TAG, "addPhotoToDatabase: adding photo to database.");
         String tags = StringManipulation.getTags(caption);
@@ -329,7 +336,7 @@ public class FirebaseMethods {
      * @param profile_photo
      */
     public void addNewUser(String email, String username, String description, String website, String profile_photo){
-        User user = new User(userID, 1, StringManipulation.condenseUsername(username), email);
+        User user = new User(userID, 1, StringManipulation.condenseUsername(username), email,FirebaseInstanceId.getInstance().getToken());
 
         myRef.child(mContext.getString(R.string.dbname_users))
                 .child(userID)
@@ -344,7 +351,8 @@ public class FirebaseMethods {
                 profile_photo,
                 StringManipulation.condenseUsername(username),
                 website,
-                userID );
+                userID,
+                FirebaseInstanceId.getInstance().getToken());
 
         myRef.child(mContext.getString(R.string.dbname_user_account_settings))
                 .child(userID)
@@ -402,6 +410,11 @@ public class FirebaseMethods {
                                     .getValue(UserAccountSettings.class)
                                     .getFollowers()
                     );
+                    settings.setDevice_token(
+                            ds.child(userID)
+                                    .getValue(UserAccountSettings.class)
+                                    .getDevice_token()
+                    );
                     Log.d(TAG, "getUserAccountSettings: retrieved user_account_settings information: " + settings.toString());
                 }catch(NullPointerException e){
                     Log.e(TAG, "getUserAccountSettings: NullPointerException: " + e.getMessage());
@@ -426,6 +439,11 @@ public class FirebaseMethods {
                                 .getPhone_number()
                 );
                 user.setUser_id(
+                        ds.child(userID)
+                                .getValue(User.class)
+                                .getUser_id()
+                );
+                user.setDevice_token(
                         ds.child(userID)
                                 .getValue(User.class)
                                 .getUser_id()

@@ -9,12 +9,14 @@ public class User implements Parcelable{
     private long phone_number;
     private String username;
     private String email;
+    private String device_token;
 
-    public User(String user_id, long phone_number, String username, String email) {
+    public User(String user_id, long phone_number, String username, String email, String device_token) {
         this.user_id = user_id;
         this.phone_number = phone_number;
         this.username = username;
         this.email = email;
+        this.device_token = device_token;
     }
 
     public User() {
@@ -25,6 +27,7 @@ public class User implements Parcelable{
         phone_number = in.readLong();
         username = in.readString();
         email = in.readString();
+        device_token = in.readString();
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -71,14 +74,12 @@ public class User implements Parcelable{
         this.email = email;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "user_id='" + user_id + '\'' +
-                ", phone_number='" + phone_number + '\'' +
-                ", user_name='" + username + '\'' +
-                ", email='" + email + '\'' +
-                '}';
+    public String getDevice_token() {
+        return device_token;
+    }
+
+    public void setDevice_token(String device_token) {
+        this.device_token = device_token;
     }
 
     @Override
@@ -92,5 +93,17 @@ public class User implements Parcelable{
         dest.writeLong(phone_number);
         dest.writeString(username);
         dest.writeString(email);
+        dest.writeString(device_token);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "user_id='" + user_id + '\'' +
+                ", phone_number=" + phone_number +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", device_token='" + device_token + '\'' +
+                '}';
     }
 }

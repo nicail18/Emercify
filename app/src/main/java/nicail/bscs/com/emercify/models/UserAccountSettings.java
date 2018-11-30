@@ -15,11 +15,14 @@ public class UserAccountSettings implements Parcelable{
     private String username;
     private String website;
     private String user_id;
+    private String device_token;
 
-    public UserAccountSettings(String description, String display_name,
-                               long followers, long following, long posts,
-                               String profile_photo, String username,
-                               String website, String user_id) {
+    public UserAccountSettings(String description,
+                               String display_name,
+                               long followers,
+                               long following,
+                               long posts, String profile_photo,
+                               String username, String website, String user_id, String device_token) {
         this.description = description;
         this.display_name = display_name;
         this.followers = followers;
@@ -29,6 +32,7 @@ public class UserAccountSettings implements Parcelable{
         this.username = username;
         this.website = website;
         this.user_id = user_id;
+        this.device_token = device_token;
     }
 
     public UserAccountSettings() {
@@ -44,6 +48,26 @@ public class UserAccountSettings implements Parcelable{
         username = in.readString();
         website = in.readString();
         user_id = in.readString();
+        device_token = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(description);
+        dest.writeString(display_name);
+        dest.writeLong(followers);
+        dest.writeLong(following);
+        dest.writeLong(posts);
+        dest.writeString(profile_photo);
+        dest.writeString(username);
+        dest.writeString(website);
+        dest.writeString(user_id);
+        dest.writeString(device_token);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<UserAccountSettings> CREATOR = new Creator<UserAccountSettings>() {
@@ -57,14 +81,6 @@ public class UserAccountSettings implements Parcelable{
             return new UserAccountSettings[size];
         }
     };
-
-    public String getUser_id() {
-        return user_id;
-    }
-
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
-    }
 
     public String getDescription() {
         return description;
@@ -130,6 +146,22 @@ public class UserAccountSettings implements Parcelable{
         this.website = website;
     }
 
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
+
+    public String getDevice_token() {
+        return device_token;
+    }
+
+    public void setDevice_token(String device_token) {
+        this.device_token = device_token;
+    }
+
     @Override
     public String toString() {
         return "UserAccountSettings{" +
@@ -141,24 +173,8 @@ public class UserAccountSettings implements Parcelable{
                 ", profile_photo='" + profile_photo + '\'' +
                 ", username='" + username + '\'' +
                 ", website='" + website + '\'' +
+                ", user_id='" + user_id + '\'' +
+                ", device_token='" + device_token + '\'' +
                 '}';
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(description);
-        dest.writeString(display_name);
-        dest.writeLong(followers);
-        dest.writeLong(following);
-        dest.writeLong(posts);
-        dest.writeString(profile_photo);
-        dest.writeString(username);
-        dest.writeString(website);
-        dest.writeString(user_id);
     }
 }

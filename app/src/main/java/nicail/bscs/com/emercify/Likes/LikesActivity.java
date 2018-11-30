@@ -28,7 +28,14 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
@@ -41,7 +48,10 @@ import java.net.URL;
 import de.hdodenhof.circleimageview.CircleImageView;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
+import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.GlideApp;
+import nicail.bscs.com.emercify.models.UserAccountSettings;
+import nicail.bscs.com.emercify.models.UserSettings;
 
 public class LikesActivity extends AppCompatActivity {
     private static final String TAG = "LikesActivity";
@@ -51,6 +61,13 @@ public class LikesActivity extends AppCompatActivity {
     private Context mContext = LikesActivity.this;
     private ImageView ivMap,test;
     private String token;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference myRef;
+    private FirebaseMethods mFirebaseMethods;
+    private UserSettings userSettings;
+    private String userID;
 
     ListView simpleList;
     String descList [] = {"has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!", "has reported an incident!"};
@@ -87,6 +104,8 @@ public class LikesActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: starting.");
 
 
+        setupFireBaseAuth();
+        setupBottomNavigationView();
         ivMap.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -98,6 +117,8 @@ public class LikesActivity extends AppCompatActivity {
         test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                token = userSettings.getSettings().getDevice_token();
+                Log.d(TAG, "onClick: " + token);
                 new Notify().execute();
             }
         });
@@ -105,9 +126,7 @@ public class LikesActivity extends AppCompatActivity {
         CustomAdapter customAdapter = new CustomAdapter(getApplicationContext(), countryList, flags);
         simpleList.setAdapter(customAdapter);
 
-        token = FirebaseInstanceId.getInstance().getToken();
 
-        setupBottomNavigationView();
     }
 
     public class Notify extends AsyncTask<Void, Void, Void>{
@@ -214,5 +233,44 @@ public class LikesActivity extends AppCompatActivity {
             return view;
 
         }
+    }
+
+    //Firebase Section
+    private void setupFireBaseAuth(){
+        Log.d(TAG, "setupFireBaseAuth: setting up firebase auth");
+        mFirebaseMethods = new FirebaseMethods(this);
+        mAuth = FirebaseAuth.getInstance();
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        myRef = mFirebaseDatabase.getReference();
+        userID = mAuth.getCurrentUser().getUid();;
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+
+                if(user != null){
+                    //User is signed in
+                    Log.d(TAG, "onAuthStateChanged: signed_in: " + user.getUid());
+                }
+                else{
+                    //User is signed out
+                    Log.d(TAG, "onAuthStateChanged: signed_out");
+                }
+            }
+        };
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onDataChange: " + dataSnapshot.getChildren());
+                userSettings = mFirebaseMethods.getUserSettings(dataSnapshot);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }
