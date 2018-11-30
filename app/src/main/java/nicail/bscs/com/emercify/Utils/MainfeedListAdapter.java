@@ -117,17 +117,19 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
             holder.address = (TextView) convertView.findViewById(R.id.address);
             holder.map = (ImageView) convertView.findViewById(R.id.ivMap);
             holder.ellipses = (ImageView) convertView.findViewById(R.id.ivEllipses);
-            holder.heart = new Heart(holder.heartWhite,holder.heartRed);
-            holder.photo = getItem(position);
-            holder.detector = new GestureDetector(mContext, new GestureListener(holder));
-            holder.users = new StringBuilder();
-            holder.firebaseMethods = new FirebaseMethods(getContext());
 
             convertView.setTag(holder);
         }
         else{
             holder = (ViewHolder) convertView.getTag();
         }
+
+
+        holder.heart = new Heart(holder.heartWhite,holder.heartRed);
+        holder.photo = getItem(position);
+        holder.detector = new GestureDetector(mContext, new GestureListener(holder));
+        holder.users = new StringBuilder();
+        holder.firebaseMethods = new FirebaseMethods(getContext());
 
         getCurrentUsername();
         getLikeString(holder);
@@ -288,6 +290,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
         @Override
         public boolean onDoubleTap(MotionEvent e) {
             Log.d(TAG, "onDoubleTap: double tap detected");
+            Log.d(TAG, "onDoubleTap: " + mHolder.photo.toString());
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
             Query query = reference
                     .child(mContext.getString(R.string.dbname_photos))
@@ -298,6 +301,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     for(DataSnapshot singleSnapshot: dataSnapshot.getChildren()){
                         String keyID = singleSnapshot.getKey();
+                        Log.d(TAG, "onDataChange: " + mHolder.photo.toString());
                         if(mHolder.likedByCurrentUser && singleSnapshot.getValue(Like.class)
                                 .getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                              mReference.child(mContext.getString(R.string.dbname_photos))
@@ -357,7 +361,9 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
 
         holder.heart.toggleLike();
         getLikeString(holder);
-
+        Log.d(TAG, "addNewLike: " + holder.photo.getUser_id());
+        Log.d(TAG, "addNewLike: " + holder.photo.toString());
+        Log.d(TAG, "addNewLike: " + FirebaseAuth.getInstance().getCurrentUser().getUid());
         if(!holder.photo.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
             String user_id = holder.photo.getUser_id();
             String from_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
