@@ -45,8 +45,6 @@ public class BottomNavigationViewHelper {
                         Intent intent2 = new Intent(context, SearchActivity.class);
                         intent2.putExtra("search","search");
                         context.startActivity(intent2);
-                        callingActivty.overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
-                        break;
                         if(incoming == 0){
                             callingActivty.overridePendingTransition(R.anim.right_to_left,R.anim.right_to_left);
                         }
