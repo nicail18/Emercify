@@ -93,7 +93,7 @@ public class NotifListAdapter extends ArrayAdapter<Notifications> {
         Query query = mReference
                 .child(mContext.getString(R.string.dbname_user_account_settings))
                 .orderByChild("user_id")
-                .equalTo(getItem(position).getUser_id());
+                .equalTo(getItem(position).getFrom_id());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

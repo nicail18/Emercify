@@ -103,6 +103,8 @@ public class    HomeFragment extends Fragment {
                         photo.setDate_created(objectMap.get("date_created").toString());
                         photo.setImage_path(objectMap.get("image_path").toString());
 
+                        Log.d(TAG, "onDataChange: " + photo.toString());
+
                         ArrayList<Comment> comments = new ArrayList<Comment>();
                         for(DataSnapshot dSnapshot: singleSnapshot.child("comments").getChildren()){
                             Comment comment = new Comment();
@@ -179,6 +181,7 @@ public class    HomeFragment extends Fragment {
                 }
                 mResults = mResults + iterations;
                 mAdapter.notifyDataSetChanged();
+
             }
         }catch(NullPointerException e){
             Log.e(TAG, "displayPhotos: NullPointerException" + e.getMessage() );
