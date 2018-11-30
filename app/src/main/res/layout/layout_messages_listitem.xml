@@ -47,8 +47,9 @@
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="2dp"
             android:layout_centerHorizontal="true"
-            android:layout_toRightOf="@+id/tvMessage"
-            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/profile_photo"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="200dp"
             android:textSize="17sp"
             android:id="@+id/timestamp"
             android:textColor="@color/black"/>
