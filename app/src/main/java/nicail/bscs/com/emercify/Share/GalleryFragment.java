@@ -69,6 +69,7 @@ public class GalleryFragment extends Fragment {
             public void onClick(View v) {
                 Log.d(TAG, "onClick: closing gallery fragment");
                 getActivity().finish();
+
             }
         });
 

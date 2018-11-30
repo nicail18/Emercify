@@ -38,8 +38,11 @@ public class BottomNavigationViewHelper {
                 switch(item.getItemId()){
                     case R.id.ic_house:
                         Intent intent1 = new Intent(context, HomeActivity.class);
+                        intent1.putExtra("home","home");
                         context.startActivity(intent1);
-                        callingActivty.overridePendingTransition(R.anim.left_to_right,R.anim.left_to_right);
+                        if( incoming > 0){
+                            callingActivty.overridePendingTransition(R.anim.left_to_right,R.anim.left_to_right);
+                        }
                         break;
                     case R.id.ic_search:
                         Intent intent2 = new Intent(context, SearchActivity.class);
@@ -56,14 +59,14 @@ public class BottomNavigationViewHelper {
                         Intent intent3 = new Intent(context, ShareActivity.class);
                         intent3.putExtra("circle", "cicle");
                         context.startActivity(intent3);
-                        callingActivty.overridePendingTransition(R.anim.left_to_right,R.anim.left_to_right);
+                        callingActivty.overridePendingTransition(R.anim.slide_up,R.anim.slide_up);
                         break;
                     case R.id.ic_alert:
                         Intent intent4 = new Intent(context, LikesActivity.class);
                         intent4.putExtra("alert","alert");
                         context.startActivity(intent4);
                         if(incoming == 4){
-                            callingActivty.overridePendingTransition(R.anim.left_to_right,R.anim.left_to_right);
+                            callingActivty.overridePendingTransition(R.anim.right_to_left,R.anim.right_to_left);
                         }
                         else if(incoming < 3){
                             callingActivty.overridePendingTransition(R.anim.right_to_left,R.anim.right_to_left);
@@ -73,7 +76,9 @@ public class BottomNavigationViewHelper {
                         Intent intent5 = new Intent(context, ProfileActivity.class);
                         intent5.putExtra("android","android");
                         context.startActivity(intent5);
-                        callingActivty.overridePendingTransition(R.anim.right_to_left,R.anim.right_to_left);
+                        if(incoming < 4){
+                            callingActivty.overridePendingTransition(R.anim.right_to_left,R.anim.right_to_left);
+                        }
                         break;
                 }
 

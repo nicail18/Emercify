@@ -169,8 +169,21 @@ public class LikesActivity extends AppCompatActivity {
         Log.d(TAG, "setupBottomNavigationView: setting up bottom navigation view");
 
         BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
+
+        int incoming = 0;
+
+        Intent intent = getIntent();
+        if(intent.hasExtra("home")){
+            incoming = 0;
+        }else if(intent.hasExtra("search")){
+            incoming = 1;
+        }else  if(intent.hasExtra("circle")){
+            incoming = 2;
+        }else if(intent.hasExtra("android"))
+            incoming = 4;
+
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
-        BottomNavigationViewHelper.enableNavigation(mContext, this, bottomNavigationViewEx, ACTIVITY_NUM);
+        BottomNavigationViewHelper.enableNavigation(mContext, this, bottomNavigationViewEx, incoming);
         Menu menu = bottomNavigationViewEx.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
