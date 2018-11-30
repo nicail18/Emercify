@@ -38,17 +38,6 @@ public class MessagesFragment extends Fragment {
     private ListView mListView;
 
 
-    int[] images = {R.drawable.image1,
-            R.drawable.image2,
-            R.drawable.image3,
-            R.drawable.image4,
-            R.drawable.image5,
-            R.drawable.image6,
-            R.drawable.image7,
-            R.drawable.image8,
-            R.drawable.image9,
-            R.drawable.image10};
-
 
     String[] Names = {"Curry",
             "James",
@@ -118,7 +107,7 @@ public class MessagesFragment extends Fragment {
 
         @Override
         public int getCount() {
-            return images.length;
+            return 0;
         }
 
         @Override
@@ -139,7 +128,6 @@ public class MessagesFragment extends Fragment {
             TextView mTextView1 = (TextView) view.findViewById(R.id.tvMessage);
             TextView mTextView2 = (TextView) view.findViewById(R.id.timestamp);
 
-            mImageView.setImageResource(images[position]);
             mTextView.setText(Names[position]);
             mTextView1.setText(Message[position]);
             mTextView2.setText(time[position]);

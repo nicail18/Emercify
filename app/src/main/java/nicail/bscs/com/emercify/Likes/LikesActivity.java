@@ -122,6 +122,42 @@ public class LikesActivity extends AppCompatActivity implements NotifListAdapter
         getNotifications();
         simpleList = (ListView) findViewById(R.id.notif_listview);
     }
+    public class Notify extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try{
+                URL url = new URL("https://fcm.googleapis.com/fcm/send");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+                conn.setUseCaches(false);
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Authorization","key=AIzaSyCdzpykpnX8MkBg7pRCczUVI39IJhpni7M");
+                conn.setRequestProperty("Content-Type","application/json");
+
+                JSONObject json = new JSONObject();
+
+                json.put("to",token);
+
+                JSONObject info = new JSONObject();
+                info.put("title","Emercify");
+                info.put("body","Hello");
+
+
+                json.put("notification",info);
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+                wr.write(json.toString());
+                wr.flush();
+                conn.getInputStream();
+            }catch(Exception e){
+                Log.d(TAG, "doInBackground: Exception" + e.getMessage());
+            }
+
+            return null;
+        }
+    }
 
     public void getNotifications(){
         Log.d(TAG, "getNotifications: getting notifications");
@@ -218,43 +254,6 @@ public class LikesActivity extends AppCompatActivity implements NotifListAdapter
         }
     }
 
-    public class Notify extends AsyncTask<Void, Void, Void>{
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try{
-                URL url = new URL("https://fcm.googleapis.com/fcm/send");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-                conn.setUseCaches(false);
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Authorization","key=AIzaSyCdzpykpnX8MkBg7pRCczUVI39IJhpni7M");
-                conn.setRequestProperty("Content-Type","application/json");
-
-                JSONObject json = new JSONObject();
-
-                json.put("to",token);
-
-                JSONObject info = new JSONObject();
-                info.put("title","Emercify");
-                info.put("body","Hello Test Notification");
-
-
-                json.put("notification",info);
-                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-                wr.write(json.toString());
-                wr.flush();
-                conn.getInputStream();
-            }catch(Exception e){
-                Log.d(TAG, "doInBackground: Exception" + e.getMessage());
-            }
-
-            return null;
-        }
-    }
-
     //Bottom Navigation View Setup
     private void setupBottomNavigationView() {
         Log.d(TAG, "setupBottomNavigationView: setting up bottom navigation view");
@@ -279,7 +278,6 @@ public class LikesActivity extends AppCompatActivity implements NotifListAdapter
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
     }
-
     //Firebase Section
     private void setupFireBaseAuth(){
         Log.d(TAG, "setupFireBaseAuth: setting up firebase auth");
