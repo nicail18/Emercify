@@ -11,8 +11,8 @@
         >
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:id="@+id/profile_photo"
             app:civ_border_color="@color/black"
             app:civ_border_width="0.5dp"
@@ -29,28 +29,29 @@
             android:textStyle="bold"
             android:id="@+id/username"
             android:textColor="@color/black"
-            android:textSize="18sp" />
+            android:text="sdsdsd"
+            android:textSize="17sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/username"
+            android:layout_marginTop="3dp"
             android:layout_marginBottom="2dp"
-            android:layout_marginLeft="96dp"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/profile_photo"
             android:id="@+id/tvMessage"
-            android:textSize="17sp"
+            android:textSize="14sp"
+            android:text="sdadasdsad"
             android:textColor="@color/black" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="2dp"
-            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
             android:layout_toRightOf="@+id/profile_photo"
-            android:layout_centerVertical="true"
             android:layout_marginLeft="200dp"
-            android:textSize="17sp"
+            android:textSize="12sp"
             android:id="@+id/timestamp"
             android:textColor="@color/black"/>
 
