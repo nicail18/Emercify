@@ -2,6 +2,7 @@ package nicail.bscs.com.emercify.Utils;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -37,6 +38,8 @@ import nicail.bscs.com.emercify.Home.HomeActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.models.Comment;
 import nicail.bscs.com.emercify.models.Photo;
+import nicail.bscs.com.emercify.models.UserAccountSettings;
+import nicail.bscs.com.emercify.models.UserSettings;
 
 public class ViewCommentsFragment extends Fragment {
 
@@ -60,6 +63,8 @@ public class ViewCommentsFragment extends Fragment {
     private Photo mPhoto;
     private ArrayList<Comment> mComments;
     private Context mContext;
+    private UserAccountSettings settings;
+    private String token,message,currentUsername;
 
     @Nullable
     @Override
@@ -133,6 +138,26 @@ public class ViewCommentsFragment extends Fragment {
         return sdf.format(new Date());
     }
 
+    public void getUserSettings(){
+        Query query = myRef
+                .child(getString(R.string.dbname_user_account_settings))
+                .orderByChild("user_id")
+                .equalTo(mPhoto.getUser_id());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds: dataSnapshot.getChildren()){
+                    settings = ds.getValue(UserAccountSettings.class);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void addNewComment(String newComment){
         Log.d(TAG, "addNewComment: adding new comment: " + newComment);
         String commentID = myRef.push().getKey();
@@ -153,6 +178,18 @@ public class ViewCommentsFragment extends Fragment {
                 .child("comments")
                 .child(commentID)
                 .setValue(comment);
+
+        if(!mPhoto.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+            String user_id = mPhoto.getUser_id();
+            String from_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            String type = "comment";
+            token = settings.getDevice_token();
+            message = currentUsername +
+                    " commented on your post \"" +
+                    mPhoto.getCaption() + "\"";
+            mFirebaseMethods.addNotification(user_id,from_id,type,message);
+            new Notify(token,message).execute();
+        }
     }
 
     private String getCallingActivityFromBundle(){
@@ -185,6 +222,7 @@ public class ViewCommentsFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         myRef = mFirebaseDatabase.getReference();
+        mFirebaseMethods = new FirebaseMethods(getActivity());
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -193,6 +231,8 @@ public class ViewCommentsFragment extends Fragment {
 
                 if(user != null){
                     //User is signed in
+
+
                     Log.d(TAG, "onAuthStateChanged: signed_in: " + user.getUid());
                 }
                 else{
@@ -201,7 +241,8 @@ public class ViewCommentsFragment extends Fragment {
                 }
             }
         };
-
+        getCurrentUsername();
+        getUserSettings();
         Log.d(TAG, "setupFireBaseAuth: " + mPhoto);
 
         if(mPhoto.getComments().size() == 0){
@@ -311,6 +352,28 @@ public class ViewCommentsFragment extends Fragment {
         if(mAuthListener != null){
             mAuth.removeAuthStateListener(mAuthListener);
         }
+    }
+
+    private void getCurrentUsername(){
+        Log.d(TAG, "getCurrentUsername: retrieving user account settings");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference
+                .child(mContext.getString(R.string.dbname_users))
+                .orderByChild("user_id")
+                .equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot singleSnapshot: dataSnapshot.getChildren()){
+                    currentUsername = singleSnapshot.getValue(UserAccountSettings.class).getUsername();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 }
