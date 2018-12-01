@@ -71,9 +71,6 @@ public class LikesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_notifs);
         ivMap = (ImageView) findViewById(R.id.ivMap);
         test = (ImageView) findViewById(R.id.testNotif);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-
-        progressBar.setVisibility(View.GONE);
         notifications = new ArrayList<>();
         notifsRecyclerView = findViewById(R.id.notif_listview);
         Log.d(TAG, "onCreate: starting.");

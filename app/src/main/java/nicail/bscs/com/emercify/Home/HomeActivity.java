@@ -43,11 +43,11 @@ import nicail.bscs.com.emercify.models.Photo;
 
 public class HomeActivity extends AppCompatActivity implements MainfeedListAdapter.OnLoadMoreItemListener{
 
+    private HomeFragment fragment;
+
     @Override
     public void onLoadMoreItems() {
         Log.d(TAG, "onLoadMoreItems: displaying more photos");
-        HomeFragment fragment = (HomeFragment) getSupportFragmentManager()
-                .findFragmentByTag("android:switcher:" + R.id.container + ":" + mViewPager.getCurrentItem());
         if(fragment != null){
             fragment.displayMorePhotos();
         }
@@ -64,7 +64,7 @@ public class HomeActivity extends AppCompatActivity implements MainfeedListAdapt
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
-    private ViewPager mViewPager;
+    private RelativeLayout mViewPager;
     private FrameLayout mFrameLayout;
     private RelativeLayout mRelativeLayout;
 
@@ -76,7 +76,7 @@ public class HomeActivity extends AppCompatActivity implements MainfeedListAdapt
         setContentView(R.layout.activity_home);
         Log.d(TAG, "onCreate: starting.");
 
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = (RelativeLayout) findViewById(R.id.rellayout2);
         mFrameLayout = (FrameLayout) findViewById(R.id.home_container);
         mRelativeLayout = (RelativeLayout) findViewById(R.id.relLayoutParent);
 
@@ -245,18 +245,19 @@ public class HomeActivity extends AppCompatActivity implements MainfeedListAdapt
 
     //Responsible for adding 3 tabs camera, home, messages
     private void setupViewPager(){
-        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new CameraFragment());
-        adapter.addFragment(new HomeFragment());
-        adapter.addFragment(new MessagesFragment());
-        mViewPager.setAdapter(adapter);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(mViewPager);
-
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_camera);
-        tabLayout.getTabAt(1).setIcon(R.mipmap.ic_emercify_launcher);
-        tabLayout.getTabAt(2).setIcon(R.drawable.ic_arrow);
+        //SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        fragment = new HomeFragment();
+        FragmentTransaction fragmentTransaction = HomeActivity.this.getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.rellayout2,fragment);
+        fragmentTransaction.addToBackStack("Home");
+        fragmentTransaction.commit();
+//        adapter.addFragment(new HomeFragment());
+//        mViewPager.setAdapter(adapter);
+//
+//        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+//        tabLayout.setupWithViewPager(mViewPager);
+//
+//        tabLayout.getTabAt(0).setIcon(R.mipmap.ic_emercify_launcher);
     }
 
     //Bottom Navigation View Setup
@@ -320,7 +321,7 @@ public class HomeActivity extends AppCompatActivity implements MainfeedListAdapt
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
-        mViewPager.setCurrentItem(HOME_FRAGMENT);
+//        mViewPager.setCurrentItem(HOME_FRAGMENT);
         checkCurrentUser(mAuth.getCurrentUser());
     }
 
