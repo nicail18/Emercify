@@ -69,12 +69,14 @@ public class ViewProfileFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseDatabase mFirebaseDatabase;
+    private FirebaseMethods firebaseMethods;
     private DatabaseReference myRef;
 
     private User mUser;
     private int mFollowersCount = 0;
     private int mFollowingCount = 0;
     private int mPostsCount = 0;
+    private String token, message;
 
     @Nullable
     @Override
@@ -134,6 +136,14 @@ public class ViewProfileFragment extends Fragment {
                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                         .child(getString(R.string.field_user_id))
                         .setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                    String user_id = mUser.getUser_id();
+                    String from_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    String type = "follow";
+                    token = mUser.getDevice_token();
+                    message = mUser.getUsername() +  " followed you" ;
+                    firebaseMethods.addNotification(user_id,from_id,type,message);
+                    new Notify(token,message).execute();
 
                 setFollowing();
             }
@@ -465,6 +475,7 @@ public class ViewProfileFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         myRef = mFirebaseDatabase.getReference();
+        firebaseMethods = new FirebaseMethods(getActivity());
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override

@@ -392,44 +392,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
             token = holder.settings.getDevice_token();
             likeMessage = currentUsername + " liked your post \"" + holder.photo.getCaption() + "\"";
             holder.firebaseMethods.addNotification(user_id,from_id,type,likeMessage);
-            new Notify().execute();
-        }
-    }
-
-    public class Notify extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try{
-                URL url = new URL("https://fcm.googleapis.com/fcm/send");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-                conn.setUseCaches(false);
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Authorization","key=AIzaSyCdzpykpnX8MkBg7pRCczUVI39IJhpni7M");
-                conn.setRequestProperty("Content-Type","application/json");
-
-                JSONObject json = new JSONObject();
-
-                json.put("to",token);
-
-                JSONObject info = new JSONObject();
-                info.put("title","Emercify");
-                info.put("body",likeMessage);
-
-
-                json.put("notification",info);
-                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-                wr.write(json.toString());
-                wr.flush();
-                conn.getInputStream();
-            }catch(Exception e){
-                Log.d(TAG, "doInBackground: Exception" + e.getMessage());
-            }
-
-            return null;
+            new Notify(token,likeMessage).execute();
         }
     }
 
