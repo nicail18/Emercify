@@ -153,7 +153,7 @@ public class    HomeFragment extends Fragment {
                     mPaginatedPhotos.add(mPhotos.get(i));
                 }
 
-                mAdapter = new MainfeedListAdapter(getActivity(),R.layout.layout_mainfeed_listitem,mPaginatedPhotos);
+                mAdapter = new MainfeedListAdapter(getActivity(),R.layout.layout_mainfeed_listitem,mPaginatedPhotos, HomeFragment.this);
                 mListView.setAdapter(mAdapter);
             }catch(NullPointerException e){
                 Log.e(TAG, "displayPhotos: NullPointerException" + e.getMessage() );
