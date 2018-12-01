@@ -1,5 +1,6 @@
 package nicail.bscs.com.emercify.Share;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Address;
@@ -10,13 +11,19 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,27 +44,36 @@ import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.FilePaths;
 import nicail.bscs.com.emercify.Utils.FileSearch;
 import nicail.bscs.com.emercify.Utils.GridImageAdapter;
+import nicail.bscs.com.emercify.Utils.ViewWeightAnimationWrapper;
 
 public class GalleryFragment extends Fragment {
-    private static final String TAG = "HomeFragment";
+    private static final String TAG = "GalleryFragment";
     private String mAppend = "file:/";
 
     private GridView gridView;
+    private RelativeLayout layoutTop;
     private ImageView galleryImage;
     private ProgressBar mProgressBar;
     private Spinner directorySpinner;
+    private ImageButton imageButton;
 
     private ArrayList<String> directories;
     private String mSelectedImage;
     private String mImageAddress;
     private double latitude, longitude;
 
+    private static final int MAP_LAYOUT_STATE_CONTRACTED = 0;
+    private static final int MAP_LAYOUT_STATE_EXPANDED = 1;
+    private int mMapLayoutState = 0;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_gallery,container,false);
         gridView = (GridView) view.findViewById(R.id.gridView);
+        layoutTop = (RelativeLayout) view.findViewById(R.id.rellayouttop);
         galleryImage = (ImageView) view.findViewById(R.id.galleryImageView);
+        imageButton = (ImageButton) view.findViewById(R.id.hide_show_btn);
         directorySpinner = (Spinner) view.findViewById(R.id.spinnerDirectory);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         directories = new ArrayList<>();
@@ -72,9 +88,30 @@ public class GalleryFragment extends Fragment {
 
             }
         });
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()){
+                    case R.id.hide_show_btn:{
 
+                        if(mMapLayoutState == MAP_LAYOUT_STATE_CONTRACTED){
+                            mMapLayoutState = MAP_LAYOUT_STATE_EXPANDED;
+                            expandMapAnimation();
+                        }
+                        else if(mMapLayoutState == MAP_LAYOUT_STATE_EXPANDED){
+                            mMapLayoutState = MAP_LAYOUT_STATE_CONTRACTED;
+                            contractMapAnimation();
+                        }
+                        break;
+                    }
+
+                }
+
+            }
+        });
         TextView nextScreen = (TextView) view.findViewById(R.id.tvNext);
-        nextScreen.setOnClickListener(new View.OnClickListener() {
+        nextScreen.setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating to final share screen");
@@ -100,7 +137,6 @@ public class GalleryFragment extends Fragment {
                     startActivity(intent);
                     getActivity().finish();
                 }
-
             }
         });
 
@@ -135,6 +171,76 @@ public class GalleryFragment extends Fragment {
 
         setupGridView(directories.get(0),resultIAV);
 
+        /*gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                Log.d(TAG, "onScrollStateChanged: ");
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                Log.d(TAG, "onScroll: ");
+            }
+        });*/
+
+
+//        layoutTop.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                Log.d(TAG, "onFocusChange: layoutTop");
+//            }
+//        });
+
+        /*gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                int lastItem = firstVisibleItem + visibleItemCount - 1;
+                int currentFirstVisPos = firstVisibleItem;
+                if(currentFirstVisPos == 0){
+                    expandMapAnimation();
+                }
+                else{
+                    contractMapAnimation();
+                }
+//                if(currentFirstVisPos > myLastVisiblePos[0]) {
+//                    Log.d(TAG, "onScrollStateChanged: down " );
+//                    Log.d(TAG, "onScroll: " + currentFirstVisPos);
+//                    Log.d(TAG, "onScroll: " + myLastVisiblePos[0]);
+//                    expandMapAnimation();
+//                    Log.d(TAG, "onScroll: count1 " + count1[0]);
+//                }
+//                if(currentFirstVisPos < myLastVisiblePos[0]) {
+//                    Log.d(TAG, "onScrollStateChanged: up");;
+//                    Log.d(TAG, "onScroll: " + currentFirstVisPos);
+//                    Log.d(TAG, "onScroll: " + myLastVisiblePos[0]);
+//
+//                    if(currentFirstVisPos == 0){
+//                        contractMapAnimation();
+//                    }
+//                    Log.d(TAG, "onScroll: count " + count[0]);
+//                }
+                myLastVisiblePos[0] = currentFirstVisPos;
+
+            }
+//            int mPosition=0;
+//            int mOffset=0;
+
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+//                // TODO Auto-generated method stub
+//                int position = gridView.getFirstVisiblePosition();
+//                View v = gridView.getChildAt(0);
+//                int offset = (v == null) ? 0 : v.getTop();
+//
+//                if (mPosition < position || (mPosition == position && mOffset < offset)){
+//                    // Scrolled up
+//                } else {
+//                    // Scrolled down
+//                }
+            }
+        });*/
+
         /*ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_spinner_item, directoryNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         directorySpinner.setAdapter(adapter);
@@ -166,6 +272,7 @@ public class GalleryFragment extends Fragment {
         gridView.setAdapter(adapter);
 
         setImage(imgURLs.get(0),galleryImage,mAppend);
+        imageButton.setVisibility(View.VISIBLE);
         mSelectedImage = imgURLs.get(0);
         try {
             ExifInterface exif = new ExifInterface(mSelectedImage);
@@ -209,6 +316,7 @@ public class GalleryFragment extends Fragment {
                 Log.d(TAG, "onItemClick: selected image " + imgURLs.get(position));
 
                 setImage(imgURLs.get(position),galleryImage,mAppend);
+                imageButton.setVisibility(View.VISIBLE);
                 mSelectedImage = imgURLs.get(position);
                 try {
                     ExifInterface exif = new ExifInterface(mSelectedImage);
@@ -326,4 +434,44 @@ public class GalleryFragment extends Fragment {
             }
         });
     }
+
+    private void expandMapAnimation(){
+        ViewWeightAnimationWrapper mapAnimationWrapper = new ViewWeightAnimationWrapper(gridView);
+        ObjectAnimator mapAnimation = ObjectAnimator.ofFloat(mapAnimationWrapper,
+                "weight",
+                40,
+                90);
+        mapAnimation.setDuration(800);
+
+        ViewWeightAnimationWrapper recyclerAnimationWrapper = new ViewWeightAnimationWrapper(layoutTop);
+        ObjectAnimator recyclerAnimation = ObjectAnimator.ofFloat(recyclerAnimationWrapper,
+                "weight",
+                60,
+                10);
+        recyclerAnimation.setDuration(800);
+
+        recyclerAnimation.start();
+        mapAnimation.start();
+    }
+
+    private void contractMapAnimation(){
+        ViewWeightAnimationWrapper mapAnimationWrapper = new ViewWeightAnimationWrapper(gridView);
+        ObjectAnimator mapAnimation = ObjectAnimator.ofFloat(mapAnimationWrapper,
+                "weight",
+                90,
+                40);
+        mapAnimation.setDuration(800);
+
+        ViewWeightAnimationWrapper recyclerAnimationWrapper = new ViewWeightAnimationWrapper(layoutTop);
+        ObjectAnimator recyclerAnimation = ObjectAnimator.ofFloat(recyclerAnimationWrapper,
+                "weight",
+                10,
+                60);
+        recyclerAnimation.setDuration(800);
+
+        recyclerAnimation.start();
+        mapAnimation.start();
+    }
+
+
 }
