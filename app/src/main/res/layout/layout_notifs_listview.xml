@@ -1,11 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="70dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="70dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -48,8 +44,6 @@
             android:layout_below="@id/notif_message"
             android:layout_marginLeft="10dp"
             android:text="7 hours ago"/>
-
-    </RelativeLayout>
 
 
 
