@@ -1,5 +1,7 @@
 package nicail.bscs.com.emercify.Utils;
 
+import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.media.Image;
@@ -7,6 +9,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -40,10 +44,13 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import nicail.bscs.com.emercify.Home.CameraFragment;
 import nicail.bscs.com.emercify.Home.HomeActivity;
+import nicail.bscs.com.emercify.Home.HomeFragment;
 import nicail.bscs.com.emercify.Likes.MapActivity;
 import nicail.bscs.com.emercify.Profile.ProfileActivity;
 import nicail.bscs.com.emercify.R;
+import nicail.bscs.com.emercify.dialogs.View_Delete_Dialog;
 import nicail.bscs.com.emercify.models.Comment;
 import nicail.bscs.com.emercify.models.Like;
 import nicail.bscs.com.emercify.models.Notifications;
@@ -67,13 +74,15 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
     private String currentUsername = "";
     private String token;
     private String likeMessage;
+    private Fragment fragment;
 
-    public MainfeedListAdapter(@NonNull Context context, int resource, @NonNull List<Photo> objects) {
+    public MainfeedListAdapter(@NonNull Context context, int resource, @NonNull List<Photo> objects,Fragment fragment) {
         super(context, resource, objects);
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mLayoutResource = resource;
         this.mContext = context;
         mReference = FirebaseDatabase.getInstance().getReference();
+        this.fragment = fragment;
     }
 
     static class ViewHolder{
@@ -95,11 +104,16 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
         Photo photo;
     }
 
+    public void openDialog(){
+        View_Delete_Dialog dialog1 = new View_Delete_Dialog();
+        dialog1.show(((FragmentActivity)mContext).getSupportFragmentManager(),"View_Delete_Dialog");
+        dialog1.setTargetFragment(fragment,1);
+    }
+
     @NonNull
     @Override
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         final ViewHolder holder;
-
         if(convertView == null){
             convertView = mLayoutInflater.inflate(mLayoutResource,parent,false);
             holder = new ViewHolder();
@@ -123,6 +137,13 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
         else{
             holder = (ViewHolder) convertView.getTag();
         }
+
+        holder.ellipses.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openDialog();
+            }
+        });
 
 
         holder.heart = new Heart(holder.heartWhite,holder.heartRed);

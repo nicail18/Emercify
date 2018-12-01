@@ -13,26 +13,26 @@
         android:layout_centerVertical="true">
     <TextView
         android:id="@+id/view_dialog"
+        android:clickable="true"
         android:layout_width="150dp"
         android:layout_height="30dp"
-        android:textSize="13sp"
+        android:textSize="15sp"
         android:paddingStart="55dp"
-        android:textColor="@color/black"
+        android:textColor="@drawable/text_changecolor"
         android:paddingTop="3dp"
-        android:background="@drawable/dialog_round"
         android:text="View" />
 
     <TextView
         android:id="@+id/delete_dialog"
         android:layout_below="@+id/view_dialog"
-        android:background="@drawable/dialog_round"
+        android:clickable="true"
         android:layout_marginTop="10dp"
-        android:textColor="@color/black"
+        android:textColor="@drawable/text_changecolor"
         android:layout_width="150dp"
         android:layout_height="30dp"
         android:paddingStart="53dp"
         android:paddingTop="3dp"
-        android:textSize="13sp"
+        android:textSize="15sp"
         android:text="Delete" />
     </RelativeLayout>
 </RelativeLayout>
