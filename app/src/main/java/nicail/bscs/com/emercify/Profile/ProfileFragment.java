@@ -1,5 +1,6 @@
 package nicail.bscs.com.emercify.Profile;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,12 +12,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,6 +47,7 @@ import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.GridImageAdapter;
 import nicail.bscs.com.emercify.Utils.UniversalImageLoader;
+import nicail.bscs.com.emercify.Utils.ViewWeightAnimationWrapper;
 import nicail.bscs.com.emercify.models.Comment;
 import nicail.bscs.com.emercify.models.Like;
 import nicail.bscs.com.emercify.models.Photo;
@@ -69,6 +76,7 @@ public class ProfileFragment extends Fragment {
     private Toolbar toolbar;
     private ImageView profileMenu;
     private BottomNavigationViewEx bottomNavigationView;
+    private ScrollView scrollView;
 
     private Context mContext;
 
@@ -77,6 +85,12 @@ public class ProfileFragment extends Fragment {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
     private FirebaseMethods mFirebaseMethods;
+    private ImageButton imageButton;
+    private RelativeLayout topLayout;
+
+    private static final int MAP_LAYOUT_STATE_CONTRACTED = 0;
+    private static final int MAP_LAYOUT_STATE_EXPANDED = 1;
+    private int mMapLayoutState = 0;
 
     @Nullable
     @Override
@@ -92,13 +106,38 @@ public class ProfileFragment extends Fragment {
         mFollowing = (TextView) view.findViewById(R.id.tvFollowing);
         mProgressBar = (ProgressBar) view.findViewById(R.id.profileProgressBar);
         gridView = (GridView) view.findViewById(R.id.gridView);
+        topLayout = (RelativeLayout) view.findViewById(R.id.rellayout6);
         toolbar =  (Toolbar) view.findViewById(R.id.profileToolBar);
         profileMenu = (ImageView) view.findViewById(R.id.profileMenu);
         bottomNavigationView = (BottomNavigationViewEx) view.findViewById(R.id.bottomNavViewBar);
         mContext = getActivity();
         mFirebaseMethods = new FirebaseMethods(mContext);
+        imageButton = (ImageButton) view.findViewById(R.id.hide_show_btn);
+        scrollView = (ScrollView) view.findViewById(R.id.scrolllayout);
 
         Log.d(TAG, "onCreateView: started");
+
+        gridView.setOnTouchListener(new GridView.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        // Disallow ScrollView to intercept touch events.
+                        v.getParent().requestDisallowInterceptTouchEvent(true);
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        // Allow ScrollView to intercept touch events.
+                        v.getParent().requestDisallowInterceptTouchEvent(false);
+                        break;
+                }
+
+                // Handle ListView touch events.
+                v.onTouchEvent(event);
+                return true;
+            }
+        });
 
         setupBottomNavigationView();
         setupToolBar();
@@ -122,7 +161,31 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()){
+                    case R.id.hide_show_btn:{
+
+                        if(mMapLayoutState == MAP_LAYOUT_STATE_CONTRACTED){
+                            mMapLayoutState = MAP_LAYOUT_STATE_EXPANDED;
+                            expandMapAnimation();
+                        }
+                        else if(mMapLayoutState == MAP_LAYOUT_STATE_EXPANDED){
+                            mMapLayoutState = MAP_LAYOUT_STATE_CONTRACTED;
+                            contractMapAnimation();
+                        }
+                        break;
+                    }
+
+                }
+
+            }
+        });
+
         return view;
+
+
     }
 
     private void getFollowersCount(){
@@ -376,6 +439,44 @@ public class ProfileFragment extends Fragment {
         if(mAuthListener != null){
             mAuth.removeAuthStateListener(mAuthListener);
         }
+    }
+
+    private void expandMapAnimation(){
+        ViewWeightAnimationWrapper mapAnimationWrapper = new ViewWeightAnimationWrapper(gridView);
+        ObjectAnimator mapAnimation = ObjectAnimator.ofFloat(mapAnimationWrapper,
+                "weight",
+                40,
+                90);
+        mapAnimation.setDuration(800);
+
+        ViewWeightAnimationWrapper recyclerAnimationWrapper = new ViewWeightAnimationWrapper(topLayout);
+        ObjectAnimator recyclerAnimation = ObjectAnimator.ofFloat(recyclerAnimationWrapper,
+                "weight",
+                60,
+                10);
+        recyclerAnimation.setDuration(800);
+
+        recyclerAnimation.start();
+        mapAnimation.start();
+    }
+
+    private void contractMapAnimation(){
+        ViewWeightAnimationWrapper mapAnimationWrapper = new ViewWeightAnimationWrapper(gridView);
+        ObjectAnimator mapAnimation = ObjectAnimator.ofFloat(mapAnimationWrapper,
+                "weight",
+                90,
+                40);
+        mapAnimation.setDuration(800);
+
+        ViewWeightAnimationWrapper recyclerAnimationWrapper = new ViewWeightAnimationWrapper(topLayout);
+        ObjectAnimator recyclerAnimation = ObjectAnimator.ofFloat(recyclerAnimationWrapper,
+                "weight",
+                10,
+                60);
+        recyclerAnimation.setDuration(800);
+
+        recyclerAnimation.start();
+        mapAnimation.start();
     }
 
 }
