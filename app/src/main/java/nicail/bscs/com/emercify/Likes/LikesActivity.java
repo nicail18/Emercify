@@ -1,33 +1,20 @@
 package nicail.bscs.com.emercify.Likes;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.AbsListView;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ProgressBar;
 
-import com.bumptech.glide.Glide;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -36,38 +23,23 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
-import org.json.JSONObject;
-
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-import nicail.bscs.com.emercify.Home.HomeFragment;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
-import nicail.bscs.com.emercify.Utils.GlideApp;
-import nicail.bscs.com.emercify.Utils.NotifListAdapter;
+import nicail.bscs.com.emercify.Utils.NotifRecyclerAdapter;
+import nicail.bscs.com.emercify.Utils.Notify;
 import nicail.bscs.com.emercify.models.Notifications;
-import nicail.bscs.com.emercify.models.UserAccountSettings;
 import nicail.bscs.com.emercify.models.UserSettings;
 
-public class LikesActivity extends AppCompatActivity implements NotifListAdapter.OnLoadMoreItemListener {
-
-    @Override
-    public void onLoadMoreItems() {
-        Log.d(TAG, "onLoadMoreItems: displaying more photos");
-        this.displayMoreNotifs();
-    }
+public class LikesActivity extends AppCompatActivity {
 
     private static final String TAG = "LikesActivity";
 
@@ -85,10 +57,13 @@ public class LikesActivity extends AppCompatActivity implements NotifListAdapter
     private String userID;
     private ArrayList<Notifications> notifications;
     private ArrayList<Notifications> paginatedNotif;
-    private NotifListAdapter mAdapter;
-    private int mResults;
+    private NotifRecyclerAdapter notifRecyclerAdapter;
+    private LinearLayoutManager manager;
+    private int mResults,currentItems,totalItems,scrollOutItems;
+    private Boolean isScrolling = false;
+    private ProgressBar progressBar;
 
-    ListView simpleList;
+    RecyclerView notifsRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +71,11 @@ public class LikesActivity extends AppCompatActivity implements NotifListAdapter
         setContentView(R.layout.activity_notifs);
         ivMap = (ImageView) findViewById(R.id.ivMap);
         test = (ImageView) findViewById(R.id.testNotif);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+
+        progressBar.setVisibility(View.GONE);
         notifications = new ArrayList<>();
+        notifsRecyclerView = findViewById(R.id.notif_listview);
         Log.d(TAG, "onCreate: starting.");
 
 
@@ -115,48 +94,11 @@ public class LikesActivity extends AppCompatActivity implements NotifListAdapter
             public void onClick(View v) {
                 token = userSettings.getSettings().getDevice_token();
                 Log.d(TAG, "onClick: " + token);
-                new Notify().execute();
+                new Notify(token,"Hello").execute();
             }
         });
 
         getNotifications();
-        simpleList = (ListView) findViewById(R.id.notif_listview);
-    }
-    public class Notify extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try{
-                URL url = new URL("https://fcm.googleapis.com/fcm/send");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
-                conn.setUseCaches(false);
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Authorization","key=AIzaSyCdzpykpnX8MkBg7pRCczUVI39IJhpni7M");
-                conn.setRequestProperty("Content-Type","application/json");
-
-                JSONObject json = new JSONObject();
-
-                json.put("to",token);
-
-                JSONObject info = new JSONObject();
-                info.put("title","Emercify");
-                info.put("body","Hello");
-
-
-                json.put("notification",info);
-                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-                wr.write(json.toString());
-                wr.flush();
-                conn.getInputStream();
-            }catch(Exception e){
-                Log.d(TAG, "doInBackground: Exception" + e.getMessage());
-            }
-
-            return null;
-        }
     }
 
     public void getNotifications(){
@@ -217,8 +159,32 @@ public class LikesActivity extends AppCompatActivity implements NotifListAdapter
                     paginatedNotif.add(notifications.get(i));
                 }
 
-                mAdapter = new NotifListAdapter(LikesActivity.this,R.layout.layout_notifs_listview,paginatedNotif);
-                simpleList.setAdapter(mAdapter);
+                notifRecyclerAdapter = new NotifRecyclerAdapter(paginatedNotif);
+                notifsRecyclerView.setAdapter(notifRecyclerAdapter);
+                manager = new LinearLayoutManager(this);
+                notifsRecyclerView.setLayoutManager(manager);
+                notifsRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                        super.onScrollStateChanged(recyclerView, newState);
+                        if(newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                            isScrolling = true;
+                        }
+                    }
+
+                    @Override
+                    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                        super.onScrolled(recyclerView, dx, dy);
+                        currentItems = manager.getChildCount();
+                        totalItems = manager.getItemCount();
+                        scrollOutItems = manager.findFirstVisibleItemPosition();
+
+                        if(isScrolling && (currentItems + scrollOutItems == totalItems)){
+                            isScrolling = false;
+                            displayMoreNotifs();
+                        }
+                    }
+                });
 
             }catch(NullPointerException e){
                 Log.e(TAG, "displayNotifs: " + e.getMessage() );
@@ -245,7 +211,7 @@ public class LikesActivity extends AppCompatActivity implements NotifListAdapter
                     paginatedNotif.add(notifications.get(i));
                 }
                 mResults = mResults + iterations;
-                mAdapter.notifyDataSetChanged();
+                notifRecyclerAdapter.notifyDataSetChanged();
             }
         }catch(NullPointerException e){
             Log.e(TAG, "displayPhotos: NullPointerException" + e.getMessage() );

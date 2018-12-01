@@ -2,15 +2,13 @@ package nicail.bscs.com.emercify.Utils;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.Circle;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -20,85 +18,54 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.models.Notifications;
-import nicail.bscs.com.emercify.models.Photo;
 import nicail.bscs.com.emercify.models.User;
 import nicail.bscs.com.emercify.models.UserAccountSettings;
 
-public class NotifListAdapter extends ArrayAdapter<Notifications> {
+public class NotifRecyclerAdapter extends RecyclerView.Adapter<NotifRecyclerAdapter.ViewHolder> {
+    private static final String TAG = "NotifRecyclerAdapter";
 
-    public interface OnLoadMoreItemListener{
-        void onLoadMoreItems();
-    }
-    NotifListAdapter.OnLoadMoreItemListener mOnLoadMoreItemListener;
-
-    private static final String TAG = "NotifListAdapter";
-
-    private LayoutInflater mLayoutInflater;
-    private int mLayoutResource;
+    private ArrayList<Notifications> notifications = new ArrayList<>();
+    private DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
     private Context mContext;
-    private DatabaseReference mReference;
 
-    public NotifListAdapter(@NonNull Context context, int resource, @NonNull List<Notifications> objects) {
-        super(context, resource, objects);
-
-        mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mLayoutResource = resource;
-        this.mContext = context;
-        mReference = FirebaseDatabase.getInstance().getReference();
-    }
-
-    static class ViewHolder{
-        CircleImageView profile_photo;
-        TextView username,notif_message,timestamp;
-
-        UserAccountSettings settings = new UserAccountSettings();
-        User user = new User();
-        Notifications notifications;
+    public NotifRecyclerAdapter(ArrayList<Notifications> notifications) {
+        this.notifications = notifications;
     }
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        final ViewHolder holder;
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_notifs_listview,parent, false);
+        final ViewHolder holder = new ViewHolder(view);
+        this.mContext = parent.getContext();
+        return holder;
+    }
 
-        if(convertView == null){
-            convertView = mLayoutInflater.inflate(mLayoutResource,parent,false);
-            holder = new ViewHolder();
+    @Override
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+        String timestampDiff = getTimeStampDifference(notifications.get(position));
+        ((ViewHolder)holder).timestamp.setText(timestampDiff);
 
-            holder.profile_photo = (CircleImageView) convertView.findViewById(R.id.profile_photo);
-            holder.username = (TextView) convertView.findViewById(R.id.username);
-            holder.notif_message = (TextView) convertView.findViewById(R.id.notif_message);
-            holder.timestamp = (TextView) convertView.findViewById(R.id.timestamp);
+        ((ViewHolder)holder).notif_message.setText(notifications.get(position).getMessage());
 
-            convertView.setTag(holder);
-        }
-        else{
-            holder = (NotifListAdapter.ViewHolder) convertView.getTag();
-        }
-
-        String timestampDiff = getTimeStampDifference(getItem(position));
-        holder.timestamp.setText(timestampDiff);
-
-        holder.notif_message.setText(getItem(position).getMessage());
-
-        Query query = mReference
+        Query query = reference
                 .child(mContext.getString(R.string.dbname_user_account_settings))
                 .orderByChild("user_id")
-                .equalTo(getItem(position).getFrom_id());
+                .equalTo(notifications.get(position).getFrom_id());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot ds: dataSnapshot.getChildren()){
-                    holder.username.setText(ds.getValue(UserAccountSettings.class).getUsername());
+                    ((ViewHolder)holder).username.setText(ds.getValue(UserAccountSettings.class).getUsername());
 
                     GlideApp
                             .with(mContext)
@@ -106,7 +73,7 @@ public class NotifListAdapter extends ArrayAdapter<Notifications> {
                             .placeholder(R.mipmap.ic_emercify_launcher)
                             .error(R.drawable.ic_error)
                             .centerCrop()
-                            .into(holder.profile_photo);
+                            .into(((ViewHolder)holder).profile_photo);
                 }
             }
 
@@ -116,29 +83,27 @@ public class NotifListAdapter extends ArrayAdapter<Notifications> {
             }
         });
 
-        if(reachedEndOfList(position)){
-            loadMoreData();
-        }
-
-        return convertView;
     }
 
-    private boolean reachedEndOfList(int position){
-        Log.d(TAG, "reachedEndOfList: " + position);
-        return position == getCount() - 1;
+    @Override
+    public int getItemCount() {
+        return notifications.size();
     }
 
-    private void loadMoreData(){
-        try{
-            mOnLoadMoreItemListener = (NotifListAdapter.OnLoadMoreItemListener) getContext();
-        }catch(ClassCastException e){
-            Log.e(TAG, "loadMoreData: ClassCastException" + e.getMessage() );
-        }
+    public class ViewHolder extends RecyclerView.ViewHolder{
 
-        try{
-            mOnLoadMoreItemListener.onLoadMoreItems();
-        }catch(NullPointerException e){
-            Log.e(TAG, "loadMoreData: NullPointerException" + e.getMessage() );
+        CircleImageView profile_photo;
+        TextView username,notif_message,timestamp;
+
+        UserAccountSettings settings = new UserAccountSettings();
+        User user = new User();
+        public ViewHolder(View itemView) {
+            super(itemView);
+
+            profile_photo = itemView.findViewById(R.id.profile_photo);
+            username = itemView.findViewById(R.id.username);
+            notif_message = itemView.findViewById(R.id.notif_message);
+            timestamp = itemView.findViewById(R.id.timestamp);
         }
     }
 

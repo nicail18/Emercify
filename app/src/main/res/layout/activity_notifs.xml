@@ -23,13 +23,13 @@
             android:layout_below="@+id/rellayout1"
             android:layout_marginBottom="50dp">
 
-            <ListView
+            <android.support.v7.widget.RecyclerView
                 android:id="@+id/notif_listview"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 >
 
-            </ListView>
+            </android.support.v7.widget.RecyclerView>
         </RelativeLayout>
 
         <include layout="@layout/layout_bottom_navigation_view"/>
