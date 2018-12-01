@@ -72,7 +72,7 @@ public class ViewProfileFragment extends Fragment {
     private FirebaseMethods firebaseMethods;
     private DatabaseReference myRef;
 
-    private User mUser;
+    private User mUser,currentUser;
     private int mFollowersCount = 0;
     private int mFollowingCount = 0;
     private int mPostsCount = 0;
@@ -141,7 +141,7 @@ public class ViewProfileFragment extends Fragment {
                     String from_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
                     String type = "follow";
                     token = mUser.getDevice_token();
-                    message = mUser.getUsername() +  " followed you" ;
+                    message = currentUser.getUsername() +  " followed you" ;
                     firebaseMethods.addNotification(user_id,from_id,type,message);
                     new Notify(token,message).execute();
 
@@ -207,6 +207,23 @@ public class ViewProfileFragment extends Fragment {
                     settings.setSettings(singleSnapshot.getValue(UserAccountSettings.class));
 
                     setProfileWidgets(settings);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        query = reference.child(getString(R.string.dbname_users))
+                .orderByChild("user_id").equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot singleSnapshot: dataSnapshot.getChildren()){
+                    currentUser = singleSnapshot.getValue(User.class);
                 }
             }
 
