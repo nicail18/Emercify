@@ -369,7 +369,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
             String from_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
             String type = "like";
             token = holder.settings.getDevice_token();
-            likeMessage = currentUsername + " liked your post";
+            likeMessage = currentUsername + " liked your post \"" + holder.photo.getCaption() + "\"";
             holder.firebaseMethods.addNotification(user_id,from_id,type,likeMessage);
             new Notify().execute();
         }
@@ -415,6 +415,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
     private void getLikeString(final ViewHolder holder){
         Log.d(TAG, "getLikeString: getting likes string ");
         try {
+            final int[] count = {0};
             DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
             Query query = reference
                     .child(mContext.getString(R.string.dbname_photos))
@@ -425,6 +426,10 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     holder.users = new StringBuilder();
                     for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
+                        Log.d(TAG, "onDataChange: likes " + singleSnapshot.getValue(Like.class).toString());
+                        Log.d(TAG, "onDataChange: count " + count[0]);
+                        Log.d(TAG, "onDataChange: " + holder.photo.toString());
+                        count[0]++;
                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
                         Query query = reference
                                 .child(mContext.getString(R.string.dbname_users))
@@ -434,7 +439,6 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 for (DataSnapshot singleSnapshot : dataSnapshot.getChildren()) {
-                                    Log.d(TAG, "onDataChange: found like: " + singleSnapshot.getValue(User.class).getUsername());
                                     holder.users.append(singleSnapshot.getValue(User.class).getUsername());
                                     holder.users.append(",");
                                 }
