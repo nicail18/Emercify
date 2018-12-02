@@ -117,6 +117,10 @@ public class ViewCommentsFragment extends Fragment {
                     getActivity().getSupportFragmentManager().popBackStack();
                     ((HomeActivity)getActivity()).showLayout();
                 }
+                else if(getCallingActivityFromBundle().equals("Likes Activity")){
+                    getActivity().getSupportFragmentManager().popBackStack();
+                    getActivity().finish();
+                }
                 else{
                     getActivity().getSupportFragmentManager().popBackStack();
                 }

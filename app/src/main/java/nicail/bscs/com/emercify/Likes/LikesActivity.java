@@ -304,6 +304,10 @@ public class LikesActivity extends AppCompatActivity implements
         String activity_id = notifications.get(position).getActivity_id();
         final String type = notifications.get(position).getType();
         boolean status_seen = notifications.get(position).isStatus_seen();
+        String notification_id = notifications.get(position).getNotification_id();
+        String user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        mFirebaseMethods.updateNotification(user_id,status_seen,notification_id);
 
         if(type.equals("follow")){
             if(activity_id

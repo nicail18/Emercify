@@ -457,6 +457,15 @@ public class FirebaseMethods {
         return new UserSettings(user,settings);
     }
 
+    public void updateNotification(String user_id,boolean status_seen,String notification_id){
+        if(!status_seen){
+            myRef.child(mContext.getString(R.string.dbname_user_notification))
+                    .child(user_id).child(notification_id).child("status_seen").setValue(true);
+            myRef.child(mContext.getString(R.string.dbname_notification))
+                    .child(notification_id).child("status_seen").setValue(true);
+        }
+    }
+
     public void addNotification(String user_id, String from_id, String type, String message){
         String notificationKey = myRef.child(mContext.getString(R.string.dbname_notification)).push().getKey();
         Notifications notification = new Notifications();
