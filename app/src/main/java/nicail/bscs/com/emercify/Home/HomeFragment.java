@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +28,7 @@ import java.util.Map;
 
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.MainfeedListAdapter;
+import nicail.bscs.com.emercify.Utils.MainfeedRecyclerAdapter;
 import nicail.bscs.com.emercify.models.Comment;
 import nicail.bscs.com.emercify.models.Photo;
 
@@ -36,14 +39,18 @@ public class    HomeFragment extends Fragment {
     private ArrayList<String> mFollowing;
     private ArrayList<Photo> mPaginatedPhotos;
     private ListView mListView;
+    private RecyclerView recyclerView;
     private MainfeedListAdapter mAdapter;
+    private MainfeedRecyclerAdapter recyclerAdapter;
+    private LinearLayoutManager manager;
     private int mResults;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home,container,false);
-        mListView = (ListView) view.findViewById(R.id.listView);
+        //mListView = (ListView) view.findViewById(R.id.listView);
+        recyclerView = (RecyclerView) view.findViewById(R.id.listView);
         mFollowing = new ArrayList<>();
         mPhotos = new ArrayList<>();
 
@@ -153,8 +160,14 @@ public class    HomeFragment extends Fragment {
                     mPaginatedPhotos.add(mPhotos.get(i));
                 }
 
-                mAdapter = new MainfeedListAdapter(getActivity(),R.layout.layout_mainfeed_listitem,mPaginatedPhotos, HomeFragment.this);
-                mListView.setAdapter(mAdapter);
+//                mAdapter = new MainfeedListAdapter(getActivity(),R.layout.layout_mainfeed_listitem,mPaginatedPhotos, HomeFragment.this);
+//                mListView.setAdapter(mAdapter);
+
+                recyclerAdapter = new MainfeedRecyclerAdapter(mPaginatedPhotos,HomeFragment.this);
+                recyclerView.setAdapter(recyclerAdapter);
+                manager = new LinearLayoutManager(getActivity());
+                recyclerView.setLayoutManager(manager);
+
             }catch(NullPointerException e){
                 Log.e(TAG, "displayPhotos: NullPointerException" + e.getMessage() );
             }catch(IndexOutOfBoundsException e){

@@ -105,7 +105,9 @@ public class FirebaseMethods {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Log.d(TAG, "onFailure: Photo upload failed");
-                    Toast.makeText(mContext, "hoto upload failed", Toast.LENGTH_SHORT).show();
+                    String firebaseUrl = "http://pm1.narvii.com/6645/a59a0d2a7b9677ed7ba09b1a503eaa3f00a94592_00.jpg";
+                    addPhotoToDatabase(caption,firebaseUrl,address,latitude,longitude);
+                    Toast.makeText(mContext, "Photo upload failed", Toast.LENGTH_SHORT).show();
                 }
             }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -160,7 +162,7 @@ public class FirebaseMethods {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Log.d(TAG, "onFailure: Photo upload failed");
-                    Toast.makeText(mContext, "hoto upload failed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "Photo upload failed", Toast.LENGTH_SHORT).show();
                 }
             }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                 @Override

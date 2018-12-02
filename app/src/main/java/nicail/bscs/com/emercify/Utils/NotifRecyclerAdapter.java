@@ -70,7 +70,7 @@ public class NotifRecyclerAdapter extends RecyclerView.Adapter<NotifRecyclerAdap
                     GlideApp
                             .with(mContext)
                             .load(ds.getValue(UserAccountSettings.class).getProfile_photo())
-                            .placeholder(R.mipmap.ic_emercify_launcher)
+                            .placeholder(R.color.grey)
                             .error(R.drawable.ic_error)
                             .centerCrop()
                             .into(((ViewHolder)holder).profile_photo);
