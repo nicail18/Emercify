@@ -117,6 +117,11 @@ public class ViewCommentsFragment extends Fragment {
                     getActivity().getSupportFragmentManager().popBackStack();
                     ((HomeActivity)getActivity()).showLayout();
                 }
+                else if(getCallingActivityFromBundle().equals("Likes Activity")){
+                    Log.d(TAG, "onClick: likes");
+                    getActivity().getSupportFragmentManager().popBackStack();
+                    getActivity().finish();
+                }
                 else{
                     getActivity().getSupportFragmentManager().popBackStack();
                 }
@@ -245,7 +250,7 @@ public class ViewCommentsFragment extends Fragment {
         getUserSettings();
         Log.d(TAG, "setupFireBaseAuth: " + mPhoto);
 
-        if(mPhoto.getComments().size() == 0){
+        if(mPhoto.getComments() == null){
             mComments.clear();
             Comment firstComment = new Comment();
             firstComment.setComment(mPhoto.getCaption());

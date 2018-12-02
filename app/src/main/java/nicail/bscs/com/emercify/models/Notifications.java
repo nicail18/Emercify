@@ -8,17 +8,39 @@ public class Notifications {
     private String timestamp;
     private String from_id;
     private String message;
+    private boolean status_seen;
+    private String activity_id;
 
-    public Notifications(String user_id, String notification_id, String type, String timestamp, String from_id, String message) {
+    public Notifications(String user_id, String notification_id,
+                         String type, String timestamp, String from_id,
+                         String message, boolean status_seen, String activity_id) {
         this.user_id = user_id;
         this.notification_id = notification_id;
         this.type = type;
         this.timestamp = timestamp;
         this.from_id = from_id;
         this.message = message;
+        this.status_seen = status_seen;
+        this.activity_id = activity_id;
     }
 
     public Notifications() {
+    }
+
+    public String getActivity_id() {
+        return activity_id;
+    }
+
+    public void setActivity_id(String activity_id) {
+        this.activity_id = activity_id;
+    }
+
+    public boolean isStatus_seen() {
+        return status_seen;
+    }
+
+    public void setStatus_seen(boolean status_seen) {
+        this.status_seen = status_seen;
     }
 
     public String getMessage() {
@@ -78,6 +100,7 @@ public class Notifications {
                 ", timestamp='" + timestamp + '\'' +
                 ", from_id='" + from_id + '\'' +
                 ", message='" + message + '\'' +
+                ", status_seen=" + status_seen +
                 '}';
     }
 }

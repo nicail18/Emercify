@@ -210,7 +210,7 @@ public class HomeActivity extends AppCompatActivity implements MainfeedListAdapt
         ViewCommentsFragment fragment = new ViewCommentsFragment();
         Bundle args = new Bundle();
         args.putParcelable("PHOTO",photo);
-        args.putString(getString(R.string.home_activity),getString(R.string.home_activity));
+        args.putString(callingActivity,callingActivity);
         fragment.setArguments(args);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.home_container, fragment);

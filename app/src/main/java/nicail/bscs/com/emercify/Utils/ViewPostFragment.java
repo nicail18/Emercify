@@ -387,6 +387,18 @@ public class ViewPostFragment extends Fragment {
         });
     }
 
+    private String getCallingActivityFromBundle(){
+        Log.d(TAG, "getPhotoFromBundle: arguments: " + getArguments());
+
+        Bundle bundle = this.getArguments();
+        if(bundle != null){
+            return bundle.getString(getString(R.string.home_activity));
+        }
+        else{
+            return null;
+        }
+    }
+
     private void setupWidgets(){
         if(mLikeString == ""){
             mLikes.setVisibility(View.GONE);
@@ -421,7 +433,13 @@ public class ViewPostFragment extends Fragment {
         mBackArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getSupportFragmentManager().popBackStack();
+                if(getCallingActivityFromBundle().equals("Likes Activity")){
+                    getActivity().getSupportFragmentManager().popBackStack();
+                    getActivity().finish();
+                }
+                else{
+                    getActivity().getSupportFragmentManager().popBackStack();
+                }
             }
         });
 
