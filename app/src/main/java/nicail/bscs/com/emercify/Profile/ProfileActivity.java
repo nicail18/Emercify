@@ -23,6 +23,9 @@ public class ProfileActivity extends AppCompatActivity implements
 
     private static final String TAG = "ProfileActivity";
 
+    private ViewProfileFragment viewProfileFragment;
+    private ProfileFragment profileFragment;
+
     @Override
     public void onCommentThreadSelecetedListener(Photo photo) {
         Log.d(TAG, "onCommentThreadSelecetedListener: selected comment thread");
@@ -74,26 +77,53 @@ public class ProfileActivity extends AppCompatActivity implements
         if(intent.hasExtra(getString(R.string.calling_activity))){
             Log.d(TAG, "init: searching for user object attached as intent extra");
             if(intent.hasExtra(getString(R.string.intent_user))){
-                ViewProfileFragment fragment = new ViewProfileFragment();
+                viewProfileFragment = new ViewProfileFragment();
                 Bundle args = new Bundle();
                 args.putParcelable(getString(R.string.intent_user),intent.getParcelableExtra(getString(R.string.intent_user)));
-                fragment.setArguments(args);
+                viewProfileFragment.setArguments(args);
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.container,fragment);
+                transaction.replace(R.id.container,viewProfileFragment);
                 transaction.addToBackStack(getString(R.string.view_profile_fragment));
                 transaction.commit();
-            }else{
+            }
+            else if(intent.hasExtra(getString(R.string.intent_like))){
+                Photo photo = new Photo();
+                photo = intent.getParcelableExtra(getString(R.string.intent_like));
+                Log.d(TAG, "init: " + photo);
+                onGridImageSelected(photo,3);
+            }
+            else if(intent.hasExtra(getString(R.string.intent_comment))){
+                Photo photo = new Photo();
+                photo = intent.getParcelableExtra(getString(R.string.intent_comment));
+                Log.d(TAG, "init: " + photo);
+                onCommentThreadSelecetedListener(photo);
+            }
+            else{
                 Toast.makeText(mContext, "Something Went Wrong", Toast.LENGTH_SHORT).show();
             }
-        }else{
+        }
+        else{
             Log.d(TAG, "init: dont have extra");
-            ProfileFragment fragment = new ProfileFragment();
+            profileFragment = new ProfileFragment();
             FragmentTransaction transaction = ProfileActivity.this.getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.container,fragment);
+            transaction.replace(R.id.container,profileFragment);
             transaction.addToBackStack(getString(R.string.profile_fragment));
             transaction.commit();
         }
 
     }
 
+    @Override
+    public void onBackPressed() {
+        int fragments = getSupportFragmentManager().getBackStackEntryCount();
+        if (fragments == 1) {
+            finish();
+        } else {
+            if (getFragmentManager().getBackStackEntryCount() > 1) {
+                getFragmentManager().popBackStack();
+            } else {
+                super.onBackPressed();
+            }
+        }
+    }
 }

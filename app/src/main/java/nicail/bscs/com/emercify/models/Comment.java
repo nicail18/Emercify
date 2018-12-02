@@ -1,8 +1,11 @@
 package nicail.bscs.com.emercify.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
-public class Comment {
+public class Comment implements Parcelable {
 
     private String comment;
     private String user_id;
@@ -18,6 +21,24 @@ public class Comment {
         this.likes = likes;
         this.date_created = date_created;
     }
+
+    protected Comment(Parcel in) {
+        comment = in.readString();
+        user_id = in.readString();
+        date_created = in.readString();
+    }
+
+    public static final Creator<Comment> CREATOR = new Creator<Comment>() {
+        @Override
+        public Comment createFromParcel(Parcel in) {
+            return new Comment(in);
+        }
+
+        @Override
+        public Comment[] newArray(int size) {
+            return new Comment[size];
+        }
+    };
 
     public String getComment() {
         return comment;
@@ -59,5 +80,17 @@ public class Comment {
                 ", likes=" + likes +
                 ", date_created='" + date_created + '\'' +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(comment);
+        dest.writeString(user_id);
+        dest.writeString(date_created);
     }
 }

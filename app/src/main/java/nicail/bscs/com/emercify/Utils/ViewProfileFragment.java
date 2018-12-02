@@ -453,6 +453,8 @@ public class ViewProfileFragment extends Fragment {
 
     }
 
+
+
     @Override
     public void onAttach(Context context) {
         try{

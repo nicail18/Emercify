@@ -245,7 +245,7 @@ public class ViewCommentsFragment extends Fragment {
         getUserSettings();
         Log.d(TAG, "setupFireBaseAuth: " + mPhoto);
 
-        if(mPhoto.getComments().size() == 0){
+        if(mPhoto.getComments() == null){
             mComments.clear();
             Comment firstComment = new Comment();
             firstComment.setComment(mPhoto.getCaption());

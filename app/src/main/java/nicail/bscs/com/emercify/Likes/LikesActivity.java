@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,15 +32,22 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+import nicail.bscs.com.emercify.Home.HomeActivity;
+import nicail.bscs.com.emercify.Profile.ProfileActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
+import nicail.bscs.com.emercify.Utils.MainfeedRecyclerAdapter;
 import nicail.bscs.com.emercify.Utils.NotifRecyclerAdapter;
 import nicail.bscs.com.emercify.Utils.Notify;
+import nicail.bscs.com.emercify.models.Comment;
 import nicail.bscs.com.emercify.models.Notifications;
+import nicail.bscs.com.emercify.models.Photo;
+import nicail.bscs.com.emercify.models.User;
 import nicail.bscs.com.emercify.models.UserSettings;
 
-public class LikesActivity extends AppCompatActivity {
+public class LikesActivity extends AppCompatActivity implements
+        NotifRecyclerAdapter.NotifRecyclerAdapterClickListener {
 
     private static final String TAG = "LikesActivity";
 
@@ -62,6 +70,7 @@ public class LikesActivity extends AppCompatActivity {
     private int mResults,currentItems,totalItems,scrollOutItems;
     private Boolean isScrolling = false;
     private ProgressBar progressBar;
+    private TextView empty;
 
     RecyclerView notifsRecyclerView;
 
@@ -73,6 +82,7 @@ public class LikesActivity extends AppCompatActivity {
         test = (ImageView) findViewById(R.id.testNotif);
         notifications = new ArrayList<>();
         notifsRecyclerView = findViewById(R.id.notif_listview);
+        empty = findViewById(R.id.empty);
         Log.d(TAG, "onCreate: starting.");
 
 
@@ -119,6 +129,8 @@ public class LikesActivity extends AppCompatActivity {
                     notification.setUser_id(objectMap.get("user_id").toString());
                     notification.setType(objectMap.get("type").toString());
                     notification.setNotification_id(objectMap.get("notification_id").toString());
+                    notification.setStatus_seen((boolean) objectMap.get("status_seen"));
+                    notification.setActivity_id(objectMap.get("activity_id").toString());
 
                     notifications.add(notification);
                     count[0]++;
@@ -156,7 +168,7 @@ public class LikesActivity extends AppCompatActivity {
                     paginatedNotif.add(notifications.get(i));
                 }
 
-                notifRecyclerAdapter = new NotifRecyclerAdapter(paginatedNotif);
+                notifRecyclerAdapter = new NotifRecyclerAdapter(paginatedNotif,this);
                 notifsRecyclerView.setAdapter(notifRecyclerAdapter);
                 manager = new LinearLayoutManager(this);
                 notifsRecyclerView.setLayoutManager(manager);
@@ -188,6 +200,10 @@ public class LikesActivity extends AppCompatActivity {
             }catch(IndexOutOfBoundsException e){
                 Log.e(TAG, "displayNotifs: " + e.getMessage() );
             }
+        }
+        else{
+            empty.setVisibility(View.VISIBLE);
+            notifsRecyclerView.setVisibility(View.GONE);
         }
     }
 
@@ -279,5 +295,110 @@ public class LikesActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onUserClicked(int position) {
+        Log.d(TAG, "onUserClicked: selected a notif " + notifications.get(position).toString());
+
+        String activity_id = notifications.get(position).getActivity_id();
+        final String type = notifications.get(position).getType();
+        boolean status_seen = notifications.get(position).isStatus_seen();
+
+        if(type.equals("follow")){
+            if(activity_id
+                    .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                Intent intent = new Intent(mContext, ProfileActivity.class);
+                mContext.startActivity(intent);
+            }
+            else{
+                Query query = myRef
+                        .child(getString(R.string.dbname_users))
+                        .orderByChild("user_id")
+                        .equalTo(activity_id);
+
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for(DataSnapshot ds: dataSnapshot.getChildren()){
+                            User user = new User();
+                            user = ds.getValue(User.class);
+                            Log.d(TAG, "onDataChange: " + user);
+                            Intent intent = new Intent(LikesActivity.this, ProfileActivity.class);
+                            intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
+                            intent.putExtra(getString(R.string.intent_user),user);
+                            startActivity(intent);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }
+        else if(type.equals("like") || type.equals("comment")) {
+            Photo photo = new Photo();
+            Query query = myRef
+                    .child(getString(R.string.dbname_photos))
+                    .orderByChild("photo_id")
+                    .equalTo(activity_id);
+
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        Photo photo = new Photo();
+                        Map<String, Object> objectMap = (HashMap<String,Object>) ds.getValue();
+                        Log.d(TAG, "onDataChange: " + objectMap.get("latitude"));
+                        photo.setAddress(objectMap.get("address").toString());
+                        photo.setLatitude((double) objectMap.get("latitude"));
+                        photo.setLongitude((double) objectMap.get("longitude"));
+                        photo.setCaption(objectMap.get("caption").toString());
+                        photo.setTags(objectMap.get("tags").toString());
+                        photo.setPhoto_id(objectMap.get("photo_id").toString());
+                        photo.setUser_id(objectMap.get("user_id").toString());
+                        photo.setDate_created(objectMap.get("date_created").toString());
+                        photo.setImage_path(objectMap.get("image_path").toString());
+
+                        Log.d(TAG, "onDataChange: " + photo.toString());
+
+                        ArrayList<Comment> comments = new ArrayList<Comment>();
+                        for(DataSnapshot dSnapshot: ds.child("comments").getChildren()){
+                            Comment comment = new Comment();
+                            comment.setUser_id(dSnapshot.getValue(Comment.class).getUser_id());
+                            comment.setComment(dSnapshot.getValue(Comment.class).getComment());
+                            comment.setDate_created(dSnapshot.getValue(Comment.class).getDate_created());
+                            comments.add(comment);
+                        }
+
+                        photo.setComments(comments);
+
+                        Log.d(TAG, "onDataChange: " + photo.toString());
+
+                        if (type.equals("like")) {
+                            Intent intent = new Intent(LikesActivity.this, ProfileActivity.class);
+                            intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
+                            intent.putExtra(getString(R.string.intent_like),photo);
+                            startActivity(intent);
+                        }
+                        else if (type.equals("comment")) {
+                            Intent intent = new Intent(LikesActivity.this, ProfileActivity.class);
+                            intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
+                            intent.putExtra(getString(R.string.intent_comment),photo);
+                            Log.d(TAG, "onDataChange: " + intent);
+                            startActivity(intent);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+
     }
 }

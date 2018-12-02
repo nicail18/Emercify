@@ -9,6 +9,8 @@
     <string name="view_comments_fragment">View Comments</string>
     <string name="view_profile_fragment">View Profile</string>
     <string name="intent_user">intent_user</string>
+    <string name="intent_comment">intent_comment</string>
+    <string name="intent_like">intent_like</string>
 
 
     <string name="dbname_users">users</string>

@@ -1,6 +1,7 @@
 package nicail.bscs.com.emercify.Utils;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -34,18 +35,20 @@ public class NotifRecyclerAdapter extends RecyclerView.Adapter<NotifRecyclerAdap
     private static final String TAG = "NotifRecyclerAdapter";
 
     private ArrayList<Notifications> notifications = new ArrayList<>();
+    private NotifRecyclerAdapterClickListener mClickListener;
     private DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
     private Context mContext;
 
-    public NotifRecyclerAdapter(ArrayList<Notifications> notifications) {
+    public NotifRecyclerAdapter(ArrayList<Notifications> notifications, NotifRecyclerAdapterClickListener clickListener) {
         this.notifications = notifications;
+        mClickListener = clickListener;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_notifs_listview,parent, false);
-        final ViewHolder holder = new ViewHolder(view);
+        final ViewHolder holder = new ViewHolder(view,mClickListener);
         this.mContext = parent.getContext();
         return holder;
     }
@@ -53,6 +56,11 @@ public class NotifRecyclerAdapter extends RecyclerView.Adapter<NotifRecyclerAdap
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         String timestampDiff = getTimeStampDifference(notifications.get(position));
+
+        if(!notifications.get(position).isStatus_seen()){
+            ((ViewHolder)holder).layoutView.setBackgroundResource(R.drawable.notseen_bg_color);
+        }
+
         ((ViewHolder)holder).timestamp.setText(timestampDiff);
 
         ((ViewHolder)holder).notif_message.setText(notifications.get(position).getMessage());
@@ -71,7 +79,6 @@ public class NotifRecyclerAdapter extends RecyclerView.Adapter<NotifRecyclerAdap
                             .with(mContext)
                             .load(ds.getValue(UserAccountSettings.class).getProfile_photo())
                             .placeholder(R.color.grey)
-                            .error(R.drawable.ic_error)
                             .centerCrop()
                             .into(((ViewHolder)holder).profile_photo);
                 }
@@ -90,21 +97,37 @@ public class NotifRecyclerAdapter extends RecyclerView.Adapter<NotifRecyclerAdap
         return notifications.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+
+        View layoutView;
+        NotifRecyclerAdapterClickListener mClickListener;
 
         CircleImageView profile_photo;
         TextView username,notif_message,timestamp;
 
         UserAccountSettings settings = new UserAccountSettings();
         User user = new User();
-        public ViewHolder(View itemView) {
+        public ViewHolder(View itemView, NotifRecyclerAdapterClickListener clickListener) {
             super(itemView);
-
+            layoutView = itemView;
             profile_photo = itemView.findViewById(R.id.profile_photo);
             username = itemView.findViewById(R.id.username);
             notif_message = itemView.findViewById(R.id.notif_message);
             timestamp = itemView.findViewById(R.id.timestamp);
+
+            mClickListener = clickListener;
+
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            mClickListener.onUserClicked(getAdapterPosition());
+        }
+    }
+
+    public interface NotifRecyclerAdapterClickListener{
+        void onUserClicked(int position);
     }
 
     private String getTimeStampDifference(Notifications notification){

@@ -466,6 +466,7 @@ public class FirebaseMethods {
         notification.setTimestamp(getTimeStamp());
         notification.setMessage(message);
         notification.setNotification_id(notificationKey);
+        notification.setStatus_seen(false);
 
         myRef.child(mContext.getString(R.string.dbname_notification))
                 .child(notificationKey)
