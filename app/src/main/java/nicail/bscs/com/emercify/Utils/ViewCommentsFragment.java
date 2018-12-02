@@ -118,6 +118,7 @@ public class ViewCommentsFragment extends Fragment {
                     ((HomeActivity)getActivity()).showLayout();
                 }
                 else if(getCallingActivityFromBundle().equals("Likes Activity")){
+                    Log.d(TAG, "onClick: likes");
                     getActivity().getSupportFragmentManager().popBackStack();
                     getActivity().finish();
                 }

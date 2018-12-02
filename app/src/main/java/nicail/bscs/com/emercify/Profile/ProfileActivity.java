@@ -25,6 +25,7 @@ public class ProfileActivity extends AppCompatActivity implements
 
     private ViewProfileFragment viewProfileFragment;
     private ProfileFragment profileFragment;
+    private String callingActivity;
 
     @Override
     public void onCommentThreadSelecetedListener(Photo photo) {
@@ -32,6 +33,7 @@ public class ProfileActivity extends AppCompatActivity implements
         ViewCommentsFragment fragment = new ViewCommentsFragment();
         Bundle args = new Bundle();
         args.putParcelable("PHOTO",photo);
+        args.putString(getString(R.string.home_activity),callingActivity);
         fragment.setArguments(args);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container,fragment);
@@ -47,6 +49,12 @@ public class ProfileActivity extends AppCompatActivity implements
         Bundle args = new Bundle();
         args.putParcelable("PHOTO",photo);
         args.putInt(getString(R.string.activity_number),activityNumber);
+        if(callingActivity != null){
+            args.putString(getString(R.string.home_activity),callingActivity);
+        }
+        else{
+            args.putString(getString(R.string.home_activity),"Profile Activity");
+        }
         fragment.setArguments(args);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -89,12 +97,14 @@ public class ProfileActivity extends AppCompatActivity implements
             else if(intent.hasExtra(getString(R.string.intent_like))){
                 Photo photo = new Photo();
                 photo = intent.getParcelableExtra(getString(R.string.intent_like));
+                callingActivity = "Likes Activity";
                 Log.d(TAG, "init: " + photo);
                 onGridImageSelected(photo,3);
             }
             else if(intent.hasExtra(getString(R.string.intent_comment))){
                 Photo photo = new Photo();
                 photo = intent.getParcelableExtra(getString(R.string.intent_comment));
+                callingActivity = "Likes Activity";
                 Log.d(TAG, "init: " + photo);
                 onCommentThreadSelecetedListener(photo);
             }
