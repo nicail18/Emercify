@@ -41,12 +41,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
+                android:layout_marginLeft="15dp"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:text="this is a comment"
-                android:layout_toRightOf="@+id/comment_username"
-                android:id="@+id/comment"/>
+                android:layout_below="@+id/comment_username"
+                android:id="@+id/comment"
+                />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -64,6 +65,7 @@
                 android:textColor="@color/grey"
                 android:textSize="15sp"
                 android:text="10 likes"
+                android:visibility="gone"
                 android:textStyle="bold"
                 android:id="@+id/comment_likes"
                 android:layout_marginLeft="15dp"
@@ -80,7 +82,8 @@
                 android:id="@+id/comment_reply"
                 android:layout_marginLeft="15dp"
                 android:layout_below="@+id/comment"
-                android:layout_toRightOf="@+id/comment_likes"/>
+                android:layout_toRightOf="@+id/comment_likes"
+                android:visibility="gone"/>
 
         </RelativeLayout>
 
@@ -91,7 +94,8 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="20dp"
             android:src="@drawable/ic_heart_white"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true"
+            android:visibility="gone"/>
 
     </RelativeLayout>
 

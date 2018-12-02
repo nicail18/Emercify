@@ -232,8 +232,9 @@ public class LikesActivity extends AppCompatActivity {
             incoming = 1;
         }else  if(intent.hasExtra("circle")){
             incoming = 2;
-        }else if(intent.hasExtra("android"))
+        }else if(intent.hasExtra("android")){
             incoming = 4;
+        }
 
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
         BottomNavigationViewHelper.enableNavigation(mContext, this, bottomNavigationViewEx, incoming);
