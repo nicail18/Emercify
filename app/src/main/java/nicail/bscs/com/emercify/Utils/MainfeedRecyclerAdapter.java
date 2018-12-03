@@ -47,7 +47,7 @@ import nicail.bscs.com.emercify.models.Photo;
 import nicail.bscs.com.emercify.models.User;
 import nicail.bscs.com.emercify.models.UserAccountSettings;
 
-public class MainfeedRecyclerAdapter extends RecyclerView.Adapter<MainfeedRecyclerAdapter.ViewHolder> {
+public class MainfeedRecyclerAdapter extends RecyclerView.Adapter<MainfeedRecyclerAdapter.ViewHolder>{
 
     private static final String TAG = "MainfeedRecyclerAdapter";
 
@@ -79,7 +79,7 @@ public class MainfeedRecyclerAdapter extends RecyclerView.Adapter<MainfeedRecycl
         ((ViewHolder)holder).ellipses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openDialog();
+                openDialog(photos.get(position),position);
             }
         });
         ((ViewHolder)holder).photo = photos.get(position);
@@ -265,10 +265,14 @@ public class MainfeedRecyclerAdapter extends RecyclerView.Adapter<MainfeedRecycl
             ellipses = (ImageView) itemView.findViewById(R.id.ivEllipses);
         }
     }
-    public void openDialog(){
-        View_Delete_Dialog dialog1 = new View_Delete_Dialog();
-        dialog1.show(((FragmentActivity)mContext).getSupportFragmentManager(),"View_Delete_Dialog");
-        dialog1.setTargetFragment(fragment,1);
+    public void openDialog(Photo photo, int position){
+        View_Delete_Dialog viewDeleteDialog = new View_Delete_Dialog();
+        Bundle args = new Bundle();
+        args.putParcelable("PHOTO",photo);
+        args.putInt("position",position);
+        viewDeleteDialog.setArguments(args);
+        viewDeleteDialog.show(((FragmentActivity)mContext).getSupportFragmentManager(),"View_Delete_Dialog");
+        viewDeleteDialog.setTargetFragment(fragment,1);
     }
 
     public class GestureListener extends GestureDetector.SimpleOnGestureListener{

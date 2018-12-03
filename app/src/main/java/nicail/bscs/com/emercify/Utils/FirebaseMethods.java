@@ -466,6 +466,13 @@ public class FirebaseMethods {
         }
     }
 
+    public void deletePhoto(String user_id, String photo_id){
+        myRef.child(mContext.getString(R.string.dbname_photos))
+                .child(photo_id).removeValue();
+        myRef.child(mContext.getString(R.string.dbname_user_photos))
+                .child(user_id).child(photo_id).removeValue();
+    }
+
     public void addNotification(String user_id, String from_id, String type, String message){
         String notificationKey = myRef.child(mContext.getString(R.string.dbname_notification)).push().getKey();
         Notifications notification = new Notifications();
