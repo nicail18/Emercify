@@ -43,6 +43,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import nicail.bscs.com.emercify.Home.HomeActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.models.Comment;
 import nicail.bscs.com.emercify.models.Like;
@@ -179,8 +180,10 @@ public class ViewPostFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        Log.d(TAG, "onAttach: " + context.getApplicationContext());
         try{
             mOnCommentThreadSelectedListener = (OnCommentThreadSelectedListener) getActivity();
+
         }catch(ClassCastException e){
             Log.e(TAG, "onAttach: ClassCastException: " + e.getMessage() );
         }
@@ -436,6 +439,10 @@ public class ViewPostFragment extends Fragment {
                 if(getCallingActivityFromBundle().equals("Likes Activity")){
                     getActivity().getSupportFragmentManager().popBackStack();
                     getActivity().finish();
+                }
+                else if(getCallingActivityFromBundle().equals("Home Activity")){
+                    getActivity().getSupportFragmentManager().popBackStack();
+                    ((HomeActivity)getActivity()).showLayout();
                 }
                 else{
                     getActivity().getSupportFragmentManager().popBackStack();

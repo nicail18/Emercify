@@ -27,14 +27,35 @@ import java.util.HashMap;
 import java.util.Map;
 
 import nicail.bscs.com.emercify.R;
+import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.MainfeedListAdapter;
 import nicail.bscs.com.emercify.Utils.MainfeedRecyclerAdapter;
+import nicail.bscs.com.emercify.dialogs.View_Delete_Dialog;
 import nicail.bscs.com.emercify.models.Comment;
 import nicail.bscs.com.emercify.models.Photo;
 
-public class    HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements
+        View_Delete_Dialog.OnViewClickListener,
+        View_Delete_Dialog.OnDeleteClickListener{
     private static final String TAG = "HomeFragment";
 
+
+    @Override
+    public void onViewClickListener(Photo photo) {
+        Log.d(TAG, "onViewClickListener: " + photo.toString());
+
+        ((HomeActivity)getContext()).OnViewClickListener(photo);
+        ((HomeActivity)getContext()).hideLayout();
+    }
+
+    @Override
+    public void onDeleteClickListener(Photo photo, int position) {
+        Log.d(TAG, "onDeleteClickListener: " + photo.toString());
+
+        ((HomeActivity)getContext()).OnDeleteClickListener(photo,position);
+
+    }
+    
     private ArrayList<Photo> mPhotos;
     private ArrayList<String> mFollowing;
     private ArrayList<Photo> mPaginatedPhotos;
@@ -53,10 +74,14 @@ public class    HomeFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.listView);
         mFollowing = new ArrayList<>();
         mPhotos = new ArrayList<>();
-
         getFollowing();
 
         return view;
+    }
+
+    public void updateMainFeed(int position){
+        mPaginatedPhotos.remove(position);
+        recyclerAdapter.notifyDataSetChanged();
     }
 
     private void getFollowing(){
@@ -193,7 +218,7 @@ public class    HomeFragment extends Fragment {
                     mPaginatedPhotos.add(mPhotos.get(i));
                 }
                 mResults = mResults + iterations;
-                mAdapter.notifyDataSetChanged();
+                recyclerAdapter.notifyDataSetChanged();
 
             }
         }catch(NullPointerException e){

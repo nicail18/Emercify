@@ -35,23 +35,17 @@ import nicail.bscs.com.emercify.Likes.MapActivity;
 import nicail.bscs.com.emercify.Login.LoginActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
+import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.MainfeedListAdapter;
 import nicail.bscs.com.emercify.Utils.SectionsPagerAdapter;
 import nicail.bscs.com.emercify.Utils.UniversalImageLoader;
 import nicail.bscs.com.emercify.Utils.ViewCommentsFragment;
+import nicail.bscs.com.emercify.Utils.ViewPostFragment;
 import nicail.bscs.com.emercify.models.Photo;
 
-public class HomeActivity extends AppCompatActivity implements MainfeedListAdapter.OnLoadMoreItemListener{
+public class HomeActivity extends AppCompatActivity{
 
     private HomeFragment fragment;
-
-    @Override
-    public void onLoadMoreItems() {
-        Log.d(TAG, "onLoadMoreItems: displaying more photos");
-        if(fragment != null){
-            fragment.displayMorePhotos();
-        }
-    }
 
     private static final String TAG = "HomeActivity";
     private static final int ACTIVITY_NUM = 0;
@@ -63,6 +57,7 @@ public class HomeActivity extends AppCompatActivity implements MainfeedListAdapt
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseMethods firebaseMethods;
 
     private RelativeLayout mViewPager;
     private FrameLayout mFrameLayout;
@@ -210,12 +205,34 @@ public class HomeActivity extends AppCompatActivity implements MainfeedListAdapt
         ViewCommentsFragment fragment = new ViewCommentsFragment();
         Bundle args = new Bundle();
         args.putParcelable("PHOTO",photo);
-        args.putString(callingActivity,callingActivity);
+        args.putString(getString(R.string.home_activity),callingActivity);
         fragment.setArguments(args);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.home_container, fragment);
         transaction.addToBackStack(getString(R.string.view_comments_fragment));
         transaction.commit();
+    }
+
+    public void OnViewClickListener(Photo photo){
+        Log.d(TAG, "OnViewClickListener: HomeActivity " + photo.toString());
+        ViewPostFragment fragment = new ViewPostFragment();
+        Bundle args = new Bundle();
+        args.putParcelable("PHOTO",photo);
+        args.putInt(getString(R.string.activity_number),ACTIVITY_NUM);
+        args.putString(getString(R.string.home_activity),"Home Activity");
+        fragment.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.home_container, fragment);
+        transaction.addToBackStack(getString(R.string.view_post_fragment));
+        transaction.commit();
+    }
+
+    public void OnDeleteClickListener(Photo photo,int position){
+        Log.d(TAG, "OnDeleteClickListener: HomeActivity " + photo.toString());
+        Log.d(TAG, "OnDeleteClickListener: " + position);
+        firebaseMethods.deletePhoto(photo.getUser_id(),photo.getPhoto_id());
+        fragment.updateMainFeed(position);
     }
 
     public void hideLayout(){
@@ -298,6 +315,7 @@ public class HomeActivity extends AppCompatActivity implements MainfeedListAdapt
     private void setupFireBaseAuth(){
         Log.d(TAG, "setupFireBaseAuth: setting up firebase auth");
         mAuth = FirebaseAuth.getInstance();
+        firebaseMethods = new FirebaseMethods(HomeActivity.this);
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
