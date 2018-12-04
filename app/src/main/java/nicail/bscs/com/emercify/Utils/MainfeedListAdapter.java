@@ -391,7 +391,7 @@ public class MainfeedListAdapter extends ArrayAdapter<Photo> {
             String type = "like";
             token = holder.settings.getDevice_token();
             likeMessage = currentUsername + " liked your post \"" + holder.photo.getCaption() + "\"";
-            holder.firebaseMethods.addNotification(user_id,from_id,type,likeMessage);
+            holder.firebaseMethods.addNotification(user_id,from_id,type,likeMessage,holder.photo.getPhoto_id());
             new Notify(token,likeMessage).execute();
         }
     }
