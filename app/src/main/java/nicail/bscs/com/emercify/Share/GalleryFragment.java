@@ -45,6 +45,7 @@ import nicail.bscs.com.emercify.Utils.FilePaths;
 import nicail.bscs.com.emercify.Utils.FileSearch;
 import nicail.bscs.com.emercify.Utils.GridImageAdapter;
 import nicail.bscs.com.emercify.Utils.ViewWeightAnimationWrapper;
+import nicail.bscs.com.emercify.dialogs.kindpost;
 
 public class GalleryFragment extends Fragment {
     private static final String TAG = "GalleryFragment";
@@ -56,7 +57,6 @@ public class GalleryFragment extends Fragment {
     private ProgressBar mProgressBar;
     private Spinner directorySpinner;
     private ImageButton imageButton;
-
     private ArrayList<String> directories;
     private String mSelectedImage;
     private String mImageAddress;
@@ -78,6 +78,7 @@ public class GalleryFragment extends Fragment {
         mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         directories = new ArrayList<>();
         Log.d(TAG, "onCreateView: started");
+
 
         ImageView shareClose = (ImageView) view.findViewById(R.id.ivCloseShare);
         shareClose.setOnClickListener(new View.OnClickListener() {
@@ -144,6 +145,8 @@ public class GalleryFragment extends Fragment {
 
         return view;
     }
+
+
 
     private boolean isRootTask(){
         if(((ShareActivity)getActivity()).getTask() == 0){
