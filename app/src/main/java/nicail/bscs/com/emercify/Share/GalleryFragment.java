@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
@@ -45,7 +46,7 @@ import nicail.bscs.com.emercify.Utils.FilePaths;
 import nicail.bscs.com.emercify.Utils.FileSearch;
 import nicail.bscs.com.emercify.Utils.GridImageAdapter;
 import nicail.bscs.com.emercify.Utils.ViewWeightAnimationWrapper;
-import nicail.bscs.com.emercify.dialogs.kindpost;
+import nicail.bscs.com.emercify.dialogs.KindPost;
 
 public class GalleryFragment extends Fragment {
     private static final String TAG = "GalleryFragment";
@@ -117,14 +118,15 @@ public class GalleryFragment extends Fragment {
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating to final share screen");
                 if(isRootTask()){
-                    Intent intent = new Intent(getActivity(),NextActivity.class);
+                    /*Intent intent = new Intent(getActivity(),NextActivity.class);
                     Bundle b = new Bundle();
                     b.putDouble(getString(R.string.image_latitude),latitude);
                     b.putDouble(getString(R.string.image_longitude),longitude);
                     intent.putExtra(getString(R.string.selected_image),mSelectedImage);
                     intent.putExtra(getString(R.string.image_address),mImageAddress);
                     intent.putExtras(b);
-                    startActivity(intent);
+                    startActivity(intent);*/
+                    openDialog();
                 }
                 else{
                     Intent intent = new Intent(getActivity(),AccountSettingsActivity.class);
@@ -146,7 +148,17 @@ public class GalleryFragment extends Fragment {
         return view;
     }
 
-
+    public void openDialog(){
+        KindPost kindPost = new KindPost();
+        Bundle b = new Bundle();
+        b.putDouble(getString(R.string.image_latitude),latitude);
+        b.putDouble(getString(R.string.image_longitude),longitude);
+        b.putString(getString(R.string.selected_image),mSelectedImage);
+        b.putString(getString(R.string.image_address),mImageAddress);
+        kindPost.setArguments(b);
+        kindPost.show(((FragmentActivity)getContext()).getSupportFragmentManager(),"KindPost");
+        kindPost.setTargetFragment(this,1);
+    }
 
     private boolean isRootTask(){
         if(((ShareActivity)getActivity()).getTask() == 0){
@@ -173,94 +185,6 @@ public class GalleryFragment extends Fragment {
         }
 
         setupGridView(directories.get(0),resultIAV);
-
-        /*gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                Log.d(TAG, "onScrollStateChanged: ");
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                Log.d(TAG, "onScroll: ");
-            }
-        });*/
-
-
-//        layoutTop.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                Log.d(TAG, "onFocusChange: layoutTop");
-//            }
-//        });
-
-        /*gridView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                int lastItem = firstVisibleItem + visibleItemCount - 1;
-                int currentFirstVisPos = firstVisibleItem;
-                if(currentFirstVisPos == 0){
-                    expandMapAnimation();
-                }
-                else{
-                    contractMapAnimation();
-                }
-//                if(currentFirstVisPos > myLastVisiblePos[0]) {
-//                    Log.d(TAG, "onScrollStateChanged: down " );
-//                    Log.d(TAG, "onScroll: " + currentFirstVisPos);
-//                    Log.d(TAG, "onScroll: " + myLastVisiblePos[0]);
-//                    expandMapAnimation();
-//                    Log.d(TAG, "onScroll: count1 " + count1[0]);
-//                }
-//                if(currentFirstVisPos < myLastVisiblePos[0]) {
-//                    Log.d(TAG, "onScrollStateChanged: up");;
-//                    Log.d(TAG, "onScroll: " + currentFirstVisPos);
-//                    Log.d(TAG, "onScroll: " + myLastVisiblePos[0]);
-//
-//                    if(currentFirstVisPos == 0){
-//                        contractMapAnimation();
-//                    }
-//                    Log.d(TAG, "onScroll: count " + count[0]);
-//                }
-                myLastVisiblePos[0] = currentFirstVisPos;
-
-            }
-//            int mPosition=0;
-//            int mOffset=0;
-
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-//                // TODO Auto-generated method stub
-//                int position = gridView.getFirstVisiblePosition();
-//                View v = gridView.getChildAt(0);
-//                int offset = (v == null) ? 0 : v.getTop();
-//
-//                if (mPosition < position || (mPosition == position && mOffset < offset)){
-//                    // Scrolled up
-//                } else {
-//                    // Scrolled down
-//                }
-            }
-        });*/
-
-        /*ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_spinner_item, directoryNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        directorySpinner.setAdapter(adapter);
-
-        directorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "onItemClick: selected: " + directories.get(position));
-
-                setupGridView(directories.get(position));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });*/
     }
 
     private void setupGridView(String selectedDirectory,ArrayList<String> resultIAV){
@@ -305,11 +229,11 @@ public class GalleryFragment extends Fragment {
                 Log.d(TAG, "onItemClick: latitude " + attrLatRef + " " + latitude);
                 Log.d(TAG, "onItemClick: longitude " + attrLonRef + " " + longitude);
             }
-            else{
-                Toast.makeText(getActivity(), "Your Photo Don't Have a Tagged Location" + "\n" +
-                        "Please enable location tag in your camera", Toast.LENGTH_LONG).show();
-                getActivity().finish();
-            }
+//            else{
+//                Toast.makeText(getActivity(), "Your Photo Don't Have a Tagged Location" + "\n" +
+//                        "Please enable location tag in your camera", Toast.LENGTH_LONG).show();
+//                getActivity().finish();
+//            }
         } catch (IOException e) {
             Log.e(TAG, "onItemClick: " + e.getMessage());
         }
@@ -350,11 +274,11 @@ public class GalleryFragment extends Fragment {
                         Log.d(TAG, "onItemClick: latitude " + attrLatRef + " " + latitude);
                         Log.d(TAG, "onItemClick: longitude " + attrLonRef + " " + longitude);
                     }
-                    else{
-                        Toast.makeText(getActivity(), "Your Photo Don't Have a Tagged Location" + "\n" +
-                                "Please enable location tag in your camera", Toast.LENGTH_LONG).show();
-                        getActivity().finish();
-                    }
+//                    else{
+//                        Toast.makeText(getActivity(), "Your Photo Don't Have a Tagged Location" + "\n" +
+//                                "Please enable location tag in your camera", Toast.LENGTH_LONG).show();
+//                        getActivity().finish();
+//                    }
                 } catch (IOException e) {
                     Log.e(TAG, "onItemClick: " + e.getMessage());
                 }
