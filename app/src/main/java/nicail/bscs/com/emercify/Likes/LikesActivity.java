@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -54,7 +55,7 @@ public class LikesActivity extends AppCompatActivity implements
     private static final int ACTIVITY_NUM = 3;
 
     private Context mContext = LikesActivity.this;
-    private ImageView ivMap,test;
+    private ImageView ivMap,test,post;
     private String token;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -82,7 +83,9 @@ public class LikesActivity extends AppCompatActivity implements
         test = (ImageView) findViewById(R.id.testNotif);
         notifications = new ArrayList<>();
         notifsRecyclerView = findViewById(R.id.notif_listview);
+        post = (ImageView) findViewById(R.id.kind_post);
         empty = findViewById(R.id.empty);
+
         Log.d(TAG, "onCreate: starting.");
 
 
@@ -103,6 +106,17 @@ public class LikesActivity extends AppCompatActivity implements
                 Log.d(TAG, "onClick: " + token);
                 new Notify(token,"Hello").execute();
             }
+        });
+        post.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(LikesActivity.this);
+                View mView = getLayoutInflater().inflate(R.layout.dialog_post,null);
+                mBuilder.setView(mView);
+                AlertDialog dialog = mBuilder.create();
+                dialog.show();
+            }
+
         });
 
         getNotifications();
