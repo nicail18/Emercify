@@ -1,9 +1,9 @@
 package nicail.bscs.com.emercify.dialogs;
 
-import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import nicail.bscs.com.emercify.R;
 
-public class kindpost extends DialogFragment {
+public class KindPost extends DialogFragment {
     private static final String TAG = "kindpost";
     TextView normal_post;
     TextView report_post;

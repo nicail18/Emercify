@@ -19,6 +19,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,6 +39,7 @@ import nicail.bscs.com.emercify.BuildConfig;
 import nicail.bscs.com.emercify.Profile.AccountSettingsActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.Permissions;
+import nicail.bscs.com.emercify.dialogs.KindPost;
 
 public class PhotoFragment extends Fragment {
     private static final String TAG = "HomeFragment";
@@ -45,6 +47,7 @@ public class PhotoFragment extends Fragment {
     private ExifInterface exif;
     private double latitude, longitude;
     private String mImageAddress;
+    private Bitmap mBitmap;
 
     @Nullable
     @Override
@@ -90,8 +93,7 @@ public class PhotoFragment extends Fragment {
         if (requestCode == CAMERA_REQUEST_CODE) {
             Log.d(TAG, "onActivityResult: done taking a photo");
             Log.d(TAG, "onActivityResult: attempting to navigate to final share screen");
-            Bitmap bitmap;
-            bitmap = (Bitmap) data.getExtras().get("data");
+            mBitmap = (Bitmap) data.getExtras().get("data");
 
             LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
             if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
@@ -116,24 +118,25 @@ public class PhotoFragment extends Fragment {
 
             if(isRootTask()){
                 try{
-                    Log.d(TAG, "onActivityResult: received new bitmap from camera: " + bitmap);
-                    Intent intent = new Intent(getActivity(),NextActivity.class);
+                    Log.d(TAG, "onActivityResult: received new bitmap from camera: " + mBitmap);
+                    openDialog();
+                    /*Intent intent = new Intent(getActivity(),NextActivity.class);
                     Bundle b = new Bundle();
                     b.putDouble(getString(R.string.image_latitude),latitude);
                     b.putDouble(getString(R.string.image_longitude),longitude);
                     intent.putExtra(getString(R.string.selected_bitmap),bitmap);
                     intent.putExtra(getString(R.string.image_address),mImageAddress);
                     intent.putExtras(b);
-                    startActivity(intent);
+                    startActivity(intent);*/
                 }catch(NullPointerException e){
                     Log.e(TAG, "onActivityResult: NullPointerException" + e.getMessage() );
                 }
             }
             else{
                 try{
-                    Log.d(TAG, "onActivityResult: received new bitmap from camera: " + bitmap);
+                    Log.d(TAG, "onActivityResult: received new bitmap from camera: " + mBitmap);
                     Intent intent = new Intent(getActivity(),AccountSettingsActivity.class);
-                    intent.putExtra(getString(R.string.selected_bitmap),bitmap);
+                    intent.putExtra(getString(R.string.selected_bitmap),mBitmap);
                     intent.putExtra(getString(R.string.image_address),mImageAddress);
                     intent.putExtra(getString(R.string.image_latitude),latitude);
                     intent.putExtra(getString(R.string.image_longitude),longitude);
@@ -145,6 +148,20 @@ public class PhotoFragment extends Fragment {
                 }
             }
         }
+    }
+
+
+
+    public void openDialog(){
+        KindPost kindPost = new KindPost();
+        Bundle b = new Bundle();
+        b.putDouble(getString(R.string.image_latitude),latitude);
+        b.putDouble(getString(R.string.image_longitude),longitude);
+        b.putParcelable(getString(R.string.selected_bitmap),mBitmap);
+        b.putString(getString(R.string.image_address),mImageAddress);
+        kindPost.setArguments(b);
+        kindPost.show(((FragmentActivity)getContext()).getSupportFragmentManager(),"KindPost");
+        kindPost.setTargetFragment(this,1);
     }
 
     private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
