@@ -473,7 +473,7 @@ public class FirebaseMethods {
                 .child(user_id).child(photo_id).removeValue();
     }
 
-    public void addNotification(String user_id, String from_id, String type, String message){
+    public void addNotification(String user_id, String from_id, String type, String message,String activity_id){
         String notificationKey = myRef.child(mContext.getString(R.string.dbname_notification)).push().getKey();
         Notifications notification = new Notifications();
         notification.setUser_id(user_id);
@@ -483,6 +483,7 @@ public class FirebaseMethods {
         notification.setMessage(message);
         notification.setNotification_id(notificationKey);
         notification.setStatus_seen(false);
+        notification.setActivity_id(activity_id);
 
         myRef.child(mContext.getString(R.string.dbname_notification))
                 .child(notificationKey)

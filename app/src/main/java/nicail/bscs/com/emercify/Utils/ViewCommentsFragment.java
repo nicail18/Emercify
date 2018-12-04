@@ -192,7 +192,7 @@ public class ViewCommentsFragment extends Fragment {
             message = currentUsername +
                     " commented on your post \"" +
                     mPhoto.getCaption() + "\"";
-            mFirebaseMethods.addNotification(user_id,from_id,type,message);
+            mFirebaseMethods.addNotification(user_id,from_id,type,message,mPhoto.getPhoto_id());
             new Notify(token,message).execute();
         }
     }

@@ -369,7 +369,7 @@ public class MainfeedRecyclerAdapter extends RecyclerView.Adapter<MainfeedRecycl
             String type = "like";
             token = holder.settings.getDevice_token();
             likeMessage = currentUsername + " liked your post \"" + ((ViewHolder)holder).photo.getCaption() + "\"";
-            firebaseMethods.addNotification(user_id,from_id,type,likeMessage);
+            firebaseMethods.addNotification(user_id,from_id,type,likeMessage,holder.photo.getPhoto_id());
             new Notify(token,likeMessage).execute();
         }
     }
