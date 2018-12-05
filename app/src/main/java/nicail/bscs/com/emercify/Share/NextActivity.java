@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,6 +32,7 @@ public class NextActivity extends AppCompatActivity {
     private int imageCount = 0;
     private String imgUrl;
     private EditText mCaption;
+    private Button select_location;
     private Intent intent;
     private Bitmap bitmap;
     private double latitude, longitude;
@@ -48,6 +50,7 @@ public class NextActivity extends AppCompatActivity {
         setContentView(R.layout.activity_next);
         mFirebaseMethods = new FirebaseMethods(NextActivity.this);
         mCaption = (EditText) findViewById(R.id.caption);
+        select_location = (Button) findViewById(R.id.select_location);
 
         setupFireBaseAuth();
 
@@ -93,6 +96,12 @@ public class NextActivity extends AppCompatActivity {
             address = intent.getStringExtra(getString(R.string.image_address));
             latitude =  b.getDouble(getString(R.string.image_latitude));
             longitude =  b.getDouble(getString(R.string.image_longitude));
+            if(latitude == 0 || longitude == 0){
+                select_location.setVisibility(View.GONE);
+            }
+            else{
+                select_location.setVisibility(View.VISIBLE);
+            }
             Log.d(TAG, "setImage: got new image url " + imgUrl);
             UniversalImageLoader.setImage(intent.getStringExtra(getString(R.string.selected_image)),image,null,mAppend);
         }
@@ -101,6 +110,12 @@ public class NextActivity extends AppCompatActivity {
             address = intent.getStringExtra(getString(R.string.image_address));
             latitude =  b.getDouble(getString(R.string.image_latitude));
             longitude =  b.getDouble(getString(R.string.image_longitude));
+            if(latitude == 0 || longitude == 0){
+                select_location.setVisibility(View.GONE);
+            }
+            else{
+                select_location.setVisibility(View.VISIBLE);
+            }
             Log.d(TAG, "setImage: got new bitmap " + bitmap);
             image.setImageBitmap(bitmap);
         }

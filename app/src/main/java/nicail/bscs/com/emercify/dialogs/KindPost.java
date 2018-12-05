@@ -18,11 +18,11 @@ public class KindPost extends DialogFragment {
     private static final String TAG = "KindPost";
 
     public interface OnNormalClickListener{
-        void onNormalClickListener(String image, Bitmap bitmap);
+        void onNormalClickListener(String image, Bitmap bitmap,double latitude,double longitude, String imageAddress);
     }
 
     public interface OnEmergencyClickListener{
-        void onEmergencyClickListener(String image, Bitmap bitmap);
+        void onEmergencyClickListener(String image, Bitmap bitmap,double latitude,double longitude, String imageAddress);
     }
 
     OnNormalClickListener onNormalClickListener;
@@ -33,8 +33,10 @@ public class KindPost extends DialogFragment {
         setArguments(new Bundle());
     }
 
-    String image;
+    String image,imageAddress;
     Bitmap bitmap;
+    static double latitude;
+    static double longitude;
 
     TextView normal_post;
     TextView report_post;
@@ -50,11 +52,14 @@ public class KindPost extends DialogFragment {
 
         image = getImageFromBundle();
         bitmap = getBitmapFromBundle();
+        latitude = getLatitudeFromBundle();
+        longitude = getLongitudeFromBundle();
+        imageAddress = getAddressFromBundle();
 
         normal_post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onNormalClickListener.onNormalClickListener(image,bitmap);
+                onNormalClickListener.onNormalClickListener(image,bitmap,latitude,longitude,imageAddress);
                 getDialog().dismiss();
             }
         });
@@ -62,7 +67,7 @@ public class KindPost extends DialogFragment {
         emergency_post.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onEmergencyClickListener.onEmergencyClickListener(image,bitmap);
+                onEmergencyClickListener.onEmergencyClickListener(image,bitmap,latitude,longitude,imageAddress);
                 getDialog().dismiss();
             }
         });
@@ -81,6 +86,11 @@ public class KindPost extends DialogFragment {
         }
     }
 
+    public String getAddressFromBundle(){
+        Bundle b = this.getArguments();
+        return b.getString(getString(R.string.image_address));
+    }
+
     public String getImageFromBundle(){
         Bundle b = this.getArguments();
         return b.getString(getString(R.string.selected_image));
@@ -89,5 +99,15 @@ public class KindPost extends DialogFragment {
     public Bitmap getBitmapFromBundle(){
         Bundle b = this.getArguments();
         return b.getParcelable(getString(R.string.selected_bitmap));
+    }
+
+    public double getLatitudeFromBundle(){
+        Bundle b = this.getArguments();
+        return b.getDouble(getString(R.string.image_latitude));
+    }
+
+    public double getLongitudeFromBundle(){
+        Bundle b = this.getArguments();
+        return b.getDouble(getString(R.string.image_longitude));
     }
 }

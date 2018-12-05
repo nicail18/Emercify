@@ -51,9 +51,9 @@ import nicail.bscs.com.emercify.dialogs.KindPost;
 public class GalleryFragment extends Fragment implements
         KindPost.OnNormalClickListener,
         KindPost.OnEmergencyClickListener{
-
-    @Override
-    public void onNormalClickListener(String image, Bitmap bitmap) {
+        @Override
+    public void onNormalClickListener(String image, Bitmap bitmap, double latitude,
+                                      double longitude, String mImageAddress) {
         Intent intent = new Intent(getActivity(),NextActivity.class);
         Bundle b = new Bundle();
         b.putDouble(getString(R.string.image_latitude),latitude);
@@ -65,7 +65,8 @@ public class GalleryFragment extends Fragment implements
     }
 
     @Override
-    public void onEmergencyClickListener(String image, Bitmap bitmap) {
+    public void onEmergencyClickListener(String image, Bitmap bitmap, double latitude,
+                                         double longitude, String mImageAddress) {
         Intent intent = new Intent(getActivity(),NextActivity.class);
         Bundle b = new Bundle();
         b.putDouble(getString(R.string.image_latitude),latitude);
