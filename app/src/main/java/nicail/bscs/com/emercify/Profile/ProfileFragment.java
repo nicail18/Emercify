@@ -85,7 +85,6 @@ public class ProfileFragment extends Fragment {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
     private FirebaseMethods mFirebaseMethods;
-    private ImageButton imageButton;
     private RelativeLayout topLayout;
 
     private static final int MAP_LAYOUT_STATE_CONTRACTED = 0;
@@ -112,8 +111,16 @@ public class ProfileFragment extends Fragment {
         bottomNavigationView = (BottomNavigationViewEx) view.findViewById(R.id.bottomNavViewBar);
         mContext = getActivity();
         mFirebaseMethods = new FirebaseMethods(mContext);
-        imageButton = (ImageButton) view.findViewById(R.id.hide_show_btn);
         scrollView = (ScrollView) view.findViewById(R.id.scrolllayout);
+
+        mDisplayName.setVisibility(View.GONE);
+        mUsername.setVisibility(View.GONE);
+        mWebsite.setVisibility(View.GONE);
+        mDescription.setVisibility(View.GONE);
+        mProfilePhoto.setVisibility(View.GONE);
+        mFollowers.setVisibility(View.GONE);
+        mFollowing.setVisibility(View.GONE);
+        mPosts.setVisibility(View.GONE);
 
         Log.d(TAG, "onCreateView: started");
 
@@ -161,28 +168,6 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (v.getId()){
-                    case R.id.hide_show_btn:{
-
-                        if(mMapLayoutState == MAP_LAYOUT_STATE_CONTRACTED){
-                            mMapLayoutState = MAP_LAYOUT_STATE_EXPANDED;
-                            expandMapAnimation();
-                        }
-                        else if(mMapLayoutState == MAP_LAYOUT_STATE_EXPANDED){
-                            mMapLayoutState = MAP_LAYOUT_STATE_CONTRACTED;
-                            contractMapAnimation();
-                        }
-                        break;
-                    }
-
-                }
-
-            }
-        });
-
         return view;
 
 
@@ -201,6 +186,7 @@ public class ProfileFragment extends Fragment {
                     Log.d(TAG, "onDataChange: found follower: " + singleSnapshot.getValue());
                     mFollowersCount++;
                 }
+                mFollowers.setVisibility(View.VISIBLE);
                 mFollowers.setText(String.valueOf(mFollowersCount));
             }
 
@@ -224,6 +210,7 @@ public class ProfileFragment extends Fragment {
                     Log.d(TAG, "onDataChange: found following: " + singleSnapshot.getValue());
                     mFollowingCount++;
                 }
+                mFollowing.setVisibility(View.VISIBLE);
                 mFollowing.setText(String.valueOf(mFollowingCount));
             }
 
@@ -247,6 +234,7 @@ public class ProfileFragment extends Fragment {
                     Log.d(TAG, "onDataChange: found post: " + singleSnapshot.getValue());
                     mPostsCount++;
                 }
+                mPosts.setVisibility(View.VISIBLE);
                 mPosts.setText(String.valueOf(mPostsCount));
             }
 
@@ -262,6 +250,12 @@ public class ProfileFragment extends Fragment {
 
         //User user = userSettings.getUser();
         UserAccountSettings settings = userSettings.getSettings();
+
+        mDisplayName.setVisibility(View.VISIBLE);
+        mUsername.setVisibility(View.VISIBLE);
+        mWebsite.setVisibility(View.VISIBLE);
+        mDescription.setVisibility(View.VISIBLE);
+        mProfilePhoto.setVisibility(View.VISIBLE);
 
         UniversalImageLoader.setImage(settings.getProfile_photo(),mProfilePhoto, null,"");
         mDisplayName.setText(settings.getDisplay_name());
