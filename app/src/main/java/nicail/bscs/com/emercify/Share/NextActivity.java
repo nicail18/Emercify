@@ -160,4 +160,16 @@ public class NextActivity extends AppCompatActivity {
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mFirebaseMethods.updateOnlineStatus(true);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();;
+        mFirebaseMethods.updateOnlineStatus(false);
+    }
 }

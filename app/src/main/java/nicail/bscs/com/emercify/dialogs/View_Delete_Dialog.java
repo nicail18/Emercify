@@ -31,8 +31,7 @@ public class View_Delete_Dialog extends DialogFragment {
     public View_Delete_Dialog() {
         super();
         setArguments(new Bundle());
-    }
-
+    };
 
     Photo photo;
     TextView mView;

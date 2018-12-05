@@ -32,6 +32,7 @@ import java.util.Locale;
 import nicail.bscs.com.emercify.Profile.ProfileActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
+import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.UserListAdapter;
 import nicail.bscs.com.emercify.models.User;
 
@@ -39,6 +40,7 @@ public class SearchActivity extends AppCompatActivity {
     private static final String TAG = "SearchActivity";
     private static final int ACTIVITY_NUM = 1;
     private Context mContext = SearchActivity.this;
+    private FirebaseMethods firebaseMethods;
 
     private EditText mSearchParam;
     private ListView mListView;
@@ -52,7 +54,7 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
         mSearchParam = (EditText) findViewById(R.id.search);
         mListView = (ListView) findViewById(R.id.listView);
-
+        firebaseMethods = new FirebaseMethods(this);
         Log.d(TAG, "onCreate: starting.");
 
         hideSoftKeyboard();
@@ -168,5 +170,17 @@ public class SearchActivity extends AppCompatActivity {
         Menu menu = bottomNavigationViewEx.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        firebaseMethods.updateOnlineStatus(true);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();;
+        firebaseMethods.updateOnlineStatus(false);
     }
 }

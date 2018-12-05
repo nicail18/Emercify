@@ -33,6 +33,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
     public SectionsStatePagerAdapater pagerAdapater;
     private ViewPager mViewPager;
     private RelativeLayout mRelativeLayout;
+    private FirebaseMethods firebaseMethods;
 
     private String address;
     private double latitude, longitude;
@@ -45,7 +46,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: started");
         mViewPager = (ViewPager) findViewById(R.id.container);
         mRelativeLayout = (RelativeLayout) findViewById(R.id.rellayout1);
-
+        firebaseMethods = new FirebaseMethods(this);
 
         setupSettingsList();
         setupBottomNavigationView();
@@ -149,6 +150,18 @@ public class AccountSettingsActivity extends AppCompatActivity {
         Menu menu = bottomNavigationViewEx.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        firebaseMethods.updateOnlineStatus(true);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();;
+        firebaseMethods.updateOnlineStatus(false);
     }
 
 

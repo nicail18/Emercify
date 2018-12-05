@@ -68,10 +68,8 @@ public class LoginActivity extends AppCompatActivity{
     }
 
     //Firebase Section
-
     private void init(){
         //initialize the button for logging in
-
         Button btnLogin = (Button) findViewById(R.id.btn_login);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,6 +106,7 @@ public class LoginActivity extends AppCompatActivity{
                                                 String user_id = mAuth.getCurrentUser().getUid();
                                                 mFirebaseMethods.updateDevice_token(
                                                         FirebaseInstanceId.getInstance().getToken());
+                                                mFirebaseMethods.updateOnlineStatus(true);
                                                 Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                                 startActivity(intent);
                                             }

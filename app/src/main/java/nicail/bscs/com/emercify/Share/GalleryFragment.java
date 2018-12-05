@@ -48,7 +48,33 @@ import nicail.bscs.com.emercify.Utils.GridImageAdapter;
 import nicail.bscs.com.emercify.Utils.ViewWeightAnimationWrapper;
 import nicail.bscs.com.emercify.dialogs.KindPost;
 
-public class GalleryFragment extends Fragment {
+public class GalleryFragment extends Fragment implements
+        KindPost.OnNormalClickListener,
+        KindPost.OnEmergencyClickListener{
+
+    @Override
+    public void onNormalClickListener(String image, Bitmap bitmap) {
+        Intent intent = new Intent(getActivity(),NextActivity.class);
+        Bundle b = new Bundle();
+        b.putDouble(getString(R.string.image_latitude),latitude);
+        b.putDouble(getString(R.string.image_longitude),longitude);
+        intent.putExtra(getString(R.string.selected_image),image);
+        intent.putExtra(getString(R.string.image_address),mImageAddress);
+        intent.putExtras(b);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onEmergencyClickListener(String image, Bitmap bitmap) {
+        Intent intent = new Intent(getActivity(),NextActivity.class);
+        Bundle b = new Bundle();
+        b.putDouble(getString(R.string.image_latitude),latitude);
+        b.putDouble(getString(R.string.image_longitude),longitude);
+        intent.putExtra(getString(R.string.selected_image),image);
+        intent.putExtra(getString(R.string.image_address),mImageAddress);
+        intent.putExtras(b);
+        startActivity(intent);
+    }
     private static final String TAG = "GalleryFragment";
     private String mAppend = "file:/";
 
@@ -154,6 +180,7 @@ public class GalleryFragment extends Fragment {
         b.putDouble(getString(R.string.image_latitude),latitude);
         b.putDouble(getString(R.string.image_longitude),longitude);
         b.putString(getString(R.string.selected_image),mSelectedImage);
+        b.putParcelable(getString(R.string.selected_bitmap),null);
         b.putString(getString(R.string.image_address),mImageAddress);
         kindPost.setArguments(b);
         kindPost.show(((FragmentActivity)getContext()).getSupportFragmentManager(),"KindPost");
@@ -229,11 +256,10 @@ public class GalleryFragment extends Fragment {
                 Log.d(TAG, "onItemClick: latitude " + attrLatRef + " " + latitude);
                 Log.d(TAG, "onItemClick: longitude " + attrLonRef + " " + longitude);
             }
-//            else{
-//                Toast.makeText(getActivity(), "Your Photo Don't Have a Tagged Location" + "\n" +
-//                        "Please enable location tag in your camera", Toast.LENGTH_LONG).show();
-//                getActivity().finish();
-//            }
+            else{
+                latitude = 0;
+                longitude = 0;
+            }
         } catch (IOException e) {
             Log.e(TAG, "onItemClick: " + e.getMessage());
         }
@@ -274,11 +300,10 @@ public class GalleryFragment extends Fragment {
                         Log.d(TAG, "onItemClick: latitude " + attrLatRef + " " + latitude);
                         Log.d(TAG, "onItemClick: longitude " + attrLonRef + " " + longitude);
                     }
-//                    else{
-//                        Toast.makeText(getActivity(), "Your Photo Don't Have a Tagged Location" + "\n" +
-//                                "Please enable location tag in your camera", Toast.LENGTH_LONG).show();
-//                        getActivity().finish();
-//                    }
+                    else{
+                        latitude = 0;
+                        longitude = 0;
+                    }
                 } catch (IOException e) {
                     Log.e(TAG, "onItemClick: " + e.getMessage());
                 }
@@ -399,6 +424,5 @@ public class GalleryFragment extends Fragment {
         recyclerAnimation.start();
         mapAnimation.start();
     }
-
 
 }

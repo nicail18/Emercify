@@ -38,7 +38,6 @@ public class FirebaseMessageService extends FirebaseMessagingService{
                 .setSound(defaultSoundUri);
 
         Intent resultIntent = new Intent(this, LikesActivity.class);
-
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         stackBuilder.addParentStack(LikesActivity.class);
         stackBuilder.addNextIntent(resultIntent);

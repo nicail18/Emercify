@@ -41,13 +41,39 @@ import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.Permissions;
 import nicail.bscs.com.emercify.dialogs.KindPost;
 
-public class PhotoFragment extends Fragment {
+public class PhotoFragment extends Fragment implements
+        KindPost.OnNormalClickListener,
+        KindPost.OnEmergencyClickListener{
     private static final String TAG = "HomeFragment";
     private static final int CAMERA_REQUEST_CODE = 5;
     private ExifInterface exif;
     private double latitude, longitude;
     private String mImageAddress;
     private Bitmap mBitmap;
+
+    @Override
+    public void onNormalClickListener(String image, Bitmap bitmap) {
+        Intent intent = new Intent(getActivity(),NextActivity.class);
+        Bundle b = new Bundle();
+        b.putDouble(getString(R.string.image_latitude),latitude);
+        b.putDouble(getString(R.string.image_longitude),longitude);
+        intent.putExtra(getString(R.string.selected_bitmap),bitmap);
+        intent.putExtra(getString(R.string.image_address),mImageAddress);
+        intent.putExtras(b);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onEmergencyClickListener(String image, Bitmap bitmap) {
+        Intent intent = new Intent(getActivity(),NextActivity.class);
+        Bundle b = new Bundle();
+        b.putDouble(getString(R.string.image_latitude),latitude);
+        b.putDouble(getString(R.string.image_longitude),longitude);
+        intent.putExtra(getString(R.string.selected_image),bitmap);
+        intent.putExtra(getString(R.string.image_address),mImageAddress);
+        intent.putExtras(b);
+        startActivity(intent);
+    }
 
     @Nullable
     @Override
@@ -157,6 +183,7 @@ public class PhotoFragment extends Fragment {
         Bundle b = new Bundle();
         b.putDouble(getString(R.string.image_latitude),latitude);
         b.putDouble(getString(R.string.image_longitude),longitude);
+        b.putString(getString(R.string.selected_image),null);
         b.putParcelable(getString(R.string.selected_bitmap),mBitmap);
         b.putString(getString(R.string.image_address),mImageAddress);
         kindPost.setArguments(b);

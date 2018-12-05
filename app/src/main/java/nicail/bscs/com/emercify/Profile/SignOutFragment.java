@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import nicail.bscs.com.emercify.Login.LoginActivity;
 import nicail.bscs.com.emercify.R;
+import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 
 public class SignOutFragment extends Fragment {
 
@@ -26,6 +27,7 @@ public class SignOutFragment extends Fragment {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseMethods firebaseMethods;
 
     private ProgressBar mProgressBar;
     private TextView tvSignout, tvSigningOut;
@@ -37,7 +39,7 @@ public class SignOutFragment extends Fragment {
         tvSignout = (TextView) view.findViewById(R.id.tvConfirmSignout);
         tvSigningOut = (TextView) view.findViewById(R.id.tvSigningOut);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
-
+        firebaseMethods = new FirebaseMethods(getActivity());
         mProgressBar.setVisibility(View.GONE);
         tvSigningOut.setVisibility(View.GONE);
 
@@ -51,6 +53,7 @@ public class SignOutFragment extends Fragment {
                 mProgressBar.setVisibility(View.VISIBLE);
                 tvSigningOut.setVisibility(View.VISIBLE);
 
+                firebaseMethods.updateOnlineStatus(false);
                 mAuth.signOut();
                 getActivity().finish();
             }
