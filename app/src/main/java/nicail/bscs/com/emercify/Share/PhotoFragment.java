@@ -52,7 +52,8 @@ public class PhotoFragment extends Fragment implements
     private Bitmap mBitmap;
 
     @Override
-    public void onNormalClickListener(String image, Bitmap bitmap) {
+    public void onNormalClickListener(String image, Bitmap bitmap, double latitude,
+                                      double longitude, String mImageAddress) {
         Intent intent = new Intent(getActivity(),NextActivity.class);
         Bundle b = new Bundle();
         b.putDouble(getString(R.string.image_latitude),latitude);
@@ -64,7 +65,8 @@ public class PhotoFragment extends Fragment implements
     }
 
     @Override
-    public void onEmergencyClickListener(String image, Bitmap bitmap) {
+    public void onEmergencyClickListener(String image, Bitmap bitmap, double latitude,
+                                         double longitude, String mImageAddress) {
         Intent intent = new Intent(getActivity(),NextActivity.class);
         Bundle b = new Bundle();
         b.putDouble(getString(R.string.image_latitude),latitude);

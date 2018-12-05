@@ -47,7 +47,20 @@
 
             </RelativeLayout>
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rellayout2">
 
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="SELECT LOCATION"
+                    android:textStyle="bold"
+                    android:id="@+id/select_location"
+                    android:visibility="gone"/>
+
+            </RelativeLayout>
             
         </RelativeLayout>
         
