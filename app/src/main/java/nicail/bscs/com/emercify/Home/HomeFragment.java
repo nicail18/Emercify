@@ -30,6 +30,7 @@ import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.MainfeedListAdapter;
 import nicail.bscs.com.emercify.Utils.MainfeedRecyclerAdapter;
+import nicail.bscs.com.emercify.Utils.ViewPostFragment;
 import nicail.bscs.com.emercify.dialogs.View_Delete_Dialog;
 import nicail.bscs.com.emercify.models.Comment;
 import nicail.bscs.com.emercify.models.Photo;
@@ -55,7 +56,6 @@ public class HomeFragment extends Fragment implements
         ((HomeActivity)getContext()).OnDeleteClickListener(photo,position);
 
     }
-    
     private ArrayList<Photo> mPhotos;
     private ArrayList<String> mFollowing;
     private ArrayList<Photo> mPaginatedPhotos;
@@ -64,6 +64,7 @@ public class HomeFragment extends Fragment implements
     private MainfeedListAdapter mAdapter;
     private MainfeedRecyclerAdapter recyclerAdapter;
     private LinearLayoutManager manager;
+
     private int mResults;
 
     @Nullable

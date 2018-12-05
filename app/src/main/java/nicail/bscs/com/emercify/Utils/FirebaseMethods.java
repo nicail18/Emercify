@@ -200,6 +200,12 @@ public class FirebaseMethods {
         myRef.child("user_account_settings").child(userID).child("device_token").setValue(token);
     }
 
+    public void updateOnlineStatus(boolean status){
+        Log.d(TAG, "updateOnlineStatus: updating online status");
+        myRef.child("users").child(userID).child("online_status").setValue(status);
+        myRef.child("user_account_settings").child(userID).child("online_status").setValue(status);
+    }
+
     private void addPhotoToDatabase(String caption, String url, String address, double latitude, double longitude){
         Log.d(TAG, "addPhotoToDatabase: adding photo to database.");
         String tags = StringManipulation.getTags(caption);
@@ -329,6 +335,14 @@ public class FirebaseMethods {
         }
     }
 
+    public void updateLocation(double latitude, double longitude ){
+        Log.d(TAG, "updateLocation: updating location");
+        myRef.child("users").child(userID).child("latitude").setValue(latitude);
+        myRef.child("users").child(userID).child("longitude").setValue(longitude);
+        myRef.child("user_account_settings").child(userID).child("latitude").setValue(latitude);
+        myRef.child("user_account_settings").child(userID).child("longitude").setValue(longitude);
+    }
+
     /**
      * Add information to the users node
      * ADd information to the user_account_setttings node
@@ -339,7 +353,10 @@ public class FirebaseMethods {
      * @param profile_photo
      */
     public void addNewUser(String email, String username, String description, String website, String profile_photo){
-        User user = new User(userID, 1, StringManipulation.condenseUsername(username), email,FirebaseInstanceId.getInstance().getToken());
+        User user = new User(userID, 1,
+                StringManipulation.condenseUsername(username),
+                email,FirebaseInstanceId.getInstance().getToken(),
+                true);
 
         myRef.child(mContext.getString(R.string.dbname_users))
                 .child(userID)
@@ -355,7 +372,10 @@ public class FirebaseMethods {
                 StringManipulation.condenseUsername(username),
                 website,
                 userID,
-                FirebaseInstanceId.getInstance().getToken());
+                FirebaseInstanceId.getInstance().getToken(),
+                true,
+                0,
+                0);
 
         myRef.child(mContext.getString(R.string.dbname_user_account_settings))
                 .child(userID)

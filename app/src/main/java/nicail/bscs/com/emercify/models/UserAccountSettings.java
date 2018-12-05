@@ -16,13 +16,14 @@ public class UserAccountSettings implements Parcelable{
     private String website;
     private String user_id;
     private String device_token;
+    private boolean online_status;
+    private double latitude, longitude;
 
-    public UserAccountSettings(String description,
-                               String display_name,
-                               long followers,
-                               long following,
-                               long posts, String profile_photo,
-                               String username, String website, String user_id, String device_token) {
+    public UserAccountSettings(String description, String display_name,
+                               long followers, long following, long posts,
+                               String profile_photo, String username, String website,
+                               String user_id, String device_token, boolean online_status,
+                               double latitude, double longitude) {
         this.description = description;
         this.display_name = display_name;
         this.followers = followers;
@@ -33,6 +34,9 @@ public class UserAccountSettings implements Parcelable{
         this.website = website;
         this.user_id = user_id;
         this.device_token = device_token;
+        this.online_status = online_status;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public UserAccountSettings() {
@@ -49,6 +53,9 @@ public class UserAccountSettings implements Parcelable{
         website = in.readString();
         user_id = in.readString();
         device_token = in.readString();
+        online_status = in.readByte() != 0;
+        latitude = in.readDouble();
+        longitude = in.readDouble();
     }
 
     @Override
@@ -63,6 +70,9 @@ public class UserAccountSettings implements Parcelable{
         dest.writeString(website);
         dest.writeString(user_id);
         dest.writeString(device_token);
+        dest.writeByte((byte) (online_status ? 1 : 0));
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
     }
 
     @Override
@@ -162,6 +172,30 @@ public class UserAccountSettings implements Parcelable{
         this.device_token = device_token;
     }
 
+    public boolean isOnline_status() {
+        return online_status;
+    }
+
+    public void setOnline_status(boolean online_status) {
+        this.online_status = online_status;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
     @Override
     public String toString() {
         return "UserAccountSettings{" +
@@ -175,6 +209,9 @@ public class UserAccountSettings implements Parcelable{
                 ", website='" + website + '\'' +
                 ", user_id='" + user_id + '\'' +
                 ", device_token='" + device_token + '\'' +
+                ", online_status=" + online_status +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
                 '}';
     }
 }

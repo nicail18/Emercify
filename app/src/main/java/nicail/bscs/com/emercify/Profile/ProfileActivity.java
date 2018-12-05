@@ -3,6 +3,7 @@ package nicail.bscs.com.emercify.Profile;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -10,7 +11,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import java.util.List;
+
 import nicail.bscs.com.emercify.R;
+import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.ViewCommentsFragment;
 import nicail.bscs.com.emercify.Utils.ViewPostFragment;
 import nicail.bscs.com.emercify.Utils.ViewProfileFragment;
@@ -68,12 +72,14 @@ public class ProfileActivity extends AppCompatActivity implements
     private ProgressBar mProgressBar;
     private ImageView profilePhoto;
     private static final int NUM_GRID_COLUMNS = 3;
+    private FirebaseMethods firebaseMethods;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         Log.d(TAG, "onCreate: starting.");
+        firebaseMethods = new FirebaseMethods(this);
 
         init();
     }
@@ -125,15 +131,25 @@ public class ProfileActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {
-        int fragments = getSupportFragmentManager().getBackStackEntryCount();
-        if (fragments == 1) {
+        int num = getSupportFragmentManager().getBackStackEntryCount();
+        if(num == 1){
             finish();
-        } else {
-            if (getFragmentManager().getBackStackEntryCount() > 1) {
-                getFragmentManager().popBackStack();
-            } else {
-                super.onBackPressed();
-            }
         }
+        else{
+            getFragmentManager().popBackStack();
+        }
+        super.onBackPressed();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        firebaseMethods.updateOnlineStatus(true);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();;
+        firebaseMethods.updateOnlineStatus(false);
     }
 }

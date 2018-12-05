@@ -62,6 +62,7 @@ import java.util.ArrayList;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
 import nicail.bscs.com.emercify.Utils.DownloadImageTask;
+import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.MyClusterManagerRenderer;
 import nicail.bscs.com.emercify.models.ClusterMarker;
 import nicail.bscs.com.emercify.models.Photo;
@@ -89,6 +90,7 @@ public class MapActivity extends AppCompatActivity implements
     private final String[] snippet = new String[1];
     private String username;
     private ImageView ivBackArrow;
+    private FirebaseMethods firebaseMethods;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -98,6 +100,8 @@ public class MapActivity extends AppCompatActivity implements
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         ivBackArrow = (ImageView) findViewById(R.id.ivBackarrow);
+
+        firebaseMethods = new FirebaseMethods(this);
 
         ivBackArrow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -305,12 +309,14 @@ public class MapActivity extends AppCompatActivity implements
     @Override
     public void onResume() {
         super.onResume();
+        firebaseMethods.updateOnlineStatus(true);
         mMapView.onResume();
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        firebaseMethods.updateOnlineStatus(false);
         mMapView.onStart();
     }
 

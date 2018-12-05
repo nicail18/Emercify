@@ -85,6 +85,8 @@ public class LikesActivity extends AppCompatActivity implements
         notifsRecyclerView = findViewById(R.id.notif_listview);
         empty = findViewById(R.id.empty);
 
+        mFirebaseMethods = new FirebaseMethods(this);
+
         Log.d(TAG, "onCreate: starting.");
 
 
@@ -263,7 +265,6 @@ public class LikesActivity extends AppCompatActivity implements
     //Firebase Section
     private void setupFireBaseAuth(){
         Log.d(TAG, "setupFireBaseAuth: setting up firebase auth");
-        mFirebaseMethods = new FirebaseMethods(this);
         mAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         myRef = mFirebaseDatabase.getReference();
@@ -406,5 +407,18 @@ public class LikesActivity extends AppCompatActivity implements
             });
         }
 
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mFirebaseMethods.updateOnlineStatus(true);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();;
+        mFirebaseMethods.updateOnlineStatus(false);
     }
 }

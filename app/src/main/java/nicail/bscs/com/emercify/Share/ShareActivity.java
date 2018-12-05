@@ -2,6 +2,7 @@ package nicail.bscs.com.emercify.Share;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
@@ -10,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import nicail.bscs.com.emercify.R;
+import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.Permissions;
 import nicail.bscs.com.emercify.Utils.SectionsPagerAdapter;
 
@@ -18,6 +20,7 @@ public class ShareActivity extends AppCompatActivity {
     private static final int ACTIVITY_NUM = 2;
 
     private ViewPager mViewPager;
+    private FirebaseMethods firebaseMethods;
 
     private Context mContext = ShareActivity.this;
 
@@ -25,6 +28,7 @@ public class ShareActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share);
+        firebaseMethods = new FirebaseMethods(this);
         Log.d(TAG, "onCreate: starting.");
 
         if(checkPermissionsArray(Permissions.PERMISSIONS)){
@@ -92,4 +96,19 @@ public class ShareActivity extends AppCompatActivity {
 
         ActivityCompat.requestPermissions(ShareActivity.this,permissions,1);
     }
+
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        firebaseMethods.updateOnlineStatus(true);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();;
+        firebaseMethods.updateOnlineStatus(false);
+    }
+
 }

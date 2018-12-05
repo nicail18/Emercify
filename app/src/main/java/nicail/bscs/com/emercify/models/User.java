@@ -10,13 +10,16 @@ public class User implements Parcelable{
     private String username;
     private String email;
     private String device_token;
+    private boolean online_status;
 
-    public User(String user_id, long phone_number, String username, String email, String device_token) {
+    public User(String user_id, long phone_number,
+                String username, String email, String device_token, boolean online_status) {
         this.user_id = user_id;
         this.phone_number = phone_number;
         this.username = username;
         this.email = email;
         this.device_token = device_token;
+        this.online_status = online_status;
     }
 
     public User() {
@@ -82,6 +85,14 @@ public class User implements Parcelable{
         this.device_token = device_token;
     }
 
+    public boolean isOnline_status() {
+        return online_status;
+    }
+
+    public void setOnline_status(boolean online_status) {
+        this.online_status = online_status;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -94,16 +105,6 @@ public class User implements Parcelable{
         dest.writeString(username);
         dest.writeString(email);
         dest.writeString(device_token);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "user_id='" + user_id + '\'' +
-                ", phone_number=" + phone_number +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", device_token='" + device_token + '\'' +
-                '}';
+        dest.writeByte((byte) (online_status ? 1 : 0));
     }
 }
