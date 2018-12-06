@@ -83,6 +83,14 @@ public class NextActivity extends AppCompatActivity {
             }
         });
 
+        select_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(NextActivity.this, ActivityPlaces.class);
+                startActivity(intent);
+            }
+        });
+
         setImage();
     }
 
@@ -97,10 +105,10 @@ public class NextActivity extends AppCompatActivity {
             latitude =  b.getDouble(getString(R.string.image_latitude));
             longitude =  b.getDouble(getString(R.string.image_longitude));
             if(latitude == 0 || longitude == 0){
-                select_location.setVisibility(View.GONE);
+                select_location.setVisibility(View.VISIBLE);
             }
             else{
-                select_location.setVisibility(View.VISIBLE);
+                select_location.setVisibility(View.GONE);
             }
             Log.d(TAG, "setImage: got new image url " + imgUrl);
             UniversalImageLoader.setImage(intent.getStringExtra(getString(R.string.selected_image)),image,null,mAppend);
@@ -111,10 +119,10 @@ public class NextActivity extends AppCompatActivity {
             latitude =  b.getDouble(getString(R.string.image_latitude));
             longitude =  b.getDouble(getString(R.string.image_longitude));
             if(latitude == 0 || longitude == 0){
-                select_location.setVisibility(View.GONE);
+                select_location.setVisibility(View.VISIBLE);
             }
             else{
-                select_location.setVisibility(View.VISIBLE);
+                select_location.setVisibility(View.GONE);
             }
             Log.d(TAG, "setImage: got new bitmap " + bitmap);
             image.setImageBitmap(bitmap);

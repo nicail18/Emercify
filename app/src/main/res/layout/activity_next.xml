@@ -55,10 +55,11 @@
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="SELECT LOCATION"
+                    android:text="YOUR PHOTO ISN'T GEOTAGGED PLEASE SELECT LOCATION"
                     android:textStyle="bold"
+                    android:textSize="12sp"
                     android:id="@+id/select_location"
-                    android:visibility="gone"/>
+                    android:visibility="visible"/>
 
             </RelativeLayout>
             
