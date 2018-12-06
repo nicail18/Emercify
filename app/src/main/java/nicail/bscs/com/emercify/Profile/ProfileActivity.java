@@ -88,6 +88,8 @@ public class ProfileActivity extends AppCompatActivity implements
         Log.d(TAG, "init: inflating " + getString(R.string.profile_fragment));
 
         Intent intent = getIntent();
+        Bundle b  = intent.getExtras();
+        String s = b.getString(getString(R.string.calling_activity));
         if(intent.hasExtra(getString(R.string.calling_activity))){
             Log.d(TAG, "init: searching for user object attached as intent extra");
             if(intent.hasExtra(getString(R.string.intent_user))){

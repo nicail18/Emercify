@@ -327,15 +327,16 @@ public class LikesActivity extends AppCompatActivity implements
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        User user = new User();
                         for(DataSnapshot ds: dataSnapshot.getChildren()){
-                            User user = new User();
                             user = ds.getValue(User.class);
                             Log.d(TAG, "onDataChange: " + user);
-                            Intent intent = new Intent(LikesActivity.this, ProfileActivity.class);
-                            intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
-                            intent.putExtra(getString(R.string.intent_user),user);
-                            startActivity(intent);
+
                         }
+                        Intent intent = new Intent(LikesActivity.this, ProfileActivity.class);
+                        intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
+                        intent.putExtra(getString(R.string.intent_user),user);
+                        startActivity(intent);
                     }
 
                     @Override
@@ -418,7 +419,7 @@ public class LikesActivity extends AppCompatActivity implements
 
     @Override
     public void onPause() {
-        super.onPause();;
+        super.onPause();
         mFirebaseMethods.updateOnlineStatus(false);
     }
 }
