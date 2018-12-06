@@ -356,7 +356,7 @@ public class FirebaseMethods {
         User user = new User(userID, 1,
                 StringManipulation.condenseUsername(username),
                 email,FirebaseInstanceId.getInstance().getToken(),
-                true);
+                true,0,0);
 
         myRef.child(mContext.getString(R.string.dbname_users))
                 .child(userID)
