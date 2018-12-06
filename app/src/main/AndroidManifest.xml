@@ -35,13 +35,17 @@
                 tools:replace="android:resource" />
         </provider>
 
-        <activity android:name=".Home.HomeActivity">
+        <activity
+            android:name=".Login.SplashActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".Home.HomeActivity"/>
         <activity android:name=".Likes.LikesActivity" />
         <activity android:name=".Profile.ProfileActivity" />
         <activity android:name=".Search.SearchActivity" />
@@ -51,6 +55,8 @@
         <activity android:name=".Login.LoginActivity" />
         <activity android:name=".Login.RegisterActivity" />
         <activity android:name=".Share.NextActivity" />
+
+
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
