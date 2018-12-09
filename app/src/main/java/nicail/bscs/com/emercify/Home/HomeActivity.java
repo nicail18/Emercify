@@ -9,7 +9,11 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.design.internal.BottomNavigationItemView;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -19,11 +23,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -84,10 +91,12 @@ public class HomeActivity extends AppCompatActivity implements
     private RelativeLayout mViewPager;
     private FrameLayout mFrameLayout;
     private FusedLocationProviderClient mFusedLocationClient;
-
+    private ProgressBar pb;
     private RelativeLayout mRelativeLayout;
     private boolean mLocationPermissionGranted = false;
     private double latitude, longitude;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,10 +105,13 @@ public class HomeActivity extends AppCompatActivity implements
         Log.d(TAG, "onCreate: starting.");
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
+        pb = (ProgressBar) findViewById(R.id.progress_Bar1);
         mViewPager = (RelativeLayout) findViewById(R.id.rellayout2);
         mFrameLayout = (FrameLayout) findViewById(R.id.home_container);
         mRelativeLayout = (RelativeLayout) findViewById(R.id.relLayoutParent);
+
+        pb.setVisibility(View.VISIBLE);
+
 
         setupFireBaseAuth();
         if (checkMapServices()) {
@@ -311,7 +323,7 @@ public class HomeActivity extends AppCompatActivity implements
 
         BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
-
+        BottomNavigationViewHelper.showBadge(this,bottomNavigationViewEx,R.id.ic_alert,"1");
         int incoming = 0;
 
         Intent intent = getIntent();

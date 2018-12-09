@@ -44,8 +44,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".Home.HomeActivity"/>
+        <activity android:name=".Home.HomeActivity" />
         <activity android:name=".Likes.LikesActivity" />
         <activity android:name=".Profile.ProfileActivity" />
         <activity android:name=".Search.SearchActivity" />
@@ -56,9 +55,6 @@
         <activity android:name=".Login.RegisterActivity" />
         <activity android:name=".Share.NextActivity" />
         <activity android:name=".Share.ActivityPlaces" />
-
-
-
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -71,31 +67,32 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
 
-        <service android:name=".Utils.FirebaseMessageService"
+        <service
+            android:name=".Utils.FirebaseMessageService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-        <service android:name=".Utils.FireIDService"
+        <service
+            android:name=".Utils.FireIDService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
-
         <activity android:name=".Utils.layout_messages_chatitem_s" />
 
-        <service android:name=".Utils.FirebaseMessageService"
+        <service
+            android:name=".Utils.FirebaseMessageService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-        <service android:name=".Utils.FireIDService"
+        <service
+            android:name=".Utils.FireIDService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
