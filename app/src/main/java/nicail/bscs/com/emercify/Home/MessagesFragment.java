@@ -1,5 +1,6 @@
 package nicail.bscs.com.emercify.Home;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -120,6 +121,7 @@ public class MessagesFragment extends Fragment {
             return 0;
         }
 
+        @SuppressLint("ResourceType")
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View view = getLayoutInflater().inflate(R.layout.layout_messages_listitem, null);
@@ -132,15 +134,13 @@ public class MessagesFragment extends Fragment {
             mTextView1.setText(Message[position]);
             mTextView2.setText(time[position]);
 
-            String internetUrl = "http://futurefemaleleader.com/wp-content/uploads/2017/08/150508211850-kim-jong-un-sub-missile-test-0905-full-169_clipped_rev_1.png";
-
-            GlideApp
-                    .with(getContext())
-                    .load(internetUrl)
-                    .placeholder(R.mipmap.ic_emercify_launcher)
-                    .error(R.drawable.ic_error)
-                    .centerCrop()
-                    .into(mImageView);
+//            GlideApp
+//                    .with(getContext())
+//                    .load(R.id.profile_photo)
+//                    .placeholder(R.mipmap.ic_emercify_launcher)
+//                    .error(R.drawable.ic_error)
+//                    .centerCrop()
+//                    .into(mImageView);
 
             return view;
         }
