@@ -37,6 +37,13 @@
             android:layout_below="@+id/rellayout1"
             android:layout_marginBottom="50dp">
 
+            <ProgressBar
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/progress_Bar1"
+                android:indeterminateTint="@android:color/darker_gray"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"/>
             <!--include layout="@layout/layout_center_viewpager" />
             -->
         </RelativeLayout>
