@@ -55,7 +55,7 @@ public class LikesActivity extends AppCompatActivity implements
     private static final int ACTIVITY_NUM = 3;
 
     private Context mContext = LikesActivity.this;
-    private ImageView ivMap,test,post;
+    private ImageView ivMap,test,post,chooseloc;
     private String token;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -81,6 +81,7 @@ public class LikesActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_notifs);
         ivMap = (ImageView) findViewById(R.id.ivMap);
         test = (ImageView) findViewById(R.id.testNotif);
+        chooseloc = (ImageView) findViewById(R.id.choose_loc);
         notifications = new ArrayList<>();
         notifsRecyclerView = findViewById(R.id.notif_listview);
         empty = findViewById(R.id.empty);
@@ -88,6 +89,20 @@ public class LikesActivity extends AppCompatActivity implements
         mFirebaseMethods = new FirebaseMethods(this);
 
         Log.d(TAG, "onCreate: starting.");
+
+        chooseloc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(LikesActivity.this);
+                View mView = getLayoutInflater().inflate(R.layout.dialog_chooseloc,null);
+                TextView pleasechoose = (TextView) findViewById(R.id.current_location);
+                TextView currentloc = (TextView) findViewById(R.id.search_location);
+
+                mBuilder.setView(mView);
+                AlertDialog dialog = mBuilder.create();
+                dialog.show();
+            }
+        });
 
 
         setupFireBaseAuth();
@@ -111,6 +126,7 @@ public class LikesActivity extends AppCompatActivity implements
 
         getNotifications();
     }
+
 
     public void getNotifications(){
         Log.d(TAG, "getNotifications: getting notifications");

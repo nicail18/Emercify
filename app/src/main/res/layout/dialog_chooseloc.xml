@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/please_choose"
+            android:layout_width="270dp"
+            android:layout_height="wrap_content"
+            android:text="It seems your photo don't have a location tagged. Please choose a location"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            />
+        <TextView
+            android:id="@+id/current_location"
+            android:layout_below="@+id/please_choose"
+            android:clickable="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Current Location"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            android:textColor="@drawable/text_changecolor"
+            android:textSize="12sp"
+            android:layout_marginBottom="10dp"/>
+
+        <TextView
+            android:id="@+id/search_location"
+            android:layout_below="@+id/current_location"
+            android:clickable="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search for a location"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            android:textColor="@drawable/text_changecolor"
+            android:textSize="12sp"
+            android:layout_marginBottom="10dp"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>
