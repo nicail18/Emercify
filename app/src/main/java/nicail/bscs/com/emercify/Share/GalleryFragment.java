@@ -1,14 +1,18 @@
 package nicail.bscs.com.emercify.Share;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -29,7 +33,16 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
@@ -44,37 +57,98 @@ import nicail.bscs.com.emercify.Profile.AccountSettingsActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.FilePaths;
 import nicail.bscs.com.emercify.Utils.FileSearch;
+import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.GridImageAdapter;
 import nicail.bscs.com.emercify.Utils.ViewWeightAnimationWrapper;
+import nicail.bscs.com.emercify.dialogs.Dialog_Choose;
 import nicail.bscs.com.emercify.dialogs.KindPost;
+
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 
 public class GalleryFragment extends Fragment implements
         KindPost.OnNormalClickListener,
-        KindPost.OnEmergencyClickListener{
-        @Override
+        KindPost.OnEmergencyClickListener,
+        Dialog_Choose.OnCurrentLocationClickListener,
+        Dialog_Choose.OnSearchLocationClickListener{
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 10) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(getActivity(), data);
+                Log.i(TAG, "Place: " + place.getName());
+                Log.i(TAG, "onActivityResult: " + place.getLatLng());
+                latitude = place.getLatLng().latitude;
+                longitude = place.getLatLng().longitude;
+                Log.i(TAG, "onActivityResult: " + type);
+                Log.i(TAG, "onActivityResult: " + image);
+                Intent intent = new Intent(getActivity(),NextActivity.class);
+                Bundle b = new Bundle();
+
+                if(type == "normal"){
+                    b.putString("type",type);
+                }
+                else if(type == "emergency"){
+                    b.putString("type",type);
+                }
+                else{
+                    b.putString("type",type);
+                }
+                b.putDouble(getString(R.string.image_latitude),latitude);
+                b.putDouble(getString(R.string.image_longitude),longitude);
+                intent.putExtra(getString(R.string.selected_image),image);
+                intent.putExtra(getString(R.string.image_address),place.getName());
+                intent.putExtras(b);
+                startActivity(intent);
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(getActivity(), data);
+                // TODO: Handle the error.
+                Log.i(TAG, status.getStatusMessage());
+
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
+    }
+
+    @Override
     public void onNormalClickListener(String image, Bitmap bitmap, double latitude,
                                       double longitude, String mImageAddress) {
-        Intent intent = new Intent(getActivity(),NextActivity.class);
-        Bundle b = new Bundle();
-        b.putDouble(getString(R.string.image_latitude),latitude);
-        b.putDouble(getString(R.string.image_longitude),longitude);
-        intent.putExtra(getString(R.string.selected_image),image);
-        intent.putExtra(getString(R.string.image_address),mImageAddress);
-        intent.putExtras(b);
-        startActivity(intent);
+            if(latitude == 0 || longitude == 0){
+                openChooseDialog("normal",image);
+            }
+            else{
+                Intent intent = new Intent(getActivity(),NextActivity.class);
+                Bundle b = new Bundle();
+                b.putDouble(getString(R.string.image_latitude),latitude);
+                b.putDouble(getString(R.string.image_longitude),longitude);
+                b.putString("type","normal");
+                intent.putExtra(getString(R.string.selected_image),image);
+                intent.putExtra(getString(R.string.image_address),mImageAddress);
+                intent.putExtras(b);
+                startActivity(intent);
+            }
     }
 
     @Override
     public void onEmergencyClickListener(String image, Bitmap bitmap, double latitude,
                                          double longitude, String mImageAddress) {
-        Intent intent = new Intent(getActivity(),NextActivity.class);
-        Bundle b = new Bundle();
-        b.putDouble(getString(R.string.image_latitude),latitude);
-        b.putDouble(getString(R.string.image_longitude),longitude);
-        intent.putExtra(getString(R.string.selected_image),image);
-        intent.putExtra(getString(R.string.image_address),mImageAddress);
-        intent.putExtras(b);
-        startActivity(intent);
+            if(latitude == 0 || longitude == 0){
+                openChooseDialog("emergency",image);
+            }
+            else{
+                Intent intent = new Intent(getActivity(),NextActivity.class);
+                Bundle b = new Bundle();
+                b.putDouble(getString(R.string.image_latitude),latitude);
+                b.putDouble(getString(R.string.image_longitude),longitude);
+                b.putString("type","emergency");
+                intent.putExtra(getString(R.string.selected_image),image);
+                intent.putExtra(getString(R.string.image_address),mImageAddress);
+                intent.putExtras(b);
+                startActivity(intent);
+            }
     }
     private static final String TAG = "GalleryFragment";
     private String mAppend = "file:/";
@@ -89,10 +163,36 @@ public class GalleryFragment extends Fragment implements
     private String mSelectedImage;
     private String mImageAddress;
     private double latitude, longitude;
+    private FirebaseMethods firebaseMethods;
+    private FusedLocationProviderClient mFusedLocationClient;
 
     private static final int MAP_LAYOUT_STATE_CONTRACTED = 0;
     private static final int MAP_LAYOUT_STATE_EXPANDED = 1;
     private int mMapLayoutState = 0;
+    private String image,type;
+
+
+    @Override
+    public void onCurrentLocationClickLsitener(String type,String image) {
+        getLastKnownLocation(type,image);
+    }
+
+    @Override
+    public void onSearchLocationClickListener(String type, String image) {
+        try {
+            this.type = type;
+            this.image = image;
+            Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
+                    .build(getActivity());
+            startActivityForResult(intent,10);
+        } catch (GooglePlayServicesRepairableException e) {
+            e.printStackTrace();
+        } catch (GooglePlayServicesNotAvailableException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
     @Nullable
     @Override
@@ -107,7 +207,8 @@ public class GalleryFragment extends Fragment implements
         directories = new ArrayList<>();
         Log.d(TAG, "onCreateView: started");
 
-
+        firebaseMethods = new FirebaseMethods(getActivity());
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         ImageView shareClose = (ImageView) view.findViewById(R.id.ivCloseShare);
         shareClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,6 +274,57 @@ public class GalleryFragment extends Fragment implements
         init();
 
         return view;
+    }
+
+    private void getLastKnownLocation(final String type, final String image) {
+        Log.d(TAG, "getLastKnownLocation: called.");
+
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            return;
+        }
+        mFusedLocationClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+                if(task.isSuccessful()){
+                    Location location = task.getResult();
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
+                    String address = getCompleteAddressString(latitude,longitude);
+                    Intent intent = new Intent(getActivity(),NextActivity.class);
+                    Bundle b = new Bundle();
+                    if(type == "normal"){
+                        b.putString("type",type);
+                    }
+                    else if(type == "emergency"){
+                        b.putString("type",type);
+                    }
+                    else{
+                        b.putString("type",type);
+                    }
+                    b.putDouble(getString(R.string.image_latitude),latitude);
+                    b.putDouble(getString(R.string.image_longitude),longitude);
+                    intent.putExtra(getString(R.string.selected_image),image);
+                    intent.putExtra(getString(R.string.image_address),address);
+                    intent.putExtras(b);
+                    startActivity(intent);
+                    Log.d(TAG, "onComplete: latitude: " + latitude + "\n" + "longitude" + longitude);
+                }
+            }
+        });
+    }
+
+    public void openChooseDialog(String type,String image){
+        Dialog_Choose dialog_choose = new Dialog_Choose();
+        Bundle b = new Bundle();
+        b.putString("type",type);
+        b.putString("image",image);
+        dialog_choose.setArguments(b);
+        dialog_choose.show(((FragmentActivity)getContext()).getSupportFragmentManager(),"KindPost");
+        dialog_choose.setTargetFragment(this,1);
     }
 
     public void openDialog(){

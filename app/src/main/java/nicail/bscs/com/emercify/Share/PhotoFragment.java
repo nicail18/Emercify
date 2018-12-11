@@ -58,6 +58,7 @@ public class PhotoFragment extends Fragment implements
         Bundle b = new Bundle();
         b.putDouble(getString(R.string.image_latitude),latitude);
         b.putDouble(getString(R.string.image_longitude),longitude);
+        b.putString("type","normal");
         intent.putExtra(getString(R.string.selected_bitmap),bitmap);
         intent.putExtra(getString(R.string.image_address),mImageAddress);
         intent.putExtras(b);
@@ -71,6 +72,7 @@ public class PhotoFragment extends Fragment implements
         Bundle b = new Bundle();
         b.putDouble(getString(R.string.image_latitude),latitude);
         b.putDouble(getString(R.string.image_longitude),longitude);
+        b.putString("type","emergency");
         intent.putExtra(getString(R.string.selected_image),bitmap);
         intent.putExtra(getString(R.string.image_address),mImageAddress);
         intent.putExtras(b);

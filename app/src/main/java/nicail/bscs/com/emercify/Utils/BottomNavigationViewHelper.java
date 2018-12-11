@@ -31,8 +31,7 @@ public class BottomNavigationViewHelper {
         BottomNavigationItemView itemView = bottomNavigationView.findViewById(itemId);
         View badge = LayoutInflater.from(context).inflate(R.layout.notification_badge, bottomNavigationView, false);
 
-        TextView text = badge.findViewById(R.id.notifications_badge1);
-        text.setText(value);
+
         itemView.addView(badge);
     }
     public static void removeBadge(BottomNavigationView bottomNavigationView, @IdRes int itemId) {

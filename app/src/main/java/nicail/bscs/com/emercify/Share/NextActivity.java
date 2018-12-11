@@ -41,7 +41,7 @@ public class NextActivity extends AppCompatActivity {
     private Intent intent;
     private Bitmap bitmap;
     private double latitude, longitude;
-    private String address;
+    private String address,type;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -78,11 +78,13 @@ public class NextActivity extends AppCompatActivity {
 
                 if(intent.hasExtra(getString(R.string.selected_image))){
                     imgUrl = intent.getStringExtra(getString(R.string.selected_image));
-                    mFirebaseMethods.uploadNewPhoto("new_photo",caption,imageCount,imgUrl,null,address,latitude,longitude);
+                    mFirebaseMethods.uploadNewPhoto("new_photo",caption,imageCount,
+                            imgUrl,null,address,latitude,longitude,type);
                 }
                 else if(intent.hasExtra(getString(R.string.selected_bitmap))){
                     bitmap = (Bitmap) intent.getParcelableExtra(getString(R.string.selected_bitmap));
-                    mFirebaseMethods.uploadNewPhoto("new_photo",caption,imageCount,null,bitmap,address,latitude,longitude);
+                    mFirebaseMethods.uploadNewPhoto("new_photo",caption,imageCount,
+                            null,bitmap,address,latitude,longitude,type);
                 }
 
             }
@@ -137,6 +139,7 @@ public class NextActivity extends AppCompatActivity {
             address = intent.getStringExtra(getString(R.string.image_address));
             latitude =  b.getDouble(getString(R.string.image_latitude));
             longitude =  b.getDouble(getString(R.string.image_longitude));
+            type = b.getString("type");
             if(latitude == 0 || longitude == 0){
                 select_location.setVisibility(View.VISIBLE);
             }
@@ -151,6 +154,7 @@ public class NextActivity extends AppCompatActivity {
             address = intent.getStringExtra(getString(R.string.image_address));
             latitude =  b.getDouble(getString(R.string.image_latitude));
             longitude =  b.getDouble(getString(R.string.image_longitude));
+            type = b.getString("type");
             if(latitude == 0 || longitude == 0){
                 select_location.setVisibility(View.VISIBLE);
             }
