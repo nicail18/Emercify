@@ -67,7 +67,8 @@ public class FirebaseMethods {
 
     public void uploadNewPhoto(String photoType, final String caption,
                                int count, String imgUrl, Bitmap bm,
-                               final String address, final double latitude, final double longitude){
+                               final String address, final double latitude,
+                               final double longitude, final String type){
         Log.d(TAG, "uploadNewPhoto: attempting to upload new photo");
         FilePaths filePaths = new FilePaths();
         if(photoType.equals("new_photo")){
@@ -92,7 +93,7 @@ public class FirebaseMethods {
                             Log.d(TAG, "onSuccess: Successfully Uploaded ");
                             Toast.makeText(mContext, "Successfully Uploaded ", Toast.LENGTH_SHORT).show();
 
-                            addPhotoToDatabase(caption,firebaseUrl,address,latitude,longitude);
+                            addPhotoToDatabase(caption,firebaseUrl,address,latitude,longitude,type);
 
                             Intent intent = new Intent(mContext, HomeActivity.class);
                             mContext.startActivity(intent);
@@ -106,7 +107,7 @@ public class FirebaseMethods {
                 public void onFailure(@NonNull Exception e) {
                     Log.d(TAG, "onFailure: Photo upload failed");
                     String firebaseUrl = "http://pm1.narvii.com/6645/a59a0d2a7b9677ed7ba09b1a503eaa3f00a94592_00.jpg";
-                    addPhotoToDatabase(caption,firebaseUrl,address,latitude,longitude);
+                    addPhotoToDatabase(caption,firebaseUrl,address,latitude,longitude,null);
                     Toast.makeText(mContext, "Photo upload failed", Toast.LENGTH_SHORT).show();
                 }
             }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
@@ -206,7 +207,9 @@ public class FirebaseMethods {
         myRef.child("user_account_settings").child(userID).child("online_status").setValue(status);
     }
 
-    private void addPhotoToDatabase(String caption, String url, String address, double latitude, double longitude){
+    private void addPhotoToDatabase(String caption, String url,
+                                    String address, double latitude,
+                                    double longitude,String type){
         Log.d(TAG, "addPhotoToDatabase: adding photo to database.");
         String tags = StringManipulation.getTags(caption);
         String newPhotoKey = myRef.child(mContext.getString(R.string.dbname_photos)).push().getKey();
@@ -220,6 +223,14 @@ public class FirebaseMethods {
         photo.setAddress(address);
         photo.setLatitude(latitude);
         photo.setLongitude(longitude);
+        if(type != null){
+            photo.setType(type);
+            if(type == "emergency"){
+            }
+            else if(type == "report"){
+
+            }
+        }
 
         myRef.child(mContext.getString(R.string.dbname_user_photos))
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())

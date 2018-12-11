@@ -20,8 +20,9 @@ public class Photo implements Parcelable{
     private String tags;
     private List<Like> likes;
     private List<Comment> comments;
+    private String type;
 
-    public Photo(String caption, String address, double latitude, double longitude, String date_created, String image_path, String photo_id, String user_id, String tags, List<Like> likes, List<Comment> comments) {
+    public Photo(String caption, String address, double latitude, double longitude, String date_created, String image_path, String photo_id, String user_id, String tags, List<Like> likes, List<Comment> comments, String type) {
         this.caption = caption;
         this.address = address;
         this.latitude = latitude;
@@ -33,6 +34,7 @@ public class Photo implements Parcelable{
         this.tags = tags;
         this.likes = likes;
         this.comments = comments;
+        this.type = type;
     }
 
     public Photo() {
@@ -48,24 +50,8 @@ public class Photo implements Parcelable{
         photo_id = in.readString();
         user_id = in.readString();
         tags = in.readString();
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(caption);
-        dest.writeString(address);
-        dest.writeDouble(latitude);
-        dest.writeDouble(longitude);
-        dest.writeString(date_created);
-        dest.writeString(image_path);
-        dest.writeString(photo_id);
-        dest.writeString(user_id);
-        dest.writeString(tags);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
+        comments = in.createTypedArrayList(Comment.CREATOR);
+        type = in.readString();
     }
 
     public static final Creator<Photo> CREATOR = new Creator<Photo>() {
@@ -168,6 +154,14 @@ public class Photo implements Parcelable{
         this.comments = comments;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         return "Photo{" +
@@ -182,6 +176,27 @@ public class Photo implements Parcelable{
                 ", tags='" + tags + '\'' +
                 ", likes=" + likes +
                 ", comments=" + comments +
+                ", type='" + type + '\'' +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(caption);
+        dest.writeString(address);
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
+        dest.writeString(date_created);
+        dest.writeString(image_path);
+        dest.writeString(photo_id);
+        dest.writeString(user_id);
+        dest.writeString(tags);
+        dest.writeTypedList(comments);
+        dest.writeString(type);
     }
 }

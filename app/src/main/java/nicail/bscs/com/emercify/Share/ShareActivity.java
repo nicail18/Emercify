@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
@@ -65,12 +66,13 @@ public class ShareActivity extends AppCompatActivity {
     }
 
     //Permissions
+    private int count = 0;
     public boolean checkPermissionsArray(String[] permissions){
         Log.d(TAG, "checkPermissionsArray: checking permission array");
 
         for(int i = 0; i< permissions.length; i++){
             String check = permissions[i];
-            if(!checkPermissions(check)){
+            if(!checkPermissions(check)) {
                 return false;
             }
         }
@@ -94,10 +96,16 @@ public class ShareActivity extends AppCompatActivity {
     public void verifyPermissions(String[] permissions){
         Log.d(TAG, "verifyPermissions: verifying permissions.");
 
-        ActivityCompat.requestPermissions(ShareActivity.this,permissions,1);
+        ActivityCompat.requestPermissions(ShareActivity.this,permissions,2);
     }
 
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            setUpViewPager();
+        }
+    }
 
     @Override
     public void onResume() {

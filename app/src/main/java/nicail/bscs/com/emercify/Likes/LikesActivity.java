@@ -90,20 +90,6 @@ public class LikesActivity extends AppCompatActivity implements
 
         Log.d(TAG, "onCreate: starting.");
 
-        chooseloc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder mBuilder = new AlertDialog.Builder(LikesActivity.this);
-                View mView = getLayoutInflater().inflate(R.layout.dialog_chooseloc,null);
-                TextView pleasechoose = (TextView) findViewById(R.id.current_location);
-                TextView currentloc = (TextView) findViewById(R.id.search_location);
-
-                mBuilder.setView(mView);
-                AlertDialog dialog = mBuilder.create();
-                dialog.show();
-            }
-        });
-
 
         setupFireBaseAuth();
         setupBottomNavigationView();

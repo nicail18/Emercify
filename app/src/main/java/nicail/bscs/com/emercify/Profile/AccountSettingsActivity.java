@@ -77,11 +77,13 @@ public class AccountSettingsActivity extends AppCompatActivity {
                 if (intent.hasExtra(getString(R.string.selected_image))) {
                     FirebaseMethods firebaseMethods = new FirebaseMethods(AccountSettingsActivity.this);
                     firebaseMethods.uploadNewPhoto("profile_photo", null, 0,
-                            intent.getStringExtra(mContext.getString(R.string.selected_image)), null,address,latitude,longitude);
+                            intent.getStringExtra(mContext.getString(R.string.selected_image)), null,
+                            address,latitude,longitude,null);
                 } else if (intent.hasExtra(getString(R.string.selected_bitmap))) {
                     FirebaseMethods firebaseMethods = new FirebaseMethods(AccountSettingsActivity.this);
                     firebaseMethods.uploadNewPhoto("profile_photo", null, 0,
-                            null, (Bitmap) intent.getParcelableExtra(mContext.getString(R.string.selected_bitmap)),address,latitude,longitude);
+                            null, (Bitmap) intent.getParcelableExtra(mContext.getString(R.string.selected_bitmap)),
+                            address,latitude,longitude,null);
                 }
 
             }
