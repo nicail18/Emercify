@@ -81,8 +81,14 @@ public class UserListAdapter extends ArrayAdapter<User> {
                 for(DataSnapshot singleSnapshot: dataSnapshot.getChildren()){
                     Log.d(TAG, "onDataChange: found user: " + singleSnapshot.getValue(UserAccountSettings.class).toString());
 
-                    ImageLoader imageLoader = ImageLoader.getInstance();
-                    imageLoader.displayImage(singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo(),holder.profileImage);
+//                    ImageLoader imageLoader = ImageLoader.getInstance();
+//                    imageLoader.displayImage(singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo(),holder.profileImage);
+                    GlideApp
+                            .with(mContext)
+                            .load( singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo())
+                            .placeholder(R.color.grey)
+                            .centerCrop()
+                            .into(holder.profileImage);
                 }
             }
 

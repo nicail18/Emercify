@@ -29,12 +29,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import nicail.bscs.com.emercify.Profile.ProfileActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
+import nicail.bscs.com.emercify.Utils.GlideApp;
 import nicail.bscs.com.emercify.Utils.UserListAdapter;
 import nicail.bscs.com.emercify.models.User;
+import nicail.bscs.com.emercify.models.UserAccountSettings;
 
 public class SearchActivity extends AppCompatActivity {
     private static final String TAG = "SearchActivity";
@@ -44,6 +47,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private EditText mSearchParam;
     private ListView mListView;
+    private CircleImageView mCircleImageView;
 
     private List<User> mUserList;
     private UserListAdapter mAdapter;
@@ -54,6 +58,7 @@ public class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
         mSearchParam = (EditText) findViewById(R.id.search);
         mListView = (ListView) findViewById(R.id.listView);
+        mCircleImageView = (CircleImageView) findViewById(R.id.profile_image);
         firebaseMethods = new FirebaseMethods(this);
         Log.d(TAG, "onCreate: starting.");
 
@@ -101,7 +106,6 @@ public class SearchActivity extends AppCompatActivity {
                         Log.d(TAG, "onDataChange: found user: " + singleSnapshot.getValue(User.class).toString());
 
                         mUserList.add(singleSnapshot.getValue(User.class));
-
                         updateUsersList();
                     }
                 }
@@ -133,6 +137,7 @@ public class SearchActivity extends AppCompatActivity {
                     Intent intent = new Intent(SearchActivity.this, ProfileActivity.class);
                     intent.putExtra(getString(R.string.calling_activity),getString(R.string.search_activity));
                     intent.putExtra(getString(R.string.intent_user),mUserList.get(position));
+
                     startActivity(intent);
                 }
 

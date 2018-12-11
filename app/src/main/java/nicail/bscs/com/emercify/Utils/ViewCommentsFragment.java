@@ -34,6 +34,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import nicail.bscs.com.emercify.Home.HomeActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.models.Comment;
@@ -59,6 +60,7 @@ public class ViewCommentsFragment extends Fragment {
     private ImageView mBackArrow, mCheckMark;
     private EditText mComment;
     private ListView mListView;
+    private CircleImageView mCircleImageView;
 
     private Photo mPhoto;
     private ArrayList<Comment> mComments;
@@ -74,6 +76,7 @@ public class ViewCommentsFragment extends Fragment {
         mCheckMark = (ImageView) view.findViewById(R.id.ivPostComment);
         mComment = (EditText) view.findViewById(R.id.comment);
         mListView = (ListView) view.findViewById(R.id.listView);
+        mCircleImageView = (CircleImageView) view.findViewById(R.id.comment_profile_image);
         mComments = new ArrayList<>();
         mContext = getActivity();
 
@@ -93,6 +96,12 @@ public class ViewCommentsFragment extends Fragment {
 
         CommentListAdapter adapter = new CommentListAdapter(mContext,R.layout.layout_comment, mComments);
         mListView.setAdapter(adapter);
+//        GlideApp
+//                .with(mContext)
+//                .load(mPhoto)
+//                .placeholder(R.color.grey)
+//                .centerCrop()
+//                .into(mCircleImageView);
 
         mCheckMark.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,6 +203,8 @@ public class ViewCommentsFragment extends Fragment {
                     mPhoto.getCaption() + "\"";
             mFirebaseMethods.addNotification(user_id,from_id,type,message,mPhoto.getPhoto_id());
             new Notify(token,message).execute();
+
+
         }
     }
 
@@ -258,7 +269,9 @@ public class ViewCommentsFragment extends Fragment {
             firstComment.setDate_created(mPhoto.getDate_created());
             mComments.add(firstComment);
             mPhoto.setComments(mComments);
+
             setupWidgets();
+
         }
 
         myRef.child(getString(R.string.dbname_photos))
