@@ -82,6 +82,7 @@ public class ViewPostFragment extends Fragment {
     private String mLikeString = "";
     private User mCurrentUser;
     private String token, likeMessage;
+    private Context mContext;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -107,6 +108,8 @@ public class ViewPostFragment extends Fragment {
         mLikes = (TextView) view.findViewById(R.id.image_likes);
         mComment = (ImageView) view.findViewById(R.id.speech_bubble);
         mComments = (TextView) view.findViewById(R.id.image_comments_Link);
+        mContext = getActivity();
+
 
         mHeart = new Heart(mHeartWhite,mHeartRed);
         mGestureDetector = new GestureDetector(getActivity(), new GestureListener());
@@ -142,6 +145,13 @@ public class ViewPostFragment extends Fragment {
                         newPhoto.setDate_created(objectMap.get("date_created").toString());
                         newPhoto.setImage_path(objectMap.get("image_path").toString());
 
+                        GlideApp
+                                .with(mContext)
+                                .load(newPhoto.getImage_path())
+                                .placeholder(R.color.grey)
+                                .centerCrop()
+                                .into(mPostImage);
+
                         List<Comment> commentList = new ArrayList<Comment>();
                         for(DataSnapshot dSnapshot: singleSnapshot.child("comments").getChildren()){
                             Comment comment = new Comment();
@@ -155,6 +165,8 @@ public class ViewPostFragment extends Fragment {
 
                         getCurrentUser();
                         getPhotoDetails();
+
+
 
                     }
                 }
@@ -380,6 +392,12 @@ public class ViewPostFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot singleSnapshot: dataSnapshot.getChildren()) {
                     mUserAccountSettings = singleSnapshot.getValue(UserAccountSettings.class);
+                    GlideApp
+                            .with(mContext)
+                            .load(singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo())
+                            .placeholder(R.color.grey)
+                            .centerCrop()
+                            .into(mProfileImage);
                 }
             }
 

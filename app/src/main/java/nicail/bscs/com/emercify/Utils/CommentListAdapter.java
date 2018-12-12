@@ -94,10 +94,16 @@ public class CommentListAdapter extends ArrayAdapter<Comment>{
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot singleSnapshot: dataSnapshot.getChildren()) {
                     holder.username.setText(singleSnapshot.getValue(UserAccountSettings.class).getUsername());
-                    ImageLoader imageLoader = ImageLoader.getInstance();
-                    imageLoader.displayImage(
-                            singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo(),
-                            holder.profileImage);
+//                    ImageLoader imageLoader = ImageLoader.getInstance();
+//                    imageLoader.displayImage(
+//                            singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo(),
+//                            holder.profileImage);
+                    GlideApp
+                            .with(mContext)
+                            .load( singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo())
+                            .placeholder(R.color.grey)
+                            .centerCrop()
+                            .into(holder.profileImage);
                 }
             }
 

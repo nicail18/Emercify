@@ -206,6 +206,13 @@ public class ViewProfileFragment extends Fragment {
                     settings.setUser(mUser);
                     settings.setSettings(singleSnapshot.getValue(UserAccountSettings.class));
 
+                    GlideApp
+                            .with(mContext)
+                            .load(singleSnapshot.getValue(UserAccountSettings.class).toString())
+                            .placeholder(R.color.grey)
+                            .centerCrop()
+                            .into(mProfilePhoto);
+
                     setProfileWidgets(settings);
                 }
             }
