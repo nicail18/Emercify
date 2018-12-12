@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
@@ -131,8 +132,13 @@ public class NextActivity extends AppCompatActivity {
 
     private void setImage(){
         intent = getIntent();
-        ImageView image = (ImageView) findViewById(R.id.imageShare);
+        PhotoView image = (PhotoView) findViewById(R.id.imageShare);
         Bundle b = intent.getExtras();
+
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int height = width;
+
+        image.getLayoutParams().height = height;
 
         if(intent.hasExtra(getString(R.string.selected_image))){
             imgUrl = intent.getStringExtra(getString(R.string.selected_image));
