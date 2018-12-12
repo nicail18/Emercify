@@ -42,7 +42,7 @@ public class UserAccountSettings implements Parcelable{
     public UserAccountSettings() {
     }
 
-    protected UserAccountSettings(Parcel in) {
+    public UserAccountSettings(Parcel in) {
         description = in.readString();
         display_name = in.readString();
         followers = in.readLong();

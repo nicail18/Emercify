@@ -3,6 +3,7 @@ package nicail.bscs.com.emercify.Utils;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -16,8 +17,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -25,6 +29,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -49,6 +54,7 @@ public class FirebaseMethods {
     private StorageReference mStorageReference;
 
     private String userID;
+    private ArrayList<UserAccountSettings> userLists;
 
     private double mPhotoUploadProgress = 0;
     private Context mContext;
@@ -59,10 +65,30 @@ public class FirebaseMethods {
         myRef = mFirebaseDatabase.getReference();
         mStorageReference = FirebaseStorage.getInstance().getReference();
         mContext = context;
-
+        userLists = new ArrayList<>();
+        getAllUsers();
         if(mAuth.getCurrentUser() != null){
             userID = mAuth.getCurrentUser().getUid();
         }
+    }
+
+    private void getAllUsers(){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference.child(mContext.getString(R.string.dbname_user_account_settings));
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds: dataSnapshot.getChildren()){
+                    Log.d(TAG, "onDataChange: checkDistance" + ds.getValue(UserAccountSettings.class).toString());
+                    userLists.add(ds.getValue(UserAccountSettings.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void uploadNewPhoto(String photoType, final String caption,
@@ -225,11 +251,32 @@ public class FirebaseMethods {
         photo.setLongitude(longitude);
         if(type != null){
             photo.setType(type);
-            if(type == "emergency"){
+            int x;
+            for(x = 0; x < userLists.size(); x++) {
+                if(!userLists.get(x).getUser_id()
+                        .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                    float[] distance = new float[1];
+                    Location.distanceBetween(userLists.get(x).getLatitude(), userLists.get(x).getLongitude()
+                            , latitude, longitude, distance);
+                    Log.d(TAG, "checkDistance: user ID " + userLists.get(x).getUsername());
+                    Log.d(TAG, "checkDistance: distance " + distance[0]);
+                    if(distance[0] < 500){
+                        String message = "There is an Emergency!";
+                        if(type.equals("emergency")){
+                            addNotification(
+                                userLists.get(x).getUser_id(),
+                                FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                                "emergency",
+                                message,
+                                newPhotoKey);
+                            new Notify(userLists.get(x).getDevice_token(),message).execute();
+                        }
+                        else if(type.equals("report")){
+                        }
+                    }
+                }
             }
-            else if(type == "report"){
 
-            }
         }
 
         myRef.child(mContext.getString(R.string.dbname_user_photos))

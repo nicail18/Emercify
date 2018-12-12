@@ -30,7 +30,7 @@ public class User implements Parcelable{
     }
 
 
-    protected User(Parcel in) {
+    public User(Parcel in) {
         user_id = in.readString();
         phone_number = in.readLong();
         username = in.readString();
