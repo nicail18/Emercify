@@ -141,7 +141,14 @@ public class MapActivity extends AppCompatActivity implements
             longitude = mPhoto.getLongitude();
             getLastKnownLocation();
             //mGoogleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title(mPhoto.getCaption()));
-        } else {
+        }
+        else if(intent.hasExtra("INTENT PHOTO")){
+            mPhoto = intent.getParcelableExtra("INTENT PHOTO");
+            latitude = mPhoto.getLatitude();
+            longitude = mPhoto.getLongitude();
+            getLastKnownLocation();
+        }
+        else {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
@@ -216,7 +223,10 @@ public class MapActivity extends AppCompatActivity implements
 
                         }
                         mClusterManager.cluster();
-                        setCameraView();
+                        Intent intent = getIntent();
+                        if(intent.hasExtra("PHOTO")){
+                            setCameraView();
+                        }
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -259,7 +269,13 @@ public class MapActivity extends AppCompatActivity implements
             iconGenerator.setContentView(imageView);
             imageView.setImageBitmap(bitmap);
             Bitmap bit = iconGenerator.makeIcon();
-            mGoogleMap.clear();
+            //mGoogleMap.clear();
+            Intent intent = getIntent();
+            if(intent.hasExtra("INTENT PHOTO")){
+                mGoogleMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(lat,lon))
+                        .title("Your Location"));
+            }
             mGoogleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(latitude,longitude))
                     .title(username)
@@ -320,6 +336,13 @@ public class MapActivity extends AppCompatActivity implements
                     if(intent.hasExtra("PHOTO")){
                         addMapMarkers();
                     }
+                    else if(intent.hasExtra("INTENT PHOTO")){
+                        mGoogleMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(lat,lon))
+                                .title("Your Location"));
+                        calculateDirections(lat,lon);
+                        addMapMarkers();
+                    }
                     else{
                         latitude = lat;
                         longitude = lon;
@@ -367,7 +390,7 @@ public class MapActivity extends AppCompatActivity implements
 
         com.google.maps.model.LatLng destination = new  com.google.maps.model.LatLng(
                 this.latitude,
-                this.   longitude
+                this.longitude
         );
         DirectionsApiRequest directions = new DirectionsApiRequest(geoApiContext);
 

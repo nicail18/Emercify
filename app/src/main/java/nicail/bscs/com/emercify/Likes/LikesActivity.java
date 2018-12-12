@@ -410,6 +410,45 @@ public class LikesActivity extends AppCompatActivity implements
                 }
             });
         }
+        else if(type.equals("emergency") || type.equals("report")){
+            Query query = myRef
+                    .child(getString(R.string.dbname_photos))
+                    .orderByChild("photo_id")
+                    .equalTo(activity_id);
+
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for(DataSnapshot ds: dataSnapshot.getChildren()){
+                        Photo photo = new Photo();
+                        Map<String, Object> objectMap = (HashMap<String,Object>) ds.getValue();
+                        Log.d(TAG, "onDataChange: " + objectMap.get("latitude"));
+                        photo.setAddress(objectMap.get("address").toString());
+                        photo.setLatitude((double) objectMap.get("latitude"));
+                        photo.setLongitude((double) objectMap.get("longitude"));
+                        photo.setCaption(objectMap.get("caption").toString());
+                        photo.setTags(objectMap.get("tags").toString());
+                        photo.setPhoto_id(objectMap.get("photo_id").toString());
+                        photo.setUser_id(objectMap.get("user_id").toString());
+                        photo.setDate_created(objectMap.get("date_created").toString());
+                        photo.setImage_path(objectMap.get("image_path").toString());
+
+                        Intent intent = new Intent(LikesActivity.this, MapActivity.class);
+                        intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
+                        intent.putExtra("INTENT PHOTO",photo);
+                        Log.d(TAG, "onDataChange: " + intent);
+                        startActivity(intent);
+
+                        Log.d(TAG, "onDataChange: " + photo.toString());
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
 
     }
 
