@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -61,11 +62,11 @@ public class HomeFragment extends Fragment implements
     private ArrayList<Photo> mPaginatedPhotos;
     private ListView mListView;
     private RecyclerView recyclerView;
-    private MainfeedListAdapter mAdapter;
     private MainfeedRecyclerAdapter recyclerAdapter;
     private LinearLayoutManager manager;
 
-    private int mResults;
+    private int mResults,currentItems,totalItems,scrollOutItems;
+    private Boolean isScrolling = false;
 
     @Nullable
     @Override
@@ -186,13 +187,32 @@ public class HomeFragment extends Fragment implements
                     mPaginatedPhotos.add(mPhotos.get(i));
                 }
 
-//                mAdapter = new MainfeedListAdapter(getActivity(),R.layout.layout_mainfeed_listitem,mPaginatedPhotos, HomeFragment.this);
-//                mListView.setAdapter(mAdapter);
-
                 recyclerAdapter = new MainfeedRecyclerAdapter(mPaginatedPhotos,HomeFragment.this);
                 recyclerView.setAdapter(recyclerAdapter);
                 manager = new LinearLayoutManager(getActivity());
                 recyclerView.setLayoutManager(manager);
+                recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                        super.onScrollStateChanged(recyclerView, newState);
+                        if(newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                            isScrolling = true;
+                        }
+                    }
+
+                    @Override
+                    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                        super.onScrolled(recyclerView, dx, dy);
+                        currentItems = manager.getChildCount();
+                        totalItems = manager.getItemCount();
+                        scrollOutItems = manager.findFirstVisibleItemPosition();
+
+                        if(isScrolling && (currentItems + scrollOutItems == totalItems)){
+                            isScrolling = false;
+                            displayMorePhotos();
+                        }
+                    }
+                });
 
             }catch(NullPointerException e){
                 Log.e(TAG, "displayPhotos: NullPointerException" + e.getMessage() );

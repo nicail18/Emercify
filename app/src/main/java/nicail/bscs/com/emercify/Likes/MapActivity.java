@@ -75,16 +75,19 @@ import java.util.List;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
 import nicail.bscs.com.emercify.Utils.DownloadImageTask;
+import nicail.bscs.com.emercify.Utils.FetchURL;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.LocationService;
 import nicail.bscs.com.emercify.Utils.MyClusterManagerRenderer;
+import nicail.bscs.com.emercify.Utils.TaskLoadedCallback;
 import nicail.bscs.com.emercify.models.ClusterMarker;
 import nicail.bscs.com.emercify.models.Photo;
 import nicail.bscs.com.emercify.models.User;
 import nicail.bscs.com.emercify.models.UserAccountSettings;
 
 public class MapActivity extends AppCompatActivity implements
-        OnMapReadyCallback {
+        OnMapReadyCallback,
+        TaskLoadedCallback {
 
     private static final String TAG = "MapActivity";
 
@@ -106,6 +109,7 @@ public class MapActivity extends AppCompatActivity implements
     private ImageView ivBackArrow;
     private FirebaseMethods firebaseMethods;
     private GeoApiContext geoApiContext = null;
+    private Polyline polyline;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -238,6 +242,15 @@ public class MapActivity extends AppCompatActivity implements
         }
     }
 
+    @Override
+    public void onTaskDone(Object... values) {
+        if(polyline != null){
+            polyline.remove();
+        }
+        polyline = mGoogleMap.addPolyline((PolylineOptions) values[0]);
+        zoomRoute(polyline.getPoints());
+    }
+
     public class AsyncImageBitmap extends AsyncTask<String, Void, Bitmap> {
 
         @Override
@@ -269,18 +282,20 @@ public class MapActivity extends AppCompatActivity implements
             iconGenerator.setContentView(imageView);
             imageView.setImageBitmap(bitmap);
             Bitmap bit = iconGenerator.makeIcon();
-            //mGoogleMap.clear();
+            mGoogleMap.clear();
             Intent intent = getIntent();
-            if(intent.hasExtra("INTENT PHOTO")){
-                mGoogleMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(lat,lon))
-                        .title("Your Location"));
-            }
             mGoogleMap.addMarker(new MarkerOptions()
                     .position(new LatLng(latitude,longitude))
                     .title(username)
                     .snippet(snippet[0])
                     .icon(BitmapDescriptorFactory.fromBitmap(bit)));
+            if(intent.hasExtra("INTENT PHOTO")){
+                mGoogleMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(lat,lon))
+                        .title("Your Location"));
+                String url = getUrl(new LatLng(lat,lon),new LatLng(latitude,longitude),"driving");
+                new FetchURL(MapActivity.this).execute(url,"driving");
+            }
         }
     }
 
@@ -340,7 +355,8 @@ public class MapActivity extends AppCompatActivity implements
                         mGoogleMap.addMarker(new MarkerOptions()
                                 .position(new LatLng(lat,lon))
                                 .title("Your Location"));
-                        calculateDirections(lat,lon);
+                        String url = getUrl(new LatLng(lat,lon),new LatLng(latitude,longitude),"driving");
+                        new FetchURL(MapActivity.this).execute(url,"driving");
                         addMapMarkers();
                     }
                     else{
@@ -352,6 +368,18 @@ public class MapActivity extends AppCompatActivity implements
                 }
             }
         });
+    }
+
+    private String getUrl(LatLng origin, LatLng destination, String directionMode){
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+        String str_dest = "destination=" + destination.latitude + "," + destination.longitude;
+        String mode = directionMode;
+        String parameters = str_origin + "&" + str_dest + "&" + mode;
+        String output = "json";
+
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters
+                + "&key=" + getString(R.string.google_api_key);
+        return url;
     }
 
     private void addPolylinesToMap(final DirectionsResult result){
@@ -494,6 +522,7 @@ public class MapActivity extends AppCompatActivity implements
 
             return;
         }
+        map.setMyLocationEnabled(true);
         mGoogleMap = map;
         checkIntent();
     }

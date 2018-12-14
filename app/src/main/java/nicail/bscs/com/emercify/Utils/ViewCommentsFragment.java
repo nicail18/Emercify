@@ -261,18 +261,15 @@ public class ViewCommentsFragment extends Fragment {
         getUserSettings();
         Log.d(TAG, "setupFireBaseAuth: " + mPhoto);
 
-        if(mPhoto.getComments() == null){
-            mComments.clear();
-            Comment firstComment = new Comment();
-            firstComment.setComment(mPhoto.getCaption());
-            firstComment.setUser_id(mPhoto.getUser_id());
-            firstComment.setDate_created(mPhoto.getDate_created());
-            mComments.add(firstComment);
-            mPhoto.setComments(mComments);
+        mComments.clear();
+        Comment firstComment = new Comment();
+        firstComment.setComment(mPhoto.getCaption());
+        firstComment.setUser_id(mPhoto.getUser_id());
+        firstComment.setDate_created(mPhoto.getDate_created());
+        mComments.add(firstComment);
+        mPhoto.setComments(mComments);
 
-            setupWidgets();
-
-        }
+        setupWidgets();
 
         myRef.child(getString(R.string.dbname_photos))
                 .child(mPhoto.getPhoto_id())
