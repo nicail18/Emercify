@@ -247,19 +247,9 @@ public class LikesActivity extends AppCompatActivity implements
 
         int incoming = 0;
 
-        Intent intent = getIntent();
-        if(intent.hasExtra("home")){
-            incoming = 0;
-        }else if(intent.hasExtra("search")){
-            incoming = 1;
-        }else  if(intent.hasExtra("circle")){
-            incoming = 2;
-        }else if(intent.hasExtra("android")){
-            incoming = 4;
-        }
-
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
         BottomNavigationViewHelper.enableNavigation(mContext, this, bottomNavigationViewEx, incoming);
+        BottomNavigationViewHelper.removeBadge(bottomNavigationViewEx,R.id.ic_alert);
         Menu menu = bottomNavigationViewEx.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);

@@ -1,5 +1,7 @@
 package nicail.bscs.com.emercify.Utils;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -10,9 +12,11 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.view.View;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import nicail.bscs.com.emercify.Home.HomeActivity;
 import nicail.bscs.com.emercify.Likes.LikesActivity;
@@ -52,5 +56,10 @@ public class FirebaseMessageService extends FirebaseMessagingService{
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         mNotificationManager.notify(1,notificationBuilder.build());
+        @SuppressLint("WrongThread") View rootView = ((Activity)getApplicationContext()).getWindow()
+                .getDecorView().findViewById(android.R.id.content);
+        @SuppressLint("WrongThread") BottomNavigationViewEx bottomNavigationViewEx =
+                (BottomNavigationViewEx)rootView.findViewById(R.id.bottomNavViewBar);
+        BottomNavigationViewHelper.showBadge(getApplicationContext(),bottomNavigationViewEx,R.id.ic_alert,"1");
     }
 }

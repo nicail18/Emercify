@@ -123,7 +123,12 @@ public class ViewPostFragment extends Fragment {
     private void init(){
         try{
             //mPhoto = getPhotoFromBundle();
-            UniversalImageLoader.setImage(getPhotoFromBundle().getImage_path(),mPostImage,null,"");
+            GlideApp
+                    .with(mContext)
+                    .load(getPhotoFromBundle().getImage_path())
+                    .placeholder(R.color.grey)
+                    .centerCrop()
+                    .into(mPostImage);
             mActivityNumber = getActivityNumFromBundle();
             String photo_id = getPhotoFromBundle().getPhoto_id();
 
