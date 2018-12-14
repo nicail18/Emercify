@@ -56,7 +56,7 @@ public class LikesActivity extends AppCompatActivity implements
     private static final int ACTIVITY_NUM = 3;
 
     private Context mContext = LikesActivity.this;
-    private ImageView ivMap,test,post,chooseloc;
+    private ImageView ivMap,test;
     private String token;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -82,7 +82,6 @@ public class LikesActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_notifs);
         ivMap = (ImageView) findViewById(R.id.ivMap);
         test = (ImageView) findViewById(R.id.testNotif);
-        chooseloc = (ImageView) findViewById(R.id.choose_loc);
         notifications = new ArrayList<>();
         notifsRecyclerView = findViewById(R.id.notif_listview);
         empty = findViewById(R.id.empty);

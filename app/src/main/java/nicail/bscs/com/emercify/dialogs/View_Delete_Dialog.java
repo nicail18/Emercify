@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.models.Photo;
 
@@ -46,6 +49,8 @@ public class View_Delete_Dialog extends DialogFragment {
 
         photo = getPhotoFromBundle();
 
+
+
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,14 +58,18 @@ public class View_Delete_Dialog extends DialogFragment {
                 getDialog().dismiss();
             }
         });
-
-        mDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mOnDeleteClickListener.onDeleteClickListener(photo,getPositionFromBundle());
-                getDialog().dismiss();
-            }
-        });
+        if(photo.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+            mDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnDeleteClickListener.onDeleteClickListener(photo,getPositionFromBundle());
+                    getDialog().dismiss();
+                }
+            });
+        }
+        else{
+            mDelete.setVisibility(View.GONE);
+        }
 
         return view;
     }
