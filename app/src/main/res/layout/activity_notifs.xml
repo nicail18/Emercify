@@ -18,10 +18,40 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+            <ProgressBar
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/progress_Barnotif"
+                android:indeterminateTint="@color/emercifycolor"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="10dp"/>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/no_internet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No internet connection"
+            android:layout_centerInParent="true"/>
+        <TextView
+            android:id="@+id/no_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Notifications available"
+            android:layout_centerInParent="true"/>
+
+        <RelativeLayout
+            android:id="@+id/rellayoutnotif"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/rellayout1"
             android:layout_marginBottom="50dp">
+
+
 
             <TextView
                 android:layout_width="wrap_content"

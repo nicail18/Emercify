@@ -11,8 +11,21 @@
         <include layout="@layout/snippet_top_gallerytoolbar" />
 
     </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+        <ProgressBar
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:indeterminateTint="@color/emercifycolor"
+            android:id="@+id/progressBar"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
     
     <LinearLayout
+        android:id="@+id/linlayout3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:weightSum="100"
@@ -43,11 +56,7 @@
                 android:background="@drawable/roundcorner"
                 android:src="@drawable/ic_hide_btn"/>
 
-            <ProgressBar
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:id="@+id/progressBar"
-                android:layout_centerInParent="true"/>
+
             
         </RelativeLayout>
         

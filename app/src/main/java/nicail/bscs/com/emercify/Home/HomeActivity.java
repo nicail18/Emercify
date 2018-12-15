@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.provider.Settings;
@@ -53,6 +54,7 @@ import nicail.bscs.com.emercify.Likes.MapActivity;
 import nicail.bscs.com.emercify.Login.LoginActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
+import nicail.bscs.com.emercify.Utils.CheckInternet;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.MainfeedListAdapter;
 import nicail.bscs.com.emercify.Utils.SectionsPagerAdapter;
@@ -97,6 +99,7 @@ public class HomeActivity extends AppCompatActivity implements
     private RelativeLayout mRelativeLayout;
     private boolean mLocationPermissionGranted = false;
     private double latitude, longitude;
+    private TextView nonet;
 
 
 
@@ -111,9 +114,48 @@ public class HomeActivity extends AppCompatActivity implements
         mViewPager = (RelativeLayout) findViewById(R.id.rellayout2);
         mFrameLayout = (FrameLayout) findViewById(R.id.home_container);
         mRelativeLayout = (RelativeLayout) findViewById(R.id.relLayoutParent);
+        nonet = (TextView) findViewById(R.id.no_net);
 
         pb.setVisibility(View.VISIBLE);
+        class Task extends AsyncTask<String, Integer, Boolean> {
+            @Override
+            protected void onPreExecute() {
+                pb.setVisibility(View.VISIBLE);
+                mViewPager.setVisibility(View.GONE);
+                nonet.setVisibility(View.GONE);
 
+                super.onPreExecute();
+            }
+            @Override
+            protected void onPostExecute(Boolean result) {
+                if (CheckInternet.isNetwork(HomeActivity.this)) {
+                    //internet is connected do something
+                    pb.setVisibility(View.GONE);
+                    //displaynotif();
+                    mViewPager.setVisibility(View.VISIBLE);
+                    //nopost.setVisibility(View.GONE);
+
+                }else{
+                    //do something, net is not connected
+                    pb.setVisibility(View.GONE);
+                    nonet.setVisibility(View.VISIBLE);
+                    //nopost.setVisibility(View.GONE);
+                }
+
+                super.onPostExecute(result);
+            }
+            @Override
+            protected Boolean doInBackground(String... params) {
+
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }
+        new Task().execute();
 
         setupFireBaseAuth();
         if (checkMapServices()) {
@@ -135,6 +177,7 @@ public class HomeActivity extends AppCompatActivity implements
         }
         return false;
     }
+
 
     private void buildAlertMessageNoGps() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);

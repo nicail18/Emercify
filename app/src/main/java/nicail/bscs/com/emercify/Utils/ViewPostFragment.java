@@ -15,6 +15,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -82,6 +84,8 @@ public class ViewPostFragment extends Fragment {
     private String mLikeString = "";
     private User mCurrentUser;
     private String token, likeMessage;
+    private RelativeLayout rellayout2;
+    private ProgressBar viewpost1;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -107,14 +111,41 @@ public class ViewPostFragment extends Fragment {
         mLikes = (TextView) view.findViewById(R.id.image_likes);
         mComment = (ImageView) view.findViewById(R.id.speech_bubble);
         mComments = (TextView) view.findViewById(R.id.image_comments_Link);
+        rellayout2 = (RelativeLayout) view.findViewById(R.id.rellayout2);
+        viewpost1 = (ProgressBar) view.findViewById(R.id.progress_Barviewpost);
 
         mHeart = new Heart(mHeartWhite,mHeartRed);
         mGestureDetector = new GestureDetector(getActivity(), new GestureListener());
-
+        new Task().execute();
         setupFireBaseAuth();
         setupBottomNavigationView();
 
         return view;
+    }
+
+    class Task extends AsyncTask<String, Integer, Boolean> {
+        @Override
+        protected void onPreExecute() {
+            viewpost1.setVisibility(View.VISIBLE);
+            rellayout2.setVisibility(View.GONE);
+            super.onPreExecute();
+        }
+        @Override
+        protected void onPostExecute(Boolean result) {
+            viewpost1.setVisibility(View.GONE);
+            rellayout2.setVisibility(View.VISIBLE);
+            super.onPostExecute(result);
+        }
+        @Override
+        protected Boolean doInBackground(String... params) {
+
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
     private void init(){

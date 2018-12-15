@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -165,6 +166,7 @@ public class GalleryFragment extends Fragment implements
     private double latitude, longitude;
     private FirebaseMethods firebaseMethods;
     private FusedLocationProviderClient mFusedLocationClient;
+    private LinearLayout linlayout3;
 
     private static final int MAP_LAYOUT_STATE_CONTRACTED = 0;
     private static final int MAP_LAYOUT_STATE_EXPANDED = 1;
@@ -204,6 +206,7 @@ public class GalleryFragment extends Fragment implements
         imageButton = (ImageButton) view.findViewById(R.id.hide_show_btn);
         directorySpinner = (Spinner) view.findViewById(R.id.spinnerDirectory);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+        linlayout3 = (LinearLayout) view.findViewById(R.id.linlayout3);
         directories = new ArrayList<>();
         Log.d(TAG, "onCreateView: started");
 

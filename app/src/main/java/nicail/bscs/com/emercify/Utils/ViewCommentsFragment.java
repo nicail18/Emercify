@@ -1,6 +1,7 @@
 package nicail.bscs.com.emercify.Utils;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -14,6 +15,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -59,6 +63,10 @@ public class ViewCommentsFragment extends Fragment {
     private ImageView mBackArrow, mCheckMark;
     private EditText mComment;
     private ListView mListView;
+    private RelativeLayout rellayout2;
+    private ProgressBar commentbar;
+    private CommentListAdapter commentListAdapter;
+    private TextView nocomment;
 
     private Photo mPhoto;
     private ArrayList<Comment> mComments;
@@ -74,9 +82,12 @@ public class ViewCommentsFragment extends Fragment {
         mCheckMark = (ImageView) view.findViewById(R.id.ivPostComment);
         mComment = (EditText) view.findViewById(R.id.comment);
         mListView = (ListView) view.findViewById(R.id.listView);
+        rellayout2 = (RelativeLayout) view.findViewById(R.id.rellayout2);
+        commentbar = (ProgressBar) view.findViewById(R.id.progress_Barcomment);
+        nocomment = (TextView) view.findViewById(R.id.no_comment);
         mComments = new ArrayList<>();
         mContext = getActivity();
-
+        new Task().execute();
         try{
             mPhoto = getPhotoFromBundle();
             Log.d(TAG, "onCreateView: " + mPhoto);
@@ -88,6 +99,45 @@ public class ViewCommentsFragment extends Fragment {
 
         return view;
     }
+
+    class Task extends AsyncTask<String, Integer, Boolean> {
+        @Override
+        protected void onPreExecute() {
+            commentbar.setVisibility(View.VISIBLE);
+            rellayout2.setVisibility(View.GONE);
+            nocomment.setVisibility(View.GONE);
+            super.onPreExecute();
+        }
+        @Override
+        protected void onPostExecute(Boolean result) {
+            displaynotif();
+            super.onPostExecute(result);
+        }
+        @Override
+        protected Boolean doInBackground(String... params) {
+
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    public void displaynotif(){
+        CommentListAdapter adapter = new CommentListAdapter(mContext,R.layout.layout_comment,mComments);
+        if(adapter.getCount()!=0){
+            mListView.setAdapter(adapter);
+            commentbar.setVisibility(View.GONE);
+            rellayout2.setVisibility(View.VISIBLE);
+        }else{
+            //Toast.makeText(LikesActivity.this, "No Notifications Available",Toast.LENGTH_SHORT).show();
+            commentbar.setVisibility(View.GONE);
+            nocomment.setVisibility(View.VISIBLE);
+        }
+    }
+
 
     private void setupWidgets(){
 
