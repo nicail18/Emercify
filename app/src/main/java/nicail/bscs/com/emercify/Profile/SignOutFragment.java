@@ -2,6 +2,7 @@ package nicail.bscs.com.emercify.Profile;
 
 
 import android.content.Intent;
+import android.content.pm.PackageInstaller;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,6 +15,16 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
+import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -31,6 +42,7 @@ public class SignOutFragment extends Fragment {
 
     private ProgressBar mProgressBar;
     private TextView tvSignout, tvSigningOut;
+    private GoogleSignInClient googleSignInClient;
 
     @Nullable
     @Override
@@ -42,8 +54,9 @@ public class SignOutFragment extends Fragment {
         firebaseMethods = new FirebaseMethods(getActivity());
         mProgressBar.setVisibility(View.GONE);
         tvSigningOut.setVisibility(View.GONE);
-
+        FacebookSdk.sdkInitialize(getActivity());
         setupFireBaseAuth();
+        Log.d(TAG, "onCreateView: " + mAuth.getCurrentUser().getUid());
 
         Button btnConfirmSignOut = (Button) view.findViewById(R.id.btnConfirmSignout);
         btnConfirmSignOut.setOnClickListener(new View.OnClickListener() {
@@ -54,11 +67,40 @@ public class SignOutFragment extends Fragment {
                 tvSigningOut.setVisibility(View.VISIBLE);
 
                 firebaseMethods.updateOnlineStatus(false);
+                signOut();
                 mAuth.signOut();
                 getActivity().finish();
             }
         });
         return view;
+    }
+
+    private void signOut(){
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        googleSignInClient = GoogleSignIn.getClient(getActivity(),gso);
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        if(accessToken != null && !accessToken.isExpired()){
+            new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/permissions/",
+                    null, HttpMethod.DELETE, new GraphRequest.Callback() {
+                @Override
+                public void onCompleted(GraphResponse response) {
+                    LoginManager.getInstance().logOut();
+                }
+            }).executeAsync();
+        }
+        else{
+            googleSignInClient.signOut().addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "onFailure: something went wrong");
+                }
+            });
+        }
+
     }
 
     private void setupFireBaseAuth(){
