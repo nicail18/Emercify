@@ -22,6 +22,15 @@
             android:layout_height="match_parent"
             android:layout_below="@+id/rellayout1"
             android:layout_marginBottom="50dp">
+
+            <ProgressBar
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/progress_Barmap"
+                android:indeterminateTint="@color/emercifycolor"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="10dp"/>
             
             <com.google.android.gms.maps.MapView
                 android:layout_width="match_parent"
