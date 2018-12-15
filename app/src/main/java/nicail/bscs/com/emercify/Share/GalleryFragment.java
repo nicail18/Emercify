@@ -34,6 +34,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
@@ -156,7 +157,7 @@ public class GalleryFragment extends Fragment implements
 
     private GridView gridView;
     private RelativeLayout layoutTop;
-    private ImageView galleryImage;
+    private PhotoView galleryImage;
     private ProgressBar mProgressBar;
     private Spinner directorySpinner;
     private ImageButton imageButton;
@@ -199,10 +200,10 @@ public class GalleryFragment extends Fragment implements
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_gallery,container,false);
+        final View view = inflater.inflate(R.layout.fragment_gallery,container,false);
         gridView = (GridView) view.findViewById(R.id.gridView);
         layoutTop = (RelativeLayout) view.findViewById(R.id.rellayouttop);
-        galleryImage = (ImageView) view.findViewById(R.id.galleryImageView);
+        galleryImage = (PhotoView) view.findViewById(R.id.galleryImageView);
         imageButton = (ImageButton) view.findViewById(R.id.hide_show_btn);
         directorySpinner = (Spinner) view.findViewById(R.id.spinnerDirectory);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
@@ -216,6 +217,7 @@ public class GalleryFragment extends Fragment implements
         shareClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                PhotoView photoView = view.findViewById(R.id.galleryImageView);
                 Log.d(TAG, "onClick: closing gallery fragment");
                 getActivity().finish();
 

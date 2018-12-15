@@ -44,6 +44,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -368,19 +369,7 @@ public class HomeActivity extends AppCompatActivity implements
 
         BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
-        BottomNavigationViewHelper.showBadge(this,bottomNavigationViewEx,R.id.ic_alert,"1");
         int incoming = 0;
-
-        Intent intent = getIntent();
-        if(intent.hasExtra("search")){
-            incoming = 1;
-        }else if(intent.hasExtra("circle")){
-            incoming = 2;
-        }else  if(intent.hasExtra("alert")){
-            incoming = 3;
-        }else if(intent.hasExtra("android"))
-            incoming = 4;
-
         BottomNavigationViewHelper.enableNavigation(mContext,this,bottomNavigationViewEx,incoming);
         Menu menu = bottomNavigationViewEx.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
@@ -435,6 +424,10 @@ public class HomeActivity extends AppCompatActivity implements
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
                     firebaseMethods.updateLocation(latitude,longitude);
+                    firebaseMethods.updateDevice_token(
+                            FirebaseInstanceId.getInstance().getToken());
+                    firebaseMethods.updateOnlineStatus(true);
+
                     Log.d(TAG, "onComplete: latitude: " + latitude + "\n" + "longitude" + longitude);
                 }
             }

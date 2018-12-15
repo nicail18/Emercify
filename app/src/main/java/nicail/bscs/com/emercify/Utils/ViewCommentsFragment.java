@@ -38,6 +38,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import nicail.bscs.com.emercify.Home.HomeActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.models.Comment;
@@ -67,6 +68,7 @@ public class ViewCommentsFragment extends Fragment {
     private ProgressBar commentbar;
     private CommentListAdapter commentListAdapter;
     private TextView nocomment;
+    private CircleImageView mCircleImageView;
 
     private Photo mPhoto;
     private ArrayList<Comment> mComments;
@@ -85,6 +87,7 @@ public class ViewCommentsFragment extends Fragment {
         rellayout2 = (RelativeLayout) view.findViewById(R.id.rellayout2);
         commentbar = (ProgressBar) view.findViewById(R.id.progress_Barcomment);
         nocomment = (TextView) view.findViewById(R.id.no_comment);
+        mCircleImageView = (CircleImageView) view.findViewById(R.id.comment_profile_image);
         mComments = new ArrayList<>();
         mContext = getActivity();
         new Task().execute();
@@ -143,6 +146,12 @@ public class ViewCommentsFragment extends Fragment {
 
         CommentListAdapter adapter = new CommentListAdapter(mContext,R.layout.layout_comment, mComments);
         mListView.setAdapter(adapter);
+//        GlideApp
+//                .with(mContext)
+//                .load(mPhoto)
+//                .placeholder(R.color.grey)
+//                .centerCrop()
+//                .into(mCircleImageView);
 
         mCheckMark.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -244,6 +253,8 @@ public class ViewCommentsFragment extends Fragment {
                     mPhoto.getCaption() + "\"";
             mFirebaseMethods.addNotification(user_id,from_id,type,message,mPhoto.getPhoto_id());
             new Notify(token,message).execute();
+
+
         }
     }
 
@@ -300,16 +311,15 @@ public class ViewCommentsFragment extends Fragment {
         getUserSettings();
         Log.d(TAG, "setupFireBaseAuth: " + mPhoto);
 
-        if(mPhoto.getComments() == null){
-            mComments.clear();
-            Comment firstComment = new Comment();
-            firstComment.setComment(mPhoto.getCaption());
-            firstComment.setUser_id(mPhoto.getUser_id());
-            firstComment.setDate_created(mPhoto.getDate_created());
-            mComments.add(firstComment);
-            mPhoto.setComments(mComments);
-            setupWidgets();
-        }
+        mComments.clear();
+        Comment firstComment = new Comment();
+        firstComment.setComment(mPhoto.getCaption());
+        firstComment.setUser_id(mPhoto.getUser_id());
+        firstComment.setDate_created(mPhoto.getDate_created());
+        mComments.add(firstComment);
+        mPhoto.setComments(mComments);
+
+        setupWidgets();
 
         myRef.child(getString(R.string.dbname_photos))
                 .child(mPhoto.getPhoto_id())

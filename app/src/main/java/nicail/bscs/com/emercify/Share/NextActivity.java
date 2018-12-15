@@ -2,7 +2,9 @@ package nicail.bscs.com.emercify.Share;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
@@ -25,11 +28,18 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.UniversalImageLoader;
+import nicail.bscs.com.emercify.models.User;
+import nicail.bscs.com.emercify.models.UserAccountSettings;
 
 public class NextActivity extends AppCompatActivity {
     private static final String TAG = "NextActivity";
@@ -56,7 +66,6 @@ public class NextActivity extends AppCompatActivity {
         mFirebaseMethods = new FirebaseMethods(NextActivity.this);
         mCaption = (EditText) findViewById(R.id.caption);
         select_location = (Button) findViewById(R.id.select_location);
-
         setupFireBaseAuth();
 
         ImageView backArrow = (ImageView) findViewById(R.id.ivBackArrow);
@@ -111,6 +120,8 @@ public class NextActivity extends AppCompatActivity {
         setImage();
     }
 
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1) {
@@ -131,8 +142,13 @@ public class NextActivity extends AppCompatActivity {
 
     private void setImage(){
         intent = getIntent();
-        ImageView image = (ImageView) findViewById(R.id.imageShare);
+        PhotoView image = (PhotoView) findViewById(R.id.imageShare);
         Bundle b = intent.getExtras();
+
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int height = width;
+
+        image.getLayoutParams().height = height;
 
         if(intent.hasExtra(getString(R.string.selected_image))){
             imgUrl = intent.getStringExtra(getString(R.string.selected_image));

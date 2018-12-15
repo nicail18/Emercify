@@ -33,6 +33,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.maps.GeoApiContext;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class LikesActivity extends AppCompatActivity implements
     private static final int ACTIVITY_NUM = 3;
 
     private Context mContext = LikesActivity.this;
-    private ImageView ivMap,test,post,chooseloc;
+    private ImageView ivMap,test;
     private String token;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -96,7 +97,6 @@ public class LikesActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_notifs);
         ivMap = (ImageView) findViewById(R.id.ivMap);
         test = (ImageView) findViewById(R.id.testNotif);
-        chooseloc = (ImageView) findViewById(R.id.choose_loc);
         pbnotif = (ProgressBar) findViewById(R.id.progress_Barnotif);
         notifications = new ArrayList<>();
         notifsRecyclerView = (RecyclerView) findViewById(R.id.notif_listview);
@@ -314,19 +314,9 @@ public class LikesActivity extends AppCompatActivity implements
 
         int incoming = 0;
 
-        Intent intent = getIntent();
-        if(intent.hasExtra("home")){
-            incoming = 0;
-        }else if(intent.hasExtra("search")){
-            incoming = 1;
-        }else  if(intent.hasExtra("circle")){
-            incoming = 2;
-        }else if(intent.hasExtra("android")){
-            incoming = 4;
-        }
-
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
         BottomNavigationViewHelper.enableNavigation(mContext, this, bottomNavigationViewEx, incoming);
+        BottomNavigationViewHelper.removeBadge(bottomNavigationViewEx,R.id.ic_alert);
         Menu menu = bottomNavigationViewEx.getMenu();
         MenuItem menuItem = menu.getItem(ACTIVITY_NUM);
         menuItem.setChecked(true);
@@ -467,6 +457,45 @@ public class LikesActivity extends AppCompatActivity implements
                             Log.d(TAG, "onDataChange: " + intent);
                             startActivity(intent);
                         }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+        else if(type.equals("emergency") || type.equals("report")){
+            Query query = myRef
+                    .child(getString(R.string.dbname_photos))
+                    .orderByChild("photo_id")
+                    .equalTo(activity_id);
+
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for(DataSnapshot ds: dataSnapshot.getChildren()){
+                        Photo photo = new Photo();
+                        Map<String, Object> objectMap = (HashMap<String,Object>) ds.getValue();
+                        Log.d(TAG, "onDataChange: " + objectMap.get("latitude"));
+                        photo.setAddress(objectMap.get("address").toString());
+                        photo.setLatitude((double) objectMap.get("latitude"));
+                        photo.setLongitude((double) objectMap.get("longitude"));
+                        photo.setCaption(objectMap.get("caption").toString());
+                        photo.setTags(objectMap.get("tags").toString());
+                        photo.setPhoto_id(objectMap.get("photo_id").toString());
+                        photo.setUser_id(objectMap.get("user_id").toString());
+                        photo.setDate_created(objectMap.get("date_created").toString());
+                        photo.setImage_path(objectMap.get("image_path").toString());
+
+                        Intent intent = new Intent(LikesActivity.this, MapActivity.class);
+                        intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
+                        intent.putExtra("INTENT PHOTO",photo);
+                        Log.d(TAG, "onDataChange: " + intent);
+                        startActivity(intent);
+
+                        Log.d(TAG, "onDataChange: " + photo.toString());
                     }
                 }
 

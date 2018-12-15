@@ -186,8 +186,8 @@ public class MainfeedRecyclerAdapter extends RecyclerView.Adapter<MainfeedRecycl
                     });
 
 
-                    holder.settings = singleSnapshot.getValue(UserAccountSettings.class);
-                    holder.comment.setOnClickListener(new View.OnClickListener() {
+                    ((ViewHolder)holder).settings = singleSnapshot.getValue(UserAccountSettings.class);
+                    ((ViewHolder)holder).comment.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             ((HomeActivity)mContext)
@@ -474,7 +474,7 @@ public class MainfeedRecyclerAdapter extends RecyclerView.Adapter<MainfeedRecycl
                 }
             });
         }
-        if(((ViewHolder)holder).mLikesString == ""){
+        if(likesString.equals("")){
             ((ViewHolder)holder).likes.setVisibility(View.GONE);
         }
         else{

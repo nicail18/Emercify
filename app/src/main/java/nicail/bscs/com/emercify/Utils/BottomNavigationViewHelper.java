@@ -31,7 +31,8 @@ public class BottomNavigationViewHelper {
         BottomNavigationItemView itemView = bottomNavigationView.findViewById(itemId);
         View badge = LayoutInflater.from(context).inflate(R.layout.notification_badge, bottomNavigationView, false);
 
-
+        TextView text = badge.findViewById(R.id.notifications_badge1);
+        text.setText(value);
         itemView.addView(badge);
     }
     public static void removeBadge(BottomNavigationView bottomNavigationView, @IdRes int itemId) {
@@ -63,26 +64,12 @@ public class BottomNavigationViewHelper {
                         intent1.putExtra("home", "home");
                         context.startActivity(intent1);
                         callingActivty.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-//                        if (incoming == 1) {
-//                            callingActivty.overridePendingTransition(R.anim.left_to_right, R.anim.left_to_right);
-//                        } else if (incoming == 3) {
-//                            callingActivty.overridePendingTransition(R.anim.left_to_right, R.anim.left_to_right);
-//                        }else if (incoming == 4) {
-//                            callingActivty.overridePendingTransition(R.anim.left_to_right, R.anim.left_to_right);
-//                        }
                         break;
                     case R.id.ic_search:
                         Intent intent2 = new Intent(context, SearchActivity.class);
                         intent2.putExtra("search", "search");
                         context.startActivity(intent2);
                         callingActivty.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-//                        if (incoming == 0) {
-//                            callingActivty.overridePendingTransition(R.anim.right_to_left, R.anim.right_to_left);
-//                        } else if (incoming == 3) {
-//                            callingActivty.overridePendingTransition(R.anim.left_to_right, R.anim.left_to_right);
-//                        }else if (incoming == 4) {
-//                            callingActivty.overridePendingTransition(R.anim.left_to_right, R.anim.left_to_right);
-//                        }
                         break;
                     case R.id.ic_circle:
                         Intent intent3 = new Intent(context, ShareActivity.class);
@@ -95,26 +82,12 @@ public class BottomNavigationViewHelper {
                         intent4.putExtra("alert", "alert");
                         context.startActivity(intent4);
                         callingActivty.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-//                        if (incoming == 4) {
-//                            callingActivty.overridePendingTransition(R.anim.left_to_right, R.anim.left_to_right);
-//                        } else if (incoming == 1) {
-//                            callingActivty.overridePendingTransition(R.anim.right_to_left, R.anim.right_to_left);
-//                        } else if (incoming == 0) {
-//                            callingActivty.overridePendingTransition(R.anim.right_to_left, R.anim.right_to_left);
-//                        }
                         break;
                     case R.id.ic_android:
                         Intent intent5 = new Intent(context, ProfileActivity.class);
                         intent5.putExtra("android", "android");
                         context.startActivity(intent5);
                         callingActivty.overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-//                        if (incoming == 3) {
-//                            callingActivty.overridePendingTransition(R.anim.right_to_left, R.anim.right_to_left);
-//                        } else if (incoming == 1) {
-//                            callingActivty.overridePendingTransition(R.anim.right_to_left, R.anim.right_to_left);
-//                        }else if (incoming == 0) {
-//                            callingActivty.overridePendingTransition(R.anim.right_to_left, R.anim.right_to_left);
-//                        }
                         break;
                 }
                 return false;
