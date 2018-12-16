@@ -163,8 +163,9 @@
                     android:layout_centerVertical="true"
                     android:layout_marginStart="40dp"
                     android:background="@null"
-                    android:inputType="textNoSuggestions"
-                    android:hint="Email"/>
+                    android:inputType="none"
+                    android:hint="Email"
+                    android:editable="false"/>
             </RelativeLayout>
 
             <RelativeLayout
@@ -188,7 +189,8 @@
                     android:layout_marginStart="40dp"
                     android:background="@null"
                     android:inputType="textNoSuggestions"
-                    android:hint="phoneNumber"/>
+                    android:hint="phoneNumber"
+                    />
             </RelativeLayout>
             
         </RelativeLayout>

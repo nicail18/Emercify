@@ -29,6 +29,27 @@
 
         </RelativeLayout>
 
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+            <ProgressBar
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:id="@+id/progress_Bar1"
+                android:indeterminateTint="@color/emercifycolor"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="10dp"/>
+            <TextView
+                android:id="@+id/no_net"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:text="No internet Connection"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+
         <!-- Middle Body -->
         <RelativeLayout
             android:layout_width="match_parent"
@@ -37,13 +58,7 @@
             android:layout_below="@+id/rellayout1"
             android:layout_marginBottom="50dp">
 
-            <ProgressBar
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:id="@+id/progress_Bar1"
-                android:indeterminateTint="@android:color/darker_gray"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"/>
+
             <!--include layout="@layout/layout_center_viewpager" />
             -->
         </RelativeLayout>

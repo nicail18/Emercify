@@ -45,5 +45,9 @@
     <string name="bundle_user_account_settings">bundle_user_account_settings</string>
     <string name="title_activity_layout_messages_chatitem_r">layout_messages_chatitem_r</string>
 
+    <string name="facebook_app_id">611127985996888</string>
+    <string name="fb_login_protocol_scheme">fb611127985996888</string>
+
+
 
 </resources>

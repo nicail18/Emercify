@@ -1,8 +1,12 @@
 package nicail.bscs.com.emercify.Likes;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -12,10 +16,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,12 +40,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import nicail.bscs.com.emercify.Home.HomeActivity;
 import nicail.bscs.com.emercify.Profile.ProfileActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
+import nicail.bscs.com.emercify.Utils.CheckInternet;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.MainfeedRecyclerAdapter;
 import nicail.bscs.com.emercify.Utils.NotifRecyclerAdapter;
@@ -71,8 +83,11 @@ public class LikesActivity extends AppCompatActivity implements
     private LinearLayoutManager manager;
     private int mResults,currentItems,totalItems,scrollOutItems;
     private Boolean isScrolling = false;
-    private ProgressBar progressBar;
+    private ProgressBar progressBar,pbnotif;
     private TextView empty;
+    private RelativeLayout rellayoutnotif;
+    private RecyclerView notiflistview;
+    private TextView nointernet, nonotification;
 
     RecyclerView notifsRecyclerView;
 
@@ -82,15 +97,19 @@ public class LikesActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_notifs);
         ivMap = (ImageView) findViewById(R.id.ivMap);
         test = (ImageView) findViewById(R.id.testNotif);
+        pbnotif = (ProgressBar) findViewById(R.id.progress_Barnotif);
         notifications = new ArrayList<>();
-        notifsRecyclerView = findViewById(R.id.notif_listview);
+        notifsRecyclerView = (RecyclerView) findViewById(R.id.notif_listview);
         empty = findViewById(R.id.empty);
-
+        nointernet = findViewById(R.id.no_internet);
+        nonotification = findViewById(R.id.no_notification);
+        pbnotif.setVisibility(View.VISIBLE);
         mFirebaseMethods = new FirebaseMethods(this);
+        rellayoutnotif = (RelativeLayout) findViewById(R.id.rellayoutnotif);
 
         Log.d(TAG, "onCreate: starting.");
 
-
+        new Task().execute();
         setupFireBaseAuth();
         setupBottomNavigationView();
         ivMap.setOnClickListener(new View.OnClickListener() {
@@ -111,8 +130,56 @@ public class LikesActivity extends AppCompatActivity implements
         });
 
         getNotifications();
+
+    }
+    class Task extends AsyncTask<String, Integer, Boolean> {
+        @Override
+        protected void onPreExecute() {
+            pbnotif.setVisibility(View.VISIBLE);
+            rellayoutnotif.setVisibility(View.GONE);
+            nointernet.setVisibility(View.GONE);
+            nonotification.setVisibility(View.GONE);
+            super.onPreExecute();
+        }
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (CheckInternet.isNetwork(LikesActivity.this)) {
+                //internet is connected do something
+                pbnotif.setVisibility(View.GONE);
+                displaynotif();
+                //rellayoutnotif.setVisibility(View.VISIBLE);
+                //nonotification.setVisibility(View.GONE);
+
+            }else{
+                //do something, net is not connected
+                pbnotif.setVisibility(View.GONE);
+                nointernet.setVisibility(View.VISIBLE);
+                nonotification.setVisibility(View.GONE);
+            }
+
+            super.onPostExecute(result);
+        }
+        @Override
+        protected Boolean doInBackground(String... params) {
+
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
+    public void displaynotif(){
+        if(notifRecyclerAdapter.getItemCount()!=0){
+            notifsRecyclerView.setAdapter(notifRecyclerAdapter);
+            rellayoutnotif.setVisibility(View.VISIBLE);
+        }else{
+            //Toast.makeText(LikesActivity.this, "No Notifications Available",Toast.LENGTH_SHORT).show();
+            nonotification.setVisibility(View.VISIBLE);
+        }
+    }
 
     public void getNotifications(){
         Log.d(TAG, "getNotifications: getting notifications");
