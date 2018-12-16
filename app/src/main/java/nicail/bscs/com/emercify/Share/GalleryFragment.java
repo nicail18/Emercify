@@ -59,10 +59,12 @@ import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.FilePaths;
 import nicail.bscs.com.emercify.Utils.FileSearch;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
+import nicail.bscs.com.emercify.Utils.GlideApp;
 import nicail.bscs.com.emercify.Utils.GridImageAdapter;
 import nicail.bscs.com.emercify.Utils.ViewWeightAnimationWrapper;
 import nicail.bscs.com.emercify.dialogs.Dialog_Choose;
 import nicail.bscs.com.emercify.dialogs.KindPost;
+import nicail.bscs.com.emercify.models.UserAccountSettings;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -540,6 +542,7 @@ public class GalleryFragment extends Fragment implements
                 mProgressBar.setVisibility(View.GONE);
             }
         });
+
     }
 
     private void expandMapAnimation(){
