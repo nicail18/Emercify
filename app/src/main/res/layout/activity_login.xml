@@ -64,19 +64,20 @@
                 <!--android:padding="12dp"-->
                 <!--android:background="@drawable/white_rounded_button"/>-->
 
-            <!--<TextView-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginBottom="25dp"-->
-                <!--android:text="No Accoun Yet? Create One"-->
-                <!--android:gravity="center"-->
-                <!--android:textSize="16dp"-->
-                <!--android:id="@+id/link_signup"-->
-                <!--android:textColor="@color/link_blue"/>-->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="25dp"
+                android:text="Sign in via"
+                android:gravity="center"
+                android:textSize="16dp"
+                android:id="@+id/link_signin"
+                android:textColor="@color/black"/>
 
             <com.google.android.gms.common.SignInButton
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_vertical"
                 android:id="@+id/googe_signin">
 
             </com.google.android.gms.common.SignInButton>
@@ -86,8 +87,8 @@
                 android:layout_height="wrap_content"
                 android:text="OR"
                 android:layout_gravity="center"
-                android:layout_marginTop="25dp"
-                android:layout_marginBottom="25dp"/>
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"/>
 
             <com.facebook.login.widget.LoginButton
                 android:layout_width="match_parent"
