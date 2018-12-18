@@ -9,7 +9,7 @@
         <bitmap
             android:gravity="center"
             android:scaleType="centerCrop"
-            android:src="@mipmap/ic_emercify"/>
+            android:src="@mipmap/ic_splashscreen2"/>
         />
     </item>
 
