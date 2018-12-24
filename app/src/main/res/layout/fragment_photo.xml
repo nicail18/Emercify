@@ -15,4 +15,12 @@
         android:background="@drawable/white_rounded_button"
         android:id="@+id/btnLaunchCamera"/>
 
+    <TextView
+        android:id="@+id/nonetcon1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        android:text="No Internet Connection"
+        android:layout_centerInParent="true"/>
+
 </RelativeLayout>

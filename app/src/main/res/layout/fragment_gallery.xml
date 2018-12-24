@@ -16,6 +16,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true">
+        <TextView
+            android:id="@+id/nonetcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="No Internet Connection"
+            android:textSize="15sp"/>
         <ProgressBar
             android:layout_width="50dp"
             android:layout_height="50dp"

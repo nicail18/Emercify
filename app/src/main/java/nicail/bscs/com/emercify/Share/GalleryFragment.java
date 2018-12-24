@@ -2,6 +2,7 @@ package nicail.bscs.com.emercify.Share;
 
 import android.Manifest;
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -9,6 +10,9 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.media.ExifInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -55,8 +59,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import nicail.bscs.com.emercify.Likes.LikesActivity;
 import nicail.bscs.com.emercify.Profile.AccountSettingsActivity;
 import nicail.bscs.com.emercify.R;
+import nicail.bscs.com.emercify.Utils.CheckInternet;
 import nicail.bscs.com.emercify.Utils.FilePaths;
 import nicail.bscs.com.emercify.Utils.FileSearch;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
@@ -170,12 +176,12 @@ public class GalleryFragment extends Fragment implements
     private FirebaseMethods firebaseMethods;
     private FusedLocationProviderClient mFusedLocationClient;
     private LinearLayout linlayout3;
-
+    private RelativeLayout rellayout1;
     private static final int MAP_LAYOUT_STATE_CONTRACTED = 0;
     private static final int MAP_LAYOUT_STATE_EXPANDED = 1;
     private int mMapLayoutState = 0;
     private String image,type;
-
+    private TextView nonetcon;
 
     @Override
     public void onCurrentLocationClickLsitener(String type,String image) {
@@ -210,9 +216,49 @@ public class GalleryFragment extends Fragment implements
         directorySpinner = (Spinner) view.findViewById(R.id.spinnerDirectory);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         linlayout3 = (LinearLayout) view.findViewById(R.id.linlayout3);
+        nonetcon = (TextView) view.findViewById(R.id.nonetcon);
+        rellayout1 = (RelativeLayout) view.findViewById(R.id.rellayout1);
         directories = new ArrayList<>();
         Log.d(TAG, "onCreateView: started");
 
+        class Task extends AsyncTask<String, Integer, Boolean> {
+            @Override
+            protected void onPreExecute() {
+                mProgressBar.setVisibility(View.VISIBLE);
+                linlayout3.setVisibility(View.GONE);
+                nonetcon.setVisibility(View.GONE);
+                //nonotification.setVisibility(View.GONE);
+                super.onPreExecute();
+            }
+            @Override
+            protected void onPostExecute(Boolean result) {
+                ConnectivityManager connMgr = (ConnectivityManager) getActivity()
+                        .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+                if (networkInfo != null && networkInfo.isConnected()) {
+                    mProgressBar.setVisibility(View.GONE);
+                    linlayout3.setVisibility(View.VISIBLE);
+                } else {
+                    mProgressBar.setVisibility(View.GONE);
+                    nonetcon.setVisibility(View.VISIBLE);
+                    rellayout1.setVisibility(View.GONE);
+                }
+                super.onPostExecute(result);
+            }
+            @Override
+            protected Boolean doInBackground(String... params) {
+
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }
+        new Task().execute();
         firebaseMethods = new FirebaseMethods(getActivity());
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         ImageView shareClose = (ImageView) view.findViewById(R.id.ivCloseShare);

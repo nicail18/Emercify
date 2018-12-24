@@ -48,6 +48,13 @@
                 android:textSize="15sp"
                 android:text="No internet Connection"
                 android:layout_centerInParent="true"/>
+            <TextView
+                android:id="@+id/no_postavail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:text="No posts Available"
+                android:layout_centerInParent="true"/>
         </RelativeLayout>
 
         <!-- Middle Body -->
