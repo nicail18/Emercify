@@ -11,7 +11,10 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.ExifInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -26,8 +29,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
+
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -50,7 +56,7 @@ public class PhotoFragment extends Fragment implements
     private double latitude, longitude;
     private String mImageAddress;
     private Bitmap mBitmap;
-
+    private TextView nonetcon1;
     @Override
     public void onNormalClickListener(String image, Bitmap bitmap, double latitude,
                                       double longitude, String mImageAddress) {
@@ -85,7 +91,43 @@ public class PhotoFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_photo, container, false);
         Log.d(TAG, "onCreateView: started  ");
 
-        Button btnLaunchCamera = (Button) view.findViewById(R.id.btnLaunchCamera);
+        final Button btnLaunchCamera = (Button) view.findViewById(R.id.btnLaunchCamera);
+        nonetcon1 = (TextView) view.findViewById(R.id.nonetcon1);
+        class Task extends AsyncTask<String, Integer, Boolean> {
+            @Override
+            protected void onPreExecute() {
+                btnLaunchCamera.setVisibility(View.GONE);
+                nonetcon1.setVisibility(View.GONE);
+                super.onPreExecute();
+            }
+            @Override
+            protected void onPostExecute(Boolean result) {
+                ConnectivityManager connMgr = (ConnectivityManager) getActivity()
+                        .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+                if (networkInfo != null && networkInfo.isConnected()) {
+                    btnLaunchCamera.setVisibility(View.VISIBLE);
+                    nonetcon1.setVisibility(View.GONE);
+                } else {
+                    nonetcon1.setVisibility(View.VISIBLE);
+                    btnLaunchCamera.setVisibility(View.GONE);
+                }
+                super.onPostExecute(result);
+            }
+            @Override
+            protected Boolean doInBackground(String... params) {
+
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }
+        new Task().execute();
         btnLaunchCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,6 +157,7 @@ public class PhotoFragment extends Fragment implements
             return false;
         }
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -88,7 +89,7 @@ public class ProfileFragment extends Fragment {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
     private FirebaseMethods mFirebaseMethods;
-    private RelativeLayout topLayout;
+    private RelativeLayout topLayout,rellayout2;
 
     private static final int MAP_LAYOUT_STATE_CONTRACTED = 0;
     private static final int MAP_LAYOUT_STATE_EXPANDED = 1;
@@ -112,6 +113,7 @@ public class ProfileFragment extends Fragment {
         toolbar =  (Toolbar) view.findViewById(R.id.profileToolBar);
         profileMenu = (ImageView) view.findViewById(R.id.profileMenu);
         bottomNavigationView = (BottomNavigationViewEx) view.findViewById(R.id.bottomNavViewBar);
+        rellayout2 = (RelativeLayout) view.findViewById(R.id.rellayout2);
         mContext = getActivity();
         mFirebaseMethods = new FirebaseMethods(mContext);
         scrollView = (ScrollView) view.findViewById(R.id.scrolllayout);
@@ -124,7 +126,33 @@ public class ProfileFragment extends Fragment {
         mFollowers.setVisibility(View.GONE);
         mFollowing.setVisibility(View.GONE);
         mPosts.setVisibility(View.GONE);
+        class Task extends AsyncTask<String, Integer, Boolean> {
+            @Override
+            protected void onPreExecute() {
+                mProgressBar.setVisibility(View.VISIBLE);
+                rellayout2.setVisibility(View.GONE);
+                //nointernet.setVisibility(View.GONE);
+                //nonotification.setVisibility(View.GONE);
+                super.onPreExecute();
+            }
+            @Override
+            protected void onPostExecute(Boolean result) {
+                mProgressBar.setVisibility(View.GONE);
+                rellayout2.setVisibility(View.VISIBLE);
+                super.onPostExecute(result);
+            }
+            @Override
+            protected Boolean doInBackground(String... params) {
 
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }
+        new Task().execute();
 
         Log.d(TAG, "onCreateView: started");
 

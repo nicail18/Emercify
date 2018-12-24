@@ -22,16 +22,22 @@
 
         <include layout="@layout/layout_center_profile" />
 
+
+
+        <include layout="@layout/layout_bottom_navigation_view"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
         <ProgressBar
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:indeterminateTint="@color/emercifycolor"
             android:id="@+id/profileProgressBar"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="100dp"/>
-
-        <include layout="@layout/layout_bottom_navigation_view"/>
-
+            android:layout_centerHorizontal="true" />
     </RelativeLayout>
 
 </RelativeLayout>

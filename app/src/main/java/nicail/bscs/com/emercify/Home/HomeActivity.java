@@ -24,6 +24,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -58,6 +59,7 @@ import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
 import nicail.bscs.com.emercify.Utils.CheckInternet;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.MainfeedListAdapter;
+import nicail.bscs.com.emercify.Utils.MainfeedRecyclerAdapter;
 import nicail.bscs.com.emercify.Utils.SectionsPagerAdapter;
 import nicail.bscs.com.emercify.Utils.UniversalImageLoader;
 import nicail.bscs.com.emercify.Utils.ViewCommentsFragment;
@@ -101,6 +103,9 @@ public class HomeActivity extends AppCompatActivity implements
     private boolean mLocationPermissionGranted = false;
     private double latitude, longitude;
     private TextView nonet;
+    private TextView noposts;
+    private MainfeedRecyclerAdapter mainfeedRecyclerAdapter;
+    RecyclerView recyclerView;
 
 
 
@@ -116,7 +121,8 @@ public class HomeActivity extends AppCompatActivity implements
         mFrameLayout = (FrameLayout) findViewById(R.id.home_container);
         mRelativeLayout = (RelativeLayout) findViewById(R.id.relLayoutParent);
         nonet = (TextView) findViewById(R.id.no_net);
-
+        noposts = (TextView) findViewById(R.id.no_postavail);
+        recyclerView = (RecyclerView) findViewById(R.id.listViewhome);
         pb.setVisibility(View.VISIBLE);
         class Task extends AsyncTask<String, Integer, Boolean> {
             @Override
@@ -124,7 +130,7 @@ public class HomeActivity extends AppCompatActivity implements
                 pb.setVisibility(View.VISIBLE);
                 mViewPager.setVisibility(View.GONE);
                 nonet.setVisibility(View.GONE);
-
+                noposts.setVisibility(View.GONE);
                 super.onPreExecute();
             }
             @Override
@@ -132,7 +138,8 @@ public class HomeActivity extends AppCompatActivity implements
                 if (CheckInternet.isNetwork(HomeActivity.this)) {
                     //internet is connected do something
                     pb.setVisibility(View.GONE);
-                    //displaynotif();
+                    //displayfeed();
+                    getItemCount();
                     mViewPager.setVisibility(View.VISIBLE);
                     //nopost.setVisibility(View.GONE);
 
@@ -140,7 +147,7 @@ public class HomeActivity extends AppCompatActivity implements
                     //do something, net is not connected
                     pb.setVisibility(View.GONE);
                     nonet.setVisibility(View.VISIBLE);
-                    //nopost.setVisibility(View.GONE);
+                    noposts.setVisibility(View.GONE);
                 }
 
                 super.onPostExecute(result);
@@ -178,6 +185,15 @@ public class HomeActivity extends AppCompatActivity implements
         }
         return false;
     }
+    public int getItemCount() {
+        if (recyclerView == null) {
+            noposts.setVisibility(View.VISIBLE);
+            return 0;
+        }else
+            noposts.setVisibility(View.GONE);
+        return  recyclerView.getChildCount();
+    }
+
 
 
     private void buildAlertMessageNoGps() {
@@ -282,6 +298,7 @@ public class HomeActivity extends AppCompatActivity implements
         }
 
     }
+
 
     public void OnCommentThreadSelected(Photo photo,String callingActivity){
         Log.d(TAG, "OnCommentThreadSelected: selected a comment thread");
