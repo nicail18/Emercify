@@ -96,7 +96,7 @@ public class LikesActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifs);
         ivMap = (ImageView) findViewById(R.id.ivMap);
-        test = (ImageView) findViewById(R.id.testNotif);
+//        test = (ImageView) findViewById(R.id.testNotif);
         pbnotif = (ProgressBar) findViewById(R.id.progress_Barnotif);
         notifications = new ArrayList<>();
         notifsRecyclerView = (RecyclerView) findViewById(R.id.notif_listview);
@@ -121,14 +121,14 @@ public class LikesActivity extends AppCompatActivity implements
                 startActivity(intent);
             }
         });
-        test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                token = userSettings.getSettings().getDevice_token();
-                Log.d(TAG, "onClick: " + token);
-                new Notify(token,"Hello").execute();
-            }
-        });
+//        test.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                token = userSettings.getSettings().getDevice_token();
+//                Log.d(TAG, "onClick: " + token);
+//                new Notify(token,"Hello").execute();
+//            }
+//        });
 
         getNotifications();
 

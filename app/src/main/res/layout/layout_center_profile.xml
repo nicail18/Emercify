@@ -78,7 +78,8 @@
                             android:id="@+id/display_name"
                             android:textColor="@color/black"
                             android:textStyle="bold"
-                            android:textSize="16sp"/>
+                            android:textSize="16sp"
+                            android:fontFamily="sans-serif-condensed"/>
 
                         <TextView
                             android:layout_width="match_parent"

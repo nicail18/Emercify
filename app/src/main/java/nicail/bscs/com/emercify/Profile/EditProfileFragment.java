@@ -3,6 +3,7 @@ package nicail.bscs.com.emercify.Profile;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -99,6 +101,7 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
     private EditText mDisplayName, mUsername, mWebsite, mDescription, mEmail, mPhoneNumber;
     private TextView mChangeProfilePhoto;
     private UserSettings mUserSettings;
+    private Context mContext;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -122,6 +125,7 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
         mPhoneNumber = (EditText) view.findViewById(R.id.phoneNumber);
         mFirebaseMethods = new FirebaseMethods(getActivity());
         mChangeProfilePhoto = (TextView) view.findViewById(R.id.changeProfilePhoto);
+        mContext = getActivity();
 
         //setProfileImage();
         setupFireBaseAuth();
@@ -132,6 +136,7 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: navigating back to ProfileActivity");
+                v.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.image_click));
                 getActivity().finish();
             }
         });
@@ -141,6 +146,7 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: attempting to save changes");
+                v.startAnimation(AnimationUtils.loadAnimation(mContext, R.anim.bounce ));
                 saveProfileSettings();
             }
         });
