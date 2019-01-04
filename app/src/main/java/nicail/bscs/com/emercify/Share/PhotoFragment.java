@@ -29,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -57,6 +58,7 @@ public class PhotoFragment extends Fragment implements
     private String mImageAddress;
     private Bitmap mBitmap;
     private TextView nonetcon1;
+    private ImageView nonetconimage1;
     @Override
     public void onNormalClickListener(String image, Bitmap bitmap, double latitude,
                                       double longitude, String mImageAddress) {
@@ -93,11 +95,13 @@ public class PhotoFragment extends Fragment implements
 
         final Button btnLaunchCamera = (Button) view.findViewById(R.id.btnLaunchCamera);
         nonetcon1 = (TextView) view.findViewById(R.id.nonetcon1);
+        nonetconimage1 = (ImageView) view.findViewById(R.id.nonetconimage1);
         class Task extends AsyncTask<String, Integer, Boolean> {
             @Override
             protected void onPreExecute() {
                 btnLaunchCamera.setVisibility(View.GONE);
                 nonetcon1.setVisibility(View.GONE);
+                nonetconimage1.setVisibility(View.GONE);
                 super.onPreExecute();
             }
             @Override
@@ -110,8 +114,10 @@ public class PhotoFragment extends Fragment implements
                 if (networkInfo != null && networkInfo.isConnected()) {
                     btnLaunchCamera.setVisibility(View.VISIBLE);
                     nonetcon1.setVisibility(View.GONE);
+                    nonetconimage1.setVisibility(View.GONE);
                 } else {
                     nonetcon1.setVisibility(View.VISIBLE);
+                    nonetconimage1.setVisibility(View.VISIBLE);
                     btnLaunchCamera.setVisibility(View.GONE);
                 }
                 super.onPostExecute(result);

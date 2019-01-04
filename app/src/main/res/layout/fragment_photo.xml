@@ -15,6 +15,15 @@
         android:background="@drawable/white_rounded_button"
         android:id="@+id/btnLaunchCamera"/>
 
+    <ImageView
+        android:id="@+id/nonetconimage1"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_above="@+id/nonetcon1"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/ic_no_wifi"
+        android:backgroundTint="@color/black"/>
+
     <TextView
         android:id="@+id/nonetcon1"
         android:layout_width="wrap_content"

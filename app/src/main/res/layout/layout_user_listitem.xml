@@ -29,6 +29,8 @@
                 android:layout_marginLeft="10dp"
                 android:textSize="22sp"
                 android:textColor="@color/black"
+                android:text="Raymart Gutierrez"
+                android:fontFamily="sans-serif"
                 android:id="@+id/username"/>
 
             <TextView
@@ -38,6 +40,8 @@
                 android:textSize="15sp"
                 android:layout_centerVertical="true"
                 android:textColor="@color/grey"
+                android:text="raymartg23@gmail.com"
+                android:fontFamily="sans-serif"
                 android:id="@+id/email"
                 android:layout_below="@+id/username"/>
 

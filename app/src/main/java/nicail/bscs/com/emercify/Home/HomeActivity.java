@@ -31,6 +31,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -93,7 +94,7 @@ public class HomeActivity extends AppCompatActivity implements
     private Context mContext = HomeActivity.this;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-
+    private ImageView nonetimage;
     private FirebaseMethods firebaseMethods;
     private RelativeLayout mViewPager;
     private FrameLayout mFrameLayout;
@@ -104,6 +105,7 @@ public class HomeActivity extends AppCompatActivity implements
     private double latitude, longitude;
     private TextView nonet;
     private TextView noposts;
+    private ImageView nopostimage;
     private MainfeedRecyclerAdapter mainfeedRecyclerAdapter;
     RecyclerView recyclerView;
 
@@ -123,6 +125,8 @@ public class HomeActivity extends AppCompatActivity implements
         nonet = (TextView) findViewById(R.id.no_net);
         noposts = (TextView) findViewById(R.id.no_postavail);
         recyclerView = (RecyclerView) findViewById(R.id.listViewhome);
+        nonetimage = (ImageView) findViewById(R.id.no_netimage);
+        nopostimage = (ImageView) findViewById(R.id.nopost_image);
         pb.setVisibility(View.VISIBLE);
         class Task extends AsyncTask<String, Integer, Boolean> {
             @Override
@@ -131,6 +135,8 @@ public class HomeActivity extends AppCompatActivity implements
                 mViewPager.setVisibility(View.GONE);
                 nonet.setVisibility(View.GONE);
                 noposts.setVisibility(View.GONE);
+                nonetimage.setVisibility(View.GONE);
+                nopostimage.setVisibility(View.GONE);
                 super.onPreExecute();
             }
             @Override
@@ -147,6 +153,7 @@ public class HomeActivity extends AppCompatActivity implements
                     //do something, net is not connected
                     pb.setVisibility(View.GONE);
                     nonet.setVisibility(View.VISIBLE);
+                    nonetimage.setVisibility(View.VISIBLE);
                     noposts.setVisibility(View.GONE);
                 }
 
@@ -188,9 +195,11 @@ public class HomeActivity extends AppCompatActivity implements
     public int getItemCount() {
         if (recyclerView == null) {
             noposts.setVisibility(View.VISIBLE);
+            nopostimage.setVisibility(View.VISIBLE);
             return 0;
         }else
             noposts.setVisibility(View.GONE);
+            nopostimage.setVisibility(View.GONE);
         return  recyclerView.getChildCount();
     }
 
