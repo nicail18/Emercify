@@ -30,7 +30,22 @@
                 android:layout_centerVertical="true"
                 android:layout_marginTop="10dp"/>
         </RelativeLayout>
-
+        <ImageView
+            android:id="@+id/nonotif_image"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_above="@+id/no_notification"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/ic_no_notification"
+            android:backgroundTint="@color/black"/>
+        <ImageView
+            android:id="@+id/nowifi_image"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_above="@+id/no_internet"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/ic_no_wifi"
+            android:backgroundTint="@color/black"/>
         <TextView
             android:id="@+id/no_internet"
             android:layout_width="wrap_content"

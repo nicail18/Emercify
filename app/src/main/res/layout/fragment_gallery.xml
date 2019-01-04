@@ -14,7 +14,7 @@
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="135dp"
         android:layout_centerInParent="true">
         <TextView
             android:id="@+id/nonetcon"
@@ -23,6 +23,14 @@
             android:layout_centerInParent="true"
             android:text="No Internet Connection"
             android:textSize="15sp"/>
+        <ImageView
+            android:id="@+id/nonetconimage"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_above="@+id/nonetcon"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/ic_no_wifi"
+            android:backgroundTint="@color/black"/>
         <ProgressBar
             android:layout_width="50dp"
             android:layout_height="50dp"

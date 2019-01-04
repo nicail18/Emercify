@@ -182,6 +182,7 @@ public class GalleryFragment extends Fragment implements
     private int mMapLayoutState = 0;
     private String image,type;
     private TextView nonetcon;
+    private ImageView nonetconimage;
 
     @Override
     public void onCurrentLocationClickLsitener(String type,String image) {
@@ -218,6 +219,7 @@ public class GalleryFragment extends Fragment implements
         linlayout3 = (LinearLayout) view.findViewById(R.id.linlayout3);
         nonetcon = (TextView) view.findViewById(R.id.nonetcon);
         rellayout1 = (RelativeLayout) view.findViewById(R.id.rellayout1);
+        nonetconimage = (ImageView) view.findViewById(R.id.nonetconimage);
         directories = new ArrayList<>();
         Log.d(TAG, "onCreateView: started");
 
@@ -227,6 +229,7 @@ public class GalleryFragment extends Fragment implements
                 mProgressBar.setVisibility(View.VISIBLE);
                 linlayout3.setVisibility(View.GONE);
                 nonetcon.setVisibility(View.GONE);
+                nonetconimage.setVisibility(View.GONE);
                 //nonotification.setVisibility(View.GONE);
                 super.onPreExecute();
             }
@@ -243,6 +246,7 @@ public class GalleryFragment extends Fragment implements
                 } else {
                     mProgressBar.setVisibility(View.GONE);
                     nonetcon.setVisibility(View.VISIBLE);
+                    nonetconimage.setVisibility(View.VISIBLE);
                     rellayout1.setVisibility(View.GONE);
                 }
                 super.onPostExecute(result);
