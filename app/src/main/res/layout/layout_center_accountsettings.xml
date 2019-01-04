@@ -12,15 +12,17 @@
             android:layout_height="wrap_content"
             android:id="@+id/textSettings"
             android:text="Account Settings"
-            android:textSize="35sp"
+            android:textSize="25sp"
             android:textColor="@color/black"
-            android:background="@drawable/grey_border_bottom"/>
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-condensed"/>
 
         <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/textSettings"
-            android:id="@+id/lvAccountSettings">
+            android:id="@+id/lvAccountSettings"
+            android:layout_marginTop="10dp">
 
         </ListView>
 
