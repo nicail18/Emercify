@@ -68,6 +68,8 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
     //Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
+    //SearchBar New Re-Design
+    implementation 'com.github.mancj:MaterialSearchBar:0.8.1'
 }
 //FireBase
 apply plugin: 'com.google.gms.google-services'

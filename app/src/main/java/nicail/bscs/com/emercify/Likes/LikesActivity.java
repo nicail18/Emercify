@@ -88,7 +88,7 @@ public class LikesActivity extends AppCompatActivity implements
     private RelativeLayout rellayoutnotif;
     private RecyclerView notiflistview;
     private TextView nointernet, nonotification;
-
+    private ImageView nonotifimage,nowifiimage;
     RecyclerView notifsRecyclerView;
 
     @Override
@@ -106,7 +106,8 @@ public class LikesActivity extends AppCompatActivity implements
         pbnotif.setVisibility(View.VISIBLE);
         mFirebaseMethods = new FirebaseMethods(this);
         rellayoutnotif = (RelativeLayout) findViewById(R.id.rellayoutnotif);
-
+        nonotifimage = (ImageView) findViewById(R.id.nonotif_image);
+        nowifiimage = (ImageView) findViewById(R.id.nowifi_image);
         Log.d(TAG, "onCreate: starting.");
 
         new Task().execute();
@@ -139,6 +140,8 @@ public class LikesActivity extends AppCompatActivity implements
             rellayoutnotif.setVisibility(View.GONE);
             nointernet.setVisibility(View.GONE);
             nonotification.setVisibility(View.GONE);
+            nonotifimage.setVisibility(View.GONE);
+            nowifiimage.setVisibility(View.GONE);
             super.onPreExecute();
         }
         @Override
@@ -154,7 +157,9 @@ public class LikesActivity extends AppCompatActivity implements
                 //do something, net is not connected
                 pbnotif.setVisibility(View.GONE);
                 nointernet.setVisibility(View.VISIBLE);
+                nowifiimage.setVisibility(View.VISIBLE);
                 nonotification.setVisibility(View.GONE);
+                nonotifimage.setVisibility(View.GONE);
             }
 
             super.onPostExecute(result);
@@ -178,6 +183,7 @@ public class LikesActivity extends AppCompatActivity implements
         }else{
             //Toast.makeText(LikesActivity.this, "No Notifications Available",Toast.LENGTH_SHORT).show();
             nonotification.setVisibility(View.VISIBLE);
+            nonotifimage.setVisibility(View.VISIBLE);
         }
     }
 
