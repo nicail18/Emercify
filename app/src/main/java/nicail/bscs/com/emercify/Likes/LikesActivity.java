@@ -2,6 +2,7 @@ package nicail.bscs.com.emercify.Likes;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.GsonBuilder;
 import com.google.maps.GeoApiContext;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
@@ -48,6 +50,7 @@ import java.util.TimerTask;
 import nicail.bscs.com.emercify.Home.HomeActivity;
 import nicail.bscs.com.emercify.Profile.ProfileActivity;
 import nicail.bscs.com.emercify.R;
+import nicail.bscs.com.emercify.Utils.BlockChain;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
 import nicail.bscs.com.emercify.Utils.CheckInternet;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
@@ -68,7 +71,7 @@ public class LikesActivity extends AppCompatActivity implements
     private static final int ACTIVITY_NUM = 3;
 
     private Context mContext = LikesActivity.this;
-    private ImageView ivMap,test;
+    private ImageView ivMap;
     private String token;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -88,15 +91,16 @@ public class LikesActivity extends AppCompatActivity implements
     private RelativeLayout rellayoutnotif;
     private RecyclerView notiflistview;
     private TextView nointernet, nonotification;
-    private ImageView nonotifimage,nowifiimage;
-    RecyclerView notifsRecyclerView;
+    private ImageView nonotifimage,nowifiimage,bcTest;
+    private RecyclerView notifsRecyclerView;
+    private static ArrayList<BlockChain> blockchain = new ArrayList<BlockChain>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifs);
         ivMap = (ImageView) findViewById(R.id.ivMap);
-//        test = (ImageView) findViewById(R.id.testNotif);
+        bcTest = (ImageView) findViewById(R.id.bcTest);
         pbnotif = (ProgressBar) findViewById(R.id.progress_Barnotif);
         notifications = new ArrayList<>();
         notifsRecyclerView = (RecyclerView) findViewById(R.id.notif_listview);
@@ -121,18 +125,73 @@ public class LikesActivity extends AppCompatActivity implements
                 startActivity(intent);
             }
         });
-//        test.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                token = userSettings.getSettings().getDevice_token();
-//                Log.d(TAG, "onClick: " + token);
-//                new Notify(token,"Hello").execute();
-//            }
-//        });
+
+        bcTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String output = "";
+
+                blockchain.add(new BlockChain("Hi im the first block", "0"));
+                Log.d(TAG, "onClick: Trying to Mine block 1... " + "\n\n");
+                blockchain.get(0).mineBlock(2);
+
+                blockchain.add(new BlockChain("Yo im the second block",blockchain.get(blockchain.size()-1).hash));
+                Log.d(TAG, "onClick: Trying to Mine block 2... " + "\n\n");
+                blockchain.get(1).mineBlock(2);
+
+                blockchain.add(new BlockChain("Hey im the third block",blockchain.get(blockchain.size()-1).hash));
+                Log.d(TAG, "onClick: Trying to Mine block 3..." + "\n\n");
+                blockchain.get(2).mineBlock(2);
+                Log.d(TAG, "onClick: \nBlockchain is Valid: " + isChainValid() + "\n\n");
+
+                String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blockchain);
+                Log.d(TAG, "onClick: \nThe block chain: " + "\n\n");
+                Log.d(TAG, "onClick: " + blockchainJson);
+//                final AlertDialog.Builder builder = new AlertDialog.Builder(LikesActivity.this);
+//                builder.setMessage(blockchainJson)
+//                        .setCancelable(false)
+//                        .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+//                            public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+//
+//                            }
+//                        });
+//                final AlertDialog alert = builder.create();
+//                alert.show();
+            }
+        });
 
         getNotifications();
 
     }
+
+    public static Boolean isChainValid() {
+        BlockChain currentBlock;
+        BlockChain previousBlock;
+        String hashTarget = new String(new char[2]).replace('\0', '0');
+
+        //loop through blockchain to check hashes:
+        for(int i=1; i < blockchain.size(); i++) {
+            currentBlock = blockchain.get(i);
+            previousBlock = blockchain.get(i-1);
+            //compare registered hash and calculated hash:
+            if(!currentBlock.hash.equals(currentBlock.calculateHash()) ){
+                Log.d(TAG, "isChainValid: Current Hashes not equal");
+                return false;
+            }
+            //compare previous hash and registered previous hash
+            if(!previousBlock.hash.equals(currentBlock.previousHash) ) {
+                Log.d(TAG, "isChainValid: Previous Hashes not equal");
+                return false;
+            }
+            //check if hash is solved
+            if(!currentBlock.hash.substring( 0, 2).equals(hashTarget)) {
+                Log.d(TAG, "isChainValid: This block hasn't been mined");
+                return false;
+            }
+        }
+        return true;
+    }
+
     class Task extends AsyncTask<String, Integer, Boolean> {
         @Override
         protected void onPreExecute() {

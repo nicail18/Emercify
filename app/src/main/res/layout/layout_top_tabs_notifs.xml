@@ -31,6 +31,7 @@
                         android:textStyle="bold"
                         android:gravity="center_vertical"/>
 
+
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
@@ -40,6 +41,16 @@
                         android:id="@+id/ivMap"
                         android:src="@drawable/ic_map"
                         android:background="@drawable/circle_shape"/>
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_android"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@+id/ivMap"
+                        android:layout_marginRight="10dp"
+                        android:id="@+id/bcTest"/>
+
 
                     <!--<ImageView-->
                         <!--android:layout_width="40dp"-->
