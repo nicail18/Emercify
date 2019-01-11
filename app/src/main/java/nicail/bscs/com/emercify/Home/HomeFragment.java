@@ -73,7 +73,7 @@ public class HomeFragment extends Fragment implements
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home,container,false);
         //mListView = (ListView) view.findViewById(R.id.listView);
-        recyclerView = (RecyclerView) view.findViewById(R.id.listView);
+        recyclerView = (RecyclerView) view.findViewById(R.id.listViewhome);
         mFollowing = new ArrayList<>();
         mPhotos = new ArrayList<>();
         getFollowing();

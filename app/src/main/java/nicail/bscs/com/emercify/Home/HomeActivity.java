@@ -145,8 +145,9 @@ public class HomeActivity extends AppCompatActivity implements
                     //internet is connected do something
                     pb.setVisibility(View.GONE);
                     //displayfeed();
-                    getItemCount();
+                    //getItemCount();
                     mViewPager.setVisibility(View.VISIBLE);
+//                    setupViewPager();
                     //nopost.setVisibility(View.GONE);
 
                 }else{
