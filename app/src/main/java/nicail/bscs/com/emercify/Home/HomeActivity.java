@@ -127,8 +127,8 @@ public class HomeActivity extends AppCompatActivity implements
         recyclerView = (RecyclerView) findViewById(R.id.listViewhome);
         nonetimage = (ImageView) findViewById(R.id.no_netimage);
         nopostimage = (ImageView) findViewById(R.id.nopost_image);
-        pb.setVisibility(View.VISIBLE);
-        class Task extends AsyncTask<String, Integer, Boolean> {
+        //pb.setVisibility(View.VISIBLE);
+        /*class Task extends AsyncTask<String, Integer, Boolean> {
             @Override
             protected void onPreExecute() {
                 pb.setVisibility(View.VISIBLE);
@@ -171,7 +171,7 @@ public class HomeActivity extends AppCompatActivity implements
                 return null;
             }
         }
-        new Task().execute();
+        new Task().execute();*/
 
         setupFireBaseAuth();
         if (checkMapServices()) {
@@ -193,7 +193,7 @@ public class HomeActivity extends AppCompatActivity implements
         }
         return false;
     }
-    public int getItemCount() {
+    /*public int getItemCount() {
         if (recyclerView == null) {
             noposts.setVisibility(View.VISIBLE);
             nopostimage.setVisibility(View.VISIBLE);
@@ -202,7 +202,7 @@ public class HomeActivity extends AppCompatActivity implements
             noposts.setVisibility(View.GONE);
             nopostimage.setVisibility(View.GONE);
         return  recyclerView.getChildCount();
-    }
+    }*/
 
 
 
