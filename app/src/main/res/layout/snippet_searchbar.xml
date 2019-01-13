@@ -6,15 +6,22 @@
         android:background="@drawable/white_gray_border_bottom">
 
         <android.support.v7.widget.Toolbar
-            android:layout_width="match_parent"
+            android:layout_width="350dp"
             android:layout_height="wrap_content"
             android:id="@+id/profileToolBar">
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/emer"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="28dp"
-                android:layout_marginRight="15dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="20dp"
                 android:background="@drawable/roundedittext">
+
                 <ImageView
                     android:layout_width="23dp"
                     android:layout_height="23dp"
