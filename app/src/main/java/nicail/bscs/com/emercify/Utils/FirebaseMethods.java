@@ -1,6 +1,7 @@
 package nicail.bscs.com.emercify.Utils;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -61,6 +62,7 @@ public class FirebaseMethods {
 
     private double mPhotoUploadProgress = 0;
     private Context mContext;
+    private ProgressDialog progressDialog;
 
     public FirebaseMethods(Context context){
         mAuth = FirebaseAuth.getInstance();
@@ -99,6 +101,12 @@ public class FirebaseMethods {
                                final String address, final double latitude,
                                final double longitude, final String type){
         Log.d(TAG, "uploadNewPhoto: attempting to upload new photo");
+
+        progressDialog = new ProgressDialog(mContext, R.style.MyAlertDialogStyle);
+        progressDialog.setTitle("Uploading Photo");
+        progressDialog.setMessage("Please Wait...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
         FilePaths filePaths = new FilePaths();
         if(photoType.equals("new_photo")){
             Log.d(TAG, "uploadNewPhoto: uploading new photo");
@@ -123,7 +131,7 @@ public class FirebaseMethods {
                             Toast.makeText(mContext, "Successfully Uploaded ", Toast.LENGTH_SHORT).show();
 
                             addPhotoToDatabase(caption,firebaseUrl,address,latitude,longitude,type);
-
+                            progressDialog.dismiss();
                             Intent intent = new Intent(mContext, HomeActivity.class);
                             mContext.startActivity(intent);
                         }
@@ -178,7 +186,7 @@ public class FirebaseMethods {
                             Toast.makeText(mContext, "Successfully Uploaded ", Toast.LENGTH_SHORT).show();
 
                             setProfilePhoto(firebaseUrl);
-
+                            progressDialog.dismiss();
                         }
                     });
                     ((AccountSettingsActivity)mContext).setViewPager(

@@ -40,7 +40,7 @@
                     android:fontFamily="sans-serif-condensed"
                     android:text="NEXT"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="10dp"
+                    android:layout_marginRight="25dp"
                     android:textSize="20sp"
                     android:textAlignment="center"
                     android:gravity="center"
