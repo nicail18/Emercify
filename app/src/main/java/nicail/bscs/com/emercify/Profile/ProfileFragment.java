@@ -4,6 +4,8 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,6 +39,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -90,7 +94,8 @@ public class ProfileFragment extends Fragment {
     private DatabaseReference myRef;
     private FirebaseMethods mFirebaseMethods;
     private RelativeLayout topLayout,rellayout2;
-
+    private TextView nonetprof;
+    private ImageView nonetimageprof;
     private static final int MAP_LAYOUT_STATE_CONTRACTED = 0;
     private static final int MAP_LAYOUT_STATE_EXPANDED = 1;
     private int mMapLayoutState = 0;
@@ -117,7 +122,8 @@ public class ProfileFragment extends Fragment {
         mContext = getActivity();
         mFirebaseMethods = new FirebaseMethods(mContext);
         scrollView = (ScrollView) view.findViewById(R.id.scrolllayout);
-
+        nonetprof = (TextView) view.findViewById(R.id.no_netprof);
+        nonetimageprof = (ImageView) view.findViewById(R.id.no_netimageprof);
         mDisplayName.setVisibility(View.GONE);
         mUsername.setVisibility(View.GONE);
         mWebsite.setVisibility(View.GONE);
@@ -131,14 +137,27 @@ public class ProfileFragment extends Fragment {
             protected void onPreExecute() {
                 mProgressBar.setVisibility(View.VISIBLE);
                 rellayout2.setVisibility(View.GONE);
+                nonetprof.setVisibility(View.GONE);
+                nonetimageprof.setVisibility(View.GONE);
                 //nointernet.setVisibility(View.GONE);
                 //nonotification.setVisibility(View.GONE);
                 super.onPreExecute();
             }
             @Override
             protected void onPostExecute(Boolean result) {
-                mProgressBar.setVisibility(View.GONE);
-                rellayout2.setVisibility(View.VISIBLE);
+                ConnectivityManager connMgr = (ConnectivityManager) getActivity()
+                        .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+                if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
+                    mProgressBar.setVisibility(View.GONE);
+                    rellayout2.setVisibility(View.VISIBLE);
+                }else{
+                    mProgressBar.setVisibility(View.GONE);
+                    nonetprof.setVisibility(View.VISIBLE);
+                    nonetimageprof.setVisibility(View.VISIBLE);
+                }
                 super.onPostExecute(result);
             }
             @Override

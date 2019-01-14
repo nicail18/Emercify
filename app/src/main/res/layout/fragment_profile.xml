@@ -18,20 +18,34 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/rellayout1"
-        android:id="@+id/rellayout2">
+        android:id="@+id/rellayout2"
+        android:layout_marginBottom="50dp">
 
         <include layout="@layout/layout_center_profile" />
 
-
-
-        <include layout="@layout/layout_bottom_navigation_view"/>
-
     </RelativeLayout>
+
+    <include layout="@layout/layout_bottom_navigation_view"/>
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="150dp"
         android:layout_centerInParent="true">
+        <TextView
+            android:id="@+id/no_netprof"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="No internet Connection"
+            android:layout_centerInParent="true"/>
+        <ImageView
+            android:id="@+id/no_netimageprof"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_above="@+id/no_netprof"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/ic_no_wifi"
+            android:backgroundTint="@color/black"/>
         <ProgressBar
             android:layout_width="60dp"
             android:layout_height="60dp"

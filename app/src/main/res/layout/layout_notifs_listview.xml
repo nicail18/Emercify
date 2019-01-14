@@ -11,8 +11,7 @@
             android:layout_height="60dp"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="10dp"
-            app:civ_border_width="2dp"
-            app:civ_border_color="@color/black"/>
+            app:civ_border_width="2dp"/>
 
         <TextView
             android:id="@+id/username"
@@ -23,6 +22,7 @@
             android:layout_toRightOf="@id/profile_photo"
             android:text=""
             android:textSize="12sp"
+            android:fontFamily="sans-serif-condensed"
             android:textStyle="bold"
             android:textColor="@color/black"/>
 
