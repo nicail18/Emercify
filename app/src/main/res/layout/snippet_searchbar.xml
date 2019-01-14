@@ -1,51 +1,53 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     >
-    <android.support.design.widget.AppBarLayout
+    <!--<android.support.design.widget.AppBarLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="50dp"-->
+    <!--android:background="@drawable/white_gray_border_bottom">-->
+
+    <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/profileToolBar"
         android:background="@drawable/white_gray_border_bottom">
 
-        <android.support.v7.widget.Toolbar
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/profileToolBar">
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/emer"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="20dp"
+            android:background="@drawable/white_rounded_border">
+
             <ImageView
-                android:layout_width="50dp"
-                android:layout_height="match_parent"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_marginStart="5dp"
-                android:background="@drawable/emer"/>
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_searchicon"
+                android:backgroundTint="@color/black"
+                />
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="28dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="20dp"
-                android:background="@drawable/roundedittext">
+            <EditText
+                android:id="@+id/search"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="30dp"
+                android:background="@null"
+                android:fontFamily="sans-serif"
+                android:hint="Search"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
 
-                <ImageView
-                    android:layout_width="23dp"
-                    android:layout_height="23dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/ic_searchicon"
-                    android:backgroundTint="@color/black"
-                    />
+        </RelativeLayout>
 
-                <EditText
-                    android:id="@+id/search"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="26dp"
-                    android:background="@null"
-                    android:fontFamily="sans-serif"
-                    android:hint="Search"
-                    android:textColor="@color/black"
-                    android:textSize="17sp" />
+    </android.support.v7.widget.Toolbar>
 
-            </RelativeLayout>
-
-        </android.support.v7.widget.Toolbar>
-
-    </android.support.design.widget.AppBarLayout>
+    <!--</android.support.design.widget.AppBarLayout>-->
 </merge>
