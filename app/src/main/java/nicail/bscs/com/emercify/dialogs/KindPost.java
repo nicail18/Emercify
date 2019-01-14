@@ -46,6 +46,7 @@ public class KindPost extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_post, container, false);
+        setCancelable(false);
         normal_post = (TextView) view.findViewById(R.id.normal_post);
         report_post = (TextView) view.findViewById(R.id.reports_post);
         emergency_post = (TextView) view.findViewById(R.id.emergency_post);
