@@ -1,9 +1,9 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     >
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@drawable/white_gray_border_bottom">
+    <!--<android.support.design.widget.AppBarLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="50dp"-->
+        <!--android:background="@drawable/white_gray_border_bottom">-->
 
         <android.support.v7.widget.Toolbar
             android:layout_width="match_parent"
@@ -17,7 +17,7 @@
                 <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginEnd="10dp"
                 android:layout_centerVertical="true"
                 android:id="@+id/ivCloseShare"
                 android:src="@drawable/ic_black_x"/>
@@ -37,11 +37,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed"
                     android:text="NEXT"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="15dp"
+                    android:layout_marginRight="25dp"
                     android:textSize="20sp"
-                    android:textColor="@color/link_blue"
+                    android:textAlignment="center"
+                    android:gravity="center"
+                    android:textColor="@color/black"
                     android:layout_centerVertical="true"
                     android:id="@+id/tvNext"/>
 
@@ -50,5 +53,5 @@
 
         </android.support.v7.widget.Toolbar>
 
-    </android.support.design.widget.AppBarLayout>
+    <!--</android.support.design.widget.AppBarLayout>-->
 </merge>

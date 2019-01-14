@@ -134,6 +134,7 @@ public class PhotoFragment extends Fragment implements
             }
         }
         new Task().execute();
+
         btnLaunchCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -4,19 +4,35 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentTop="true">
-        <android.support.design.widget.AppBarLayout
+        <!--<android.support.design.widget.AppBarLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content">-->
+
+        <android.support.v7.widget.Toolbar
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/tabs"
+            android:background="@drawable/white_gray_border_bottom">
 
-            <android.support.design.widget.TabLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/tabs"
-                android:background="@drawable/white_gray_border_bottom">
+                android:layout_height="match_parent"
+                android:layout_marginEnd="15dp">
 
-            </android.support.design.widget.TabLayout>
+                <ImageView
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/emercifytext1"
+                    android:id="@+id/emercify_text"
+                    android:layout_centerHorizontal="true"/>
 
-        </android.support.design.widget.AppBarLayout>
+
+            </RelativeLayout>
+
+
+        </android.support.v7.widget.Toolbar>
+
+        <!--</android.support.design.widget.AppBarLayout>-->
 
     </RelativeLayout>
 

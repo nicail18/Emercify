@@ -22,7 +22,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:id="@+id/rellayout2"
                 android:layout_below="@+id/rellayout1">
 
@@ -32,7 +32,6 @@
                     android:id="@+id/imageShare"
                     android:scaleType="centerCrop"
                     android:layout_centerVertical="true"
-                    android:layout_marginBottom="40dp"
                     />
 
             </RelativeLayout>

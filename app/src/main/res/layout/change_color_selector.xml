@@ -3,6 +3,6 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="wrap_content"
     android:layout_width="wrap_content">
-    <item android:color="@color/darkRed" android:state_checked="true" />
+    <item android:color="@color/emercifycolor" android:state_checked="true" />
     <item android:color="@color/black" />
 </selector>

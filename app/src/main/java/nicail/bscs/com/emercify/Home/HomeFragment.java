@@ -1,5 +1,9 @@
 package nicail.bscs.com.emercify.Home;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,8 +15,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -67,24 +76,96 @@ public class HomeFragment extends Fragment implements
 
     private int mResults,currentItems,totalItems,scrollOutItems;
     private Boolean isScrolling = false;
-
+    private ProgressBar pb;
+    private RelativeLayout mViewPager;
+    private TextView nonet;
+    private TextView noposts;
+    private ImageView nonetimage;
+    private ImageView nopostimage;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home,container,false);
         //mListView = (ListView) view.findViewById(R.id.listView);
         recyclerView = (RecyclerView) view.findViewById(R.id.listViewhome);
+        pb = (ProgressBar) view.findViewById(R.id.progress_Bar1);
+        mViewPager = (RelativeLayout) view.findViewById(R.id.rellayout2);
+        nonet = (TextView) view.findViewById(R.id.no_net);
+        noposts = (TextView) view.findViewById(R.id.no_postavail);
+        nonetimage = (ImageView) view.findViewById(R.id.no_netimage);
+        nopostimage = (ImageView) view.findViewById(R.id.nopost_image);
         mFollowing = new ArrayList<>();
         mPhotos = new ArrayList<>();
-        getFollowing();
+        class Task extends AsyncTask<String, Integer, Boolean> {
+            @Override
+            protected void onPreExecute() {
+                pb.setVisibility(View.VISIBLE);
+                nonet.setVisibility(View.GONE);
+                noposts.setVisibility(View.GONE);
+                nonetimage.setVisibility(View.GONE);
+                nopostimage.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
+                super.onPreExecute();
+            }
+            @Override
+            protected void onPostExecute(Boolean result) {
+                ConnectivityManager connMgr = (ConnectivityManager) getActivity()
+                        .getSystemService(Context.CONNECTIVITY_SERVICE);
 
+                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+                if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
+                    //internet is connected do something
+                    //displayfeed();
+                    //mViewPager.setVisibility(View.VISIBLE);
+                    //setupViewPager();
+                    //nopost.setVisibility(View.GONE);
+                    getFollowing();
+                } else {
+                    pb.setVisibility(View.GONE);
+                    nonet.setVisibility(View.VISIBLE);
+                    nonetimage.setVisibility(View.VISIBLE);
+                    //noposts.setVisibility(View.GONE);
+                }
+                super.onPostExecute(result);
+            }
+            @Override
+            protected Boolean doInBackground(String... params) {
+
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }
+        new Task().execute();
         return view;
+
     }
+
+
+
+    public int getItemCount() {
+        if (mPhotos.size() == 0) {
+            noposts.setVisibility(View.VISIBLE);
+            nopostimage.setVisibility(View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
+            return 0;
+        }else
+        noposts.setVisibility(View.GONE);
+        nopostimage.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
+        return  recyclerView.getChildCount();
+    }
+
 
     public void updateMainFeed(int position){
         mPaginatedPhotos.remove(position);
         recyclerAdapter.notifyDataSetChanged();
     }
+
 
     private void getFollowing(){
         Log.d(TAG, "getFollowing: searching for following");
@@ -109,6 +190,7 @@ public class HomeFragment extends Fragment implements
             }
         });
     }
+
 
     public void getPhotos(){
         Log.d(TAG, "getPhotos: getting photos");
@@ -213,7 +295,8 @@ public class HomeFragment extends Fragment implements
                         }
                     }
                 });
-
+                pb.setVisibility(View.GONE);
+                getItemCount();
             }catch(NullPointerException e){
                 Log.e(TAG, "displayPhotos: NullPointerException" + e.getMessage() );
             }catch(IndexOutOfBoundsException e){

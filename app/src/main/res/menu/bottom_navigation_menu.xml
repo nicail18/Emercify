@@ -5,33 +5,33 @@
 
     <item
         android:id="@+id/ic_house"
-        android:icon="@drawable/ic_home"
+        android:icon="@mipmap/ic_home1"
         android:title="">
 
     </item>
 
     <item
         android:id="@+id/ic_search"
-        android:icon="@drawable/ic_search1"
+        android:icon="@mipmap/ic_search2"
         android:title="">
 
     </item>
 
     <item
         android:id="@+id/ic_circle"
-        android:icon="@drawable/ic_share"
+        android:icon="@mipmap/ic_share1"
         android:title="">
 
     </item>
 
     <item
         android:id="@+id/ic_alert"
-        android:icon="@drawable/ic_notif"
+        android:icon="@mipmap/ic_notif1"
         android:title=""/>
 
     <item
         android:id="@+id/ic_android"
-        android:icon="@drawable/ic_profile"
+        android:icon="@mipmap/ic_profile"
         android:title="">
 
     </item>
