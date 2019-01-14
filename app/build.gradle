@@ -19,6 +19,10 @@ android {
         }
     }
     buildToolsVersion '28.0.3'
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
 }
 
 dependencies {
@@ -70,6 +74,8 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
     //SearchBar New Re-Design
     implementation 'com.github.mancj:MaterialSearchBar:0.8.1'
+    implementation ('org.web3j:core:3.3.1-android')
+    implementation ('org.web3j:infura:3.3.1-android')
 }
 //FireBase
 apply plugin: 'com.google.gms.google-services'

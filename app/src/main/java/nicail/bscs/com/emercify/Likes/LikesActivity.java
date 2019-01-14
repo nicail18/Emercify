@@ -1,11 +1,14 @@
 package nicail.bscs.com.emercify.Likes;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.icu.math.BigDecimal;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
@@ -38,6 +41,22 @@ import com.google.gson.GsonBuilder;
 import com.google.maps.GeoApiContext;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
+import org.web3j.crypto.CipherException;
+import org.web3j.crypto.Credentials;
+import org.web3j.crypto.WalletUtils;
+import org.web3j.protocol.Web3j;
+import org.web3j.protocol.Web3jFactory;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import org.web3j.protocol.core.methods.response.Web3ClientVersion;
+import org.web3j.protocol.http.HttpService;
+import org.web3j.protocol.infura.InfuraHttpService;
+import org.web3j.tx.Contract;
+import org.web3j.tx.ManagedTransaction;
+import org.web3j.tx.Transfer;
+import org.web3j.utils.Convert;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -54,6 +73,7 @@ import nicail.bscs.com.emercify.Utils.BlockChain;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
 import nicail.bscs.com.emercify.Utils.CheckInternet;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
+import nicail.bscs.com.emercify.Utils.HelloWorld;
 import nicail.bscs.com.emercify.Utils.MainfeedRecyclerAdapter;
 import nicail.bscs.com.emercify.Utils.NotifRecyclerAdapter;
 import nicail.bscs.com.emercify.Utils.Notify;
@@ -62,6 +82,7 @@ import nicail.bscs.com.emercify.models.Notifications;
 import nicail.bscs.com.emercify.models.Photo;
 import nicail.bscs.com.emercify.models.User;
 import nicail.bscs.com.emercify.models.UserSettings;
+import rx.schedulers.Schedulers;
 
 public class LikesActivity extends AppCompatActivity implements
         NotifRecyclerAdapter.NotifRecyclerAdapterClickListener {
@@ -93,6 +114,7 @@ public class LikesActivity extends AppCompatActivity implements
     private TextView nointernet, nonotification;
     private ImageView nonotifimage,nowifiimage,bcTest;
     private RecyclerView notifsRecyclerView;
+    private ProgressDialog progressDialog;
     private static ArrayList<BlockChain> blockchain = new ArrayList<BlockChain>();
 
     @Override
@@ -130,38 +152,113 @@ public class LikesActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 String output = "";
-
-                blockchain.add(new BlockChain("Hi im the first block", "0"));
-                Log.d(TAG, "onClick: Trying to Mine block 1... " + "\n\n");
-                blockchain.get(0).mineBlock(2);
-
-                blockchain.add(new BlockChain("Yo im the second block",blockchain.get(blockchain.size()-1).hash));
-                Log.d(TAG, "onClick: Trying to Mine block 2... " + "\n\n");
-                blockchain.get(1).mineBlock(2);
-
-                blockchain.add(new BlockChain("Hey im the third block",blockchain.get(blockchain.size()-1).hash));
-                Log.d(TAG, "onClick: Trying to Mine block 3..." + "\n\n");
-                blockchain.get(2).mineBlock(2);
-                Log.d(TAG, "onClick: \nBlockchain is Valid: " + isChainValid() + "\n\n");
-
-                String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blockchain);
-                Log.d(TAG, "onClick: \nThe block chain: " + "\n\n");
-                Log.d(TAG, "onClick: " + blockchainJson);
-//                final AlertDialog.Builder builder = new AlertDialog.Builder(LikesActivity.this);
-//                builder.setMessage(blockchainJson)
-//                        .setCancelable(false)
-//                        .setPositiveButton("Close", new DialogInterface.OnClickListener() {
-//                            public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                web3j();
+//                blockchain.add(new BlockChain("Hi im the first block", "0"));
+//                Log.d(TAG, "onClick: Trying to Mine block 1... " + "\n\n");
+//                blockchain.get(0).mineBlock(2);
 //
-//                            }
-//                        });
-//                final AlertDialog alert = builder.create();
-//                alert.show();
+//                blockchain.add(new BlockChain("Yo im the second block",blockchain.get(blockchain.size()-1).hash));
+//                Log.d(TAG, "onClick: Trying to Mine block 2... " + "\n\n");
+//                blockchain.get(1).mineBlock(2);
+//
+//                blockchain.add(new BlockChain("Hey im the third block",blockchain.get(blockchain.size()-1).hash));
+//                Log.d(TAG, "onClick: Trying to Mine block 3..." + "\n\n");
+//                blockchain.get(2).mineBlock(2);
+//                Log.d(TAG, "onClick: \nBlockchain is Valid: " + isChainValid() + "\n\n");
+//
+//                String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blockchain);
+//                Log.d(TAG, "onClick: \nThe block chain: " + "\n\n");
+//                Log.d(TAG, "onClick: " + blockchainJson);
             }
         });
 
         getNotifications();
 
+    }
+
+    private void web3j(){
+        String infura = "https://ropsten.infura.io/v3/1f7164b0fe774aed805a297c99736218";
+        InitWeb3j task = new InitWeb3j();
+        progressDialog = new ProgressDialog(LikesActivity.this);
+        progressDialog.setTitle("Loading");
+        progressDialog.setMessage("Please Wait..");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        task.execute(infura);
+    }
+
+    private class InitWeb3j extends AsyncTask<String, String, String>{
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String url = strings[0];
+            String walletFileName = "";
+            try {
+                Web3j web3 = Web3jFactory.build(new HttpService(url));
+                Web3ClientVersion web3ClientVersion = web3.web3ClientVersion().send();
+//                File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
+//                File[] list = file.listFiles();
+//                String walletPath = "";
+//                for(File path: list){
+//                    if(path.getName().contains(".json") && path.getName().contains("UTC")){
+//                        walletPath = path.getAbsolutePath();
+//                        File walletFile = new File(walletPath);
+//                        walletFileName = walletFile.getName();
+//                    }
+//                }
+                Credentials credentials = Credentials.create("0x83FC7F52521183D064A23B5D29423AC9A9AB26F768FBA183FE858BA5A763FDD3");
+//                Credentials credentials =
+//                        WalletUtils.loadCredentials(
+//                                "password",
+//                                walletPath);
+//                TransactionReceipt transferReceipt = Transfer.sendFunds(
+//                        web3, credentials,
+//                        "0xDc1Fb60F7E1eF6ef052A014EFbDF82debd803D06",  // you can put any address here
+//                        java.math.BigDecimal.valueOf(1.0), Convert.Unit.WEI)  // 1 wei = 10^-18 Ether
+//                        .send();
+                HelloWorld contract = HelloWorld.deploy(
+                        web3, credentials,
+                        ManagedTransaction.GAS_PRICE,
+                        Contract.GAS_LIMIT
+                ).send();
+                String contractAddress = contract.getContractAddress();
+                String output = contract.helloWorld().send();
+//                String walletFileName = "";
+//                try {
+//                    walletFileName = WalletUtils.generateLightNewWalletFile(
+//                            "password",
+//                            new File(Environment.getExternalStorageDirectory().getAbsolutePath())
+//                    );
+//                }catch(Exception e){
+//                    Log.d(TAG, "doInBackground: Exception: " + e.getMessage());
+//                    return e.getMessage();
+//                }
+                return contractAddress + "\n" + output;
+            } catch (IOException e) {
+                Log.d(TAG, "doInBackground: web3j IOException " + e.getMessage() );
+                return "IOException" + e.getMessage();
+            } catch (Exception e){
+                Log.d(TAG, "doInBackground: web3j Exception: " + e.getMessage());
+                return "Excepti on" + e.getMessage();
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            progressDialog.dismiss();
+            final AlertDialog.Builder builder = new AlertDialog.Builder(LikesActivity.this);
+            builder.setMessage(s)
+                    .setCancelable(false)
+                    .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                        public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+
+                        }
+                    });
+            final AlertDialog alert = builder.create();
+            alert.show();
+        }
     }
 
     public static Boolean isChainValid() {
@@ -572,7 +669,6 @@ public class LikesActivity extends AppCompatActivity implements
         }
 
     }
-
 
     @Override
     public void onResume() {
