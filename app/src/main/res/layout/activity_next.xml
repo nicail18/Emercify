@@ -40,7 +40,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/rellayout3"
-                android:layout_below="@+id/rellayout2">
+                android:layout_below="@+id/rellayout2"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp">
 
                 <EditText
                     android:layout_width="match_parent"
