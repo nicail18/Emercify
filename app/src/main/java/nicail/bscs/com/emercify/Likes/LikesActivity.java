@@ -1,16 +1,11 @@
 package nicail.bscs.com.emercify.Likes;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.icu.math.BigDecimal;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -20,14 +15,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,52 +29,40 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.GsonBuilder;
-import com.google.maps.GeoApiContext;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
-import org.web3j.crypto.CipherException;
+import org.web3j.abi.datatypes.Utf8String;
 import org.web3j.crypto.Credentials;
-import org.web3j.crypto.WalletUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
+import org.web3j.protocol.core.RemoteCall;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
-import org.web3j.protocol.infura.InfuraHttpService;
 import org.web3j.tx.Contract;
 import org.web3j.tx.ManagedTransaction;
-import org.web3j.tx.Transfer;
-import org.web3j.utils.Convert;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import nicail.bscs.com.emercify.Home.HomeActivity;
 import nicail.bscs.com.emercify.Profile.ProfileActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.BlockChain;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
 import nicail.bscs.com.emercify.Utils.CheckInternet;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
-import nicail.bscs.com.emercify.Utils.HelloWorld;
-import nicail.bscs.com.emercify.Utils.MainfeedRecyclerAdapter;
+import nicail.bscs.com.emercify.Utils.MessageContract;
 import nicail.bscs.com.emercify.Utils.NotifRecyclerAdapter;
-import nicail.bscs.com.emercify.Utils.Notify;
 import nicail.bscs.com.emercify.models.Comment;
+import nicail.bscs.com.emercify.models.Message;
 import nicail.bscs.com.emercify.models.Notifications;
 import nicail.bscs.com.emercify.models.Photo;
 import nicail.bscs.com.emercify.models.User;
 import nicail.bscs.com.emercify.models.UserSettings;
-import rx.schedulers.Schedulers;
 
 public class LikesActivity extends AppCompatActivity implements
         NotifRecyclerAdapter.NotifRecyclerAdapterClickListener {
@@ -153,22 +133,6 @@ public class LikesActivity extends AppCompatActivity implements
             public void onClick(View v) {
                 String output = "";
                 web3j();
-//                blockchain.add(new BlockChain("Hi im the first block", "0"));
-//                Log.d(TAG, "onClick: Trying to Mine block 1... " + "\n\n");
-//                blockchain.get(0).mineBlock(2);
-//
-//                blockchain.add(new BlockChain("Yo im the second block",blockchain.get(blockchain.size()-1).hash));
-//                Log.d(TAG, "onClick: Trying to Mine block 2... " + "\n\n");
-//                blockchain.get(1).mineBlock(2);
-//
-//                blockchain.add(new BlockChain("Hey im the third block",blockchain.get(blockchain.size()-1).hash));
-//                Log.d(TAG, "onClick: Trying to Mine block 3..." + "\n\n");
-//                blockchain.get(2).mineBlock(2);
-//                Log.d(TAG, "onClick: \nBlockchain is Valid: " + isChainValid() + "\n\n");
-//
-//                String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blockchain);
-//                Log.d(TAG, "onClick: \nThe block chain: " + "\n\n");
-//                Log.d(TAG, "onClick: " + blockchainJson);
             }
         });
 
@@ -195,45 +159,23 @@ public class LikesActivity extends AppCompatActivity implements
             String walletFileName = "";
             try {
                 Web3j web3 = Web3jFactory.build(new HttpService(url));
-                Web3ClientVersion web3ClientVersion = web3.web3ClientVersion().send();
-//                File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath());
-//                File[] list = file.listFiles();
-//                String walletPath = "";
-//                for(File path: list){
-//                    if(path.getName().contains(".json") && path.getName().contains("UTC")){
-//                        walletPath = path.getAbsolutePath();
-//                        File walletFile = new File(walletPath);
-//                        walletFileName = walletFile.getName();
-//                    }
-//                }
                 Credentials credentials = Credentials.create("0x83FC7F52521183D064A23B5D29423AC9A9AB26F768FBA183FE858BA5A763FDD3");
-//                Credentials credentials =
-//                        WalletUtils.loadCredentials(
-//                                "password",
-//                                walletPath);
-//                TransactionReceipt transferReceipt = Transfer.sendFunds(
-//                        web3, credentials,
-//                        "0xDc1Fb60F7E1eF6ef052A014EFbDF82debd803D06",  // you can put any address here
-//                        java.math.BigDecimal.valueOf(1.0), Convert.Unit.WEI)  // 1 wei = 10^-18 Ether
-//                        .send();
-                HelloWorld contract = HelloWorld.deploy(
+                MessageContract contract = MessageContract.load(
+                        "0xaf6d4b550a44466ff02bd22115395ad775472f1d",
                         web3, credentials,
                         ManagedTransaction.GAS_PRICE,
                         Contract.GAS_LIMIT
-                ).send();
+                );
+                boolean isValid = contract.isValid();
+                String output = contract.getMessage().send();
                 String contractAddress = contract.getContractAddress();
-                String output = contract.helloWorld().send();
-//                String walletFileName = "";
-//                try {
-//                    walletFileName = WalletUtils.generateLightNewWalletFile(
-//                            "password",
-//                            new File(Environment.getExternalStorageDirectory().getAbsolutePath())
-//                    );
-//                }catch(Exception e){
-//                    Log.d(TAG, "doInBackground: Exception: " + e.getMessage());
-//                    return e.getMessage();
-//                }
-                return contractAddress + "\n" + output;
+                TransactionReceipt transactionReceipt = contract.setMessage("Hi World").send();
+                String transaction = transactionReceipt.getTransactionHash();
+                return "IsValid: " + isValid + "\n\n" +
+                        "First Message" + output + "\n\n" +
+                        "ContractAddress: " +contractAddress + "\n\n" +
+                        "Block Hash" + transaction + "\n\n" +
+                        "Message" + contract.getMessage().send();
             } catch (IOException e) {
                 Log.d(TAG, "doInBackground: web3j IOException " + e.getMessage() );
                 return "IOException" + e.getMessage();
