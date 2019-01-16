@@ -1,38 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="240dp"
-    android:layout_height="150dp"
+    android:layout_height="wrap_content"
     android:padding="20dp"
     android:background="@drawable/rel_dialog_round"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true">
-    <TextView
-        android:id="@+id/view_dialog"
-        android:clickable="true"
+        android:id="@+id/reldialog1"
         android:layout_width="150dp"
-        android:layout_height="30dp"
-        android:textSize="15sp"
-        android:paddingStart="55dp"
-        android:textColor="@drawable/text_changecolor"
-        android:paddingTop="3dp"
-        android:text="View" />
-
-    <TextView
-        android:id="@+id/delete_dialog"
-        android:layout_below="@+id/view_dialog"
-        android:clickable="true"
-        android:layout_marginTop="10dp"
-        android:textColor="@drawable/text_changecolor"
-        android:layout_width="150dp"
-        android:layout_height="30dp"
-        android:paddingStart="53dp"
-        android:paddingTop="3dp"
-        android:textSize="15sp"
-        android:text="Delete" />
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/view_dialog"
+            android:layout_marginRight="9dp"
+            android:background="@mipmap/ic_viewdialog"/>
+        <TextView
+            android:id="@+id/view_dialog"
+            android:clickable="true"
+            android:layout_marginTop="10dp"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:textColor="@drawable/text_changecolor"
+            android:paddingTop="3dp"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="sans-serif-condensed"
+            android:text="View" />
     </RelativeLayout>
-</RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/reldialog2"
+        android:layout_below="@+id/reldialog1"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/report_dialog1"
+            android:layout_marginRight="5dp"
+            android:background="@mipmap/ic_reportdialog"/>
+        <TextView
+            android:id="@+id/report_dialog1"
+            android:clickable="true"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="15sp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:textColor="@drawable/text_changecolor"
+            android:paddingTop="3dp"
+            android:text="Report" />
+
+    </RelativeLayout>
+     <RelativeLayout
+         android:id="@+id/reldialog3"
+         android:layout_below="@id/reldialog2"
+         android:layout_width="150dp"
+         android:layout_height="wrap_content">
+         <ImageView
+             android:layout_width="15dp"
+             android:layout_height="15dp"
+             android:layout_centerVertical="true"
+             android:layout_toStartOf="@id/delete_dialog"
+             android:layout_marginRight="5dp"
+             android:background="@mipmap/ic_deletedialog"/>
+         <TextView
+             android:id="@+id/delete_dialog"
+             android:clickable="true"
+             android:layout_marginTop="10dp"
+             android:textColor="@drawable/text_changecolor"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:fontFamily="sans-serif-condensed"
+             android:paddingTop="3dp"
+             android:layout_centerVertical="true"
+             android:layout_centerHorizontal="true"
+             android:textSize="15sp"
+             android:text="Delete" />
+     </RelativeLayout>
+</LinearLayout>

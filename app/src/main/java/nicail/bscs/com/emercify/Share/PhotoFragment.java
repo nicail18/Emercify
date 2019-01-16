@@ -234,6 +234,7 @@ public class PhotoFragment extends Fragment implements
 
     public void openDialog(){
         KindPost kindPost = new KindPost();
+        kindPost.setCancelable(false);
         Bundle b = new Bundle();
         b.putDouble(getString(R.string.image_latitude),latitude);
         b.putDouble(getString(R.string.image_longitude),longitude);
