@@ -270,6 +270,8 @@ public class GalleryFragment extends Fragment implements
         shareClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
 //                PhotoView photoView = view.findViewById(R.id.galleryImageView);
                 Log.d(TAG, "onClick: closing gallery fragment");
                 getActivity().finish();
@@ -574,29 +576,13 @@ public class GalleryFragment extends Fragment implements
     private void setImage(String imgURL, ImageView image, String append){
         Log.d(TAG, "setImage: setting image");
 
-        ImageLoader imageLoader = ImageLoader.getInstance();
-        imageLoader.displayImage(append + imgURL, image, new ImageLoadingListener() {
-            @Override
-            public void onLoadingStarted(String imageUri, View view) {
-                mProgressBar.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
-                mProgressBar.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                mProgressBar.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onLoadingCancelled(String imageUri, View view) {
-                mProgressBar.setVisibility(View.GONE);
-            }
-        });
-
+        GlideApp
+                .with(getActivity())
+                .load(
+                        imgURL)
+                .placeholder(R.color.grey)
+                .centerCrop()
+                .into(image);
     }
 
     private void expandMapAnimation(){

@@ -211,7 +211,7 @@ public class MapActivity extends AppCompatActivity implements
                             else{
                                 snippet[0] = "This is " + ds.getValue(User.class).getUsername() +"'s post";
                             }
-                            int avatar = R.mipmap.ic_emercify_launcher_round;
+                            int avatar = R.mipmap.ic_emercify;
                             Log.d(TAG, "onDataChange: " + avatar);
                             new AsyncImageBitmap().execute(mPhoto.getImage_path());
 
