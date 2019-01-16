@@ -395,6 +395,7 @@ public class HomeActivity extends AppCompatActivity implements
         Log.d(TAG, "setupBottomNavigationView: setting up bottom navigation view");
 
         BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
+        Log.d(TAG, "setupBottomNavigationView: " + bottomNavigationViewEx);
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
         int incoming = 0;
         BottomNavigationViewHelper.enableNavigation(mContext,this,bottomNavigationViewEx,incoming);

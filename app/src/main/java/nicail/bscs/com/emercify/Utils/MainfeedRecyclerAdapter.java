@@ -265,6 +265,7 @@ public class MainfeedRecyclerAdapter extends RecyclerView.Adapter<MainfeedRecycl
             ellipses = (ImageView) itemView.findViewById(R.id.ivEllipses);
         }
     }
+
     public void openDialog(Photo photo, int position){
         View_Delete_Dialog viewDeleteDialog = new View_Delete_Dialog();
         Bundle args = new Bundle();

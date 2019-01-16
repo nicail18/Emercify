@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,8 +29,13 @@ public class View_Delete_Dialog extends DialogFragment {
         public void onDeleteClickListener(Photo photo,int position);
 
     }
+
+    public interface OnReportClickListener{
+        void onReportClickListener(Photo photo);
+    }
     OnViewClickListener mOnViewClickListener;
     OnDeleteClickListener mOnDeleteClickListener;
+    OnReportClickListener mOnReportClickListener;
 
     public View_Delete_Dialog() {
         super();
@@ -40,6 +46,7 @@ public class View_Delete_Dialog extends DialogFragment {
     TextView mView;
     TextView mDelete;
     TextView mReport;
+    ImageView ic_report, ic_delete;
 
     @Nullable
     @Override
@@ -48,9 +55,9 @@ public class View_Delete_Dialog extends DialogFragment {
         mView = (TextView) view.findViewById(R.id.view_dialog);
         mDelete = (TextView) view.findViewById(R.id.delete_dialog);
         mReport = (TextView) view.findViewById(R.id.report_dialog1);
+        ic_report = (ImageView) view.findViewById(R.id.ic_report);
+        ic_delete = (ImageView) view.findViewById(R.id.ic_delete);
         photo = getPhotoFromBundle();
-
-
 
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,9 +74,19 @@ public class View_Delete_Dialog extends DialogFragment {
                     getDialog().dismiss();
                 }
             });
+            ic_report.setVisibility(View.GONE);
+            mReport.setVisibility(View.GONE);
         }
         else{
             mDelete.setVisibility(View.GONE);
+            ic_delete.setVisibility(View.GONE);
+            mReport.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mOnReportClickListener.onReportClickListener(photo);
+                    getDialog().dismiss();
+                }
+            });
         }
 
         return view;
@@ -92,6 +109,7 @@ public class View_Delete_Dialog extends DialogFragment {
         try{
             mOnViewClickListener = (OnViewClickListener) getTargetFragment();
             mOnDeleteClickListener = (OnDeleteClickListener) getTargetFragment();
+            mOnReportClickListener = (OnReportClickListener) getTargetFragment();
         }catch(ClassCastException e){
             Log.d(TAG, "onAttach: " + e.getMessage());
         }

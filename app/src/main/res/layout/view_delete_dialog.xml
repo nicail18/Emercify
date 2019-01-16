@@ -37,6 +37,7 @@
         android:layout_width="150dp"
         android:layout_height="wrap_content">
         <ImageView
+            android:id="@+id/ic_report"
             android:layout_width="15dp"
             android:layout_height="15dp"
             android:layout_centerVertical="true"
@@ -64,6 +65,7 @@
          android:layout_width="150dp"
          android:layout_height="wrap_content">
          <ImageView
+             android:id="@+id/ic_delete"
              android:layout_width="15dp"
              android:layout_height="15dp"
              android:layout_centerVertical="true"

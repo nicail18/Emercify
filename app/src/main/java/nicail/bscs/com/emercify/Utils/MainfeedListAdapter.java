@@ -1,11 +1,7 @@
 package nicail.bscs.com.emercify.Utils;
 
-import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,11 +26,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import org.json.JSONObject;
-
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -44,16 +35,13 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import nicail.bscs.com.emercify.Home.CameraFragment;
 import nicail.bscs.com.emercify.Home.HomeActivity;
-import nicail.bscs.com.emercify.Home.HomeFragment;
 import nicail.bscs.com.emercify.Likes.MapActivity;
 import nicail.bscs.com.emercify.Profile.ProfileActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.dialogs.View_Delete_Dialog;
 import nicail.bscs.com.emercify.models.Comment;
 import nicail.bscs.com.emercify.models.Like;
-import nicail.bscs.com.emercify.models.Notifications;
 import nicail.bscs.com.emercify.models.Photo;
 import nicail.bscs.com.emercify.models.User;
 import nicail.bscs.com.emercify.models.UserAccountSettings;

@@ -1,6 +1,8 @@
 package nicail.bscs.com.emercify.Home;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -47,9 +49,30 @@ import nicail.bscs.com.emercify.models.Photo;
 
 public class HomeFragment extends Fragment implements
         View_Delete_Dialog.OnViewClickListener,
-        View_Delete_Dialog.OnDeleteClickListener{
+        View_Delete_Dialog.OnDeleteClickListener,
+        View_Delete_Dialog.OnReportClickListener{
     private static final String TAG = "HomeFragment";
 
+    @Override
+    public void onReportClickListener(Photo photo) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Are you sure you want to Report the user?")
+                .setCancelable(false)
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
 
     @Override
     public void onViewClickListener(Photo photo) {

@@ -201,9 +201,6 @@ public class ViewPostFragment extends Fragment {
 
                         getCurrentUser();
                         getPhotoDetails();
-
-
-
                     }
                 }
 
@@ -467,7 +464,7 @@ public class ViewPostFragment extends Fragment {
         if(!timestampDiff.equals("0")){
             mTimeStamp.setText(timestampDiff);
         }
-        UniversalImageLoader.setImage(mUserAccountSettings.getProfile_photo(),mProfileImage,null,"");
+//        UniversalImageLoader.setImage(mUserAccountSettings.getProfile_photo(),mProfileImage,null,"");
         mUsername.setText(mUserAccountSettings.getUsername());
         mLikes.setText(mLikeString);
         mCaption.setText(mPhoto.getCaption());
