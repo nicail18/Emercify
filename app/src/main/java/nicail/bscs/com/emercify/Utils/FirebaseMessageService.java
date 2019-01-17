@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -56,10 +57,6 @@ public class FirebaseMessageService extends FirebaseMessagingService{
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         mNotificationManager.notify(1,notificationBuilder.build());
-        @SuppressLint("WrongThread") View rootView = ((Activity)getApplicationContext()).getWindow()
-                .getDecorView().findViewById(android.R.id.content);
-        @SuppressLint("WrongThread") BottomNavigationViewEx bottomNavigationViewEx =
-                (BottomNavigationViewEx)rootView.findViewById(R.id.bottomNavViewBar);
-        BottomNavigationViewHelper.showBadge(getApplicationContext(),bottomNavigationViewEx,R.id.ic_alert,"1");
+        BottomNavigationViewHelper.showBadge(getApplicationContext(),R.id.ic_alert,"1");
     }
 }
