@@ -1,19 +1,15 @@
 package nicail.bscs.com.emercify.Login;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -43,11 +39,16 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.iid.FirebaseInstanceId;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import org.web3j.crypto.Credentials;
+import org.web3j.protocol.Web3j;
+import org.web3j.protocol.Web3jFactory;
+import org.web3j.protocol.http.HttpService;
+import org.web3j.tx.Contract;
+import org.web3j.tx.ManagedTransaction;
 
 import nicail.bscs.com.emercify.Home.HomeActivity;
 import nicail.bscs.com.emercify.R;
+import nicail.bscs.com.emercify.Utils.Emercify;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 
 public class LoginActivity extends AppCompatActivity{
@@ -66,6 +67,7 @@ public class LoginActivity extends AppCompatActivity{
     private ProgressBar mProgressBar;
     private EditText mEmail, mPassword;
     private TextView mPleaseWait;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,6 +80,7 @@ public class LoginActivity extends AppCompatActivity{
         signInButton = (SignInButton) findViewById(R.id.googe_signin);
         loginButton = (LoginButton) findViewById(R.id.facebook_login);
         mContext = LoginActivity.this;
+        progressDialog = new ProgressDialog(mContext);
         Log.d(TAG, "onCreate: started");
 
         loginButton.setReadPermissions("email");
@@ -221,15 +224,19 @@ public class LoginActivity extends AppCompatActivity{
             @Override
             public void onSuccess(AuthResult authResult) {
                 Toast.makeText(mContext, "Login Successfully", Toast.LENGTH_SHORT).show();
-                String email = authResult.getUser().getDisplayName();
+                String email = authResult.getUser().getEmail();
                 String username = authResult.getUser().getDisplayName();
                 mFirebaseMethods.addNewUser(email,username,"","","" );
 
                 mFirebaseMethods.updateDevice_token(
                         FirebaseInstanceId.getInstance().getToken());
                 mFirebaseMethods.updateOnlineStatus(true);
-                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                startActivity(intent);
+                progressDialog.setTitle("Logging In To Emercify");
+                progressDialog.setMessage("Please Wait");
+                progressDialog.setCancelable(false);
+                progressDialog.setMessage("Please Wait...");
+                progressDialog.show();
+                new InitWeb3j(FirebaseAuth.getInstance().getCurrentUser().getUid(),username,username,email).execute(getString(R.string.infura));
             }
         });
     }
@@ -307,9 +314,12 @@ public class LoginActivity extends AppCompatActivity{
                             mFirebaseMethods.updateDevice_token(
                                     FirebaseInstanceId.getInstance().getToken());
                             mFirebaseMethods.updateOnlineStatus(true);
-                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                            startActivity(intent);
-                            Toast.makeText(mContext, "Login Successfully", Toast.LENGTH_SHORT).show();
+                            progressDialog.setTitle("Logging In To Emercify");
+                            progressDialog.setMessage("Please Wait");
+                            progressDialog.setCancelable(false);
+                            progressDialog.setMessage("Please Wait...");
+                            progressDialog.show();
+                            new InitWeb3j(FirebaseAuth.getInstance().getCurrentUser().getUid(),username,username,email).execute(getString(R.string.infura));;
                         } else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(mContext, "Login Failed", Toast.LENGTH_SHORT).show();
@@ -318,6 +328,52 @@ public class LoginActivity extends AppCompatActivity{
                         // ...
                     }
                 });
+    }
+
+    private class InitWeb3j extends AsyncTask<String, String, String> {
+
+        String user_id, name, username, email;
+
+        public InitWeb3j(String user_id, String name, String username, String email) {
+            this.user_id = user_id;
+            this.name = name;
+            this.username = username;
+            this.email = email;
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String url = strings[0];
+            try {
+                Web3j web3 = Web3jFactory.build(new HttpService(url));
+                Credentials credentials = Credentials.create(getString(R.string.private_key));
+                Emercify contract = Emercify.load(
+                        getString(R.string.contract_address),
+                        web3, credentials,
+                        ManagedTransaction.GAS_PRICE,
+                        Contract.GAS_LIMIT
+                );
+                contract._setUser(
+                        this.user_id,
+                        this.name,
+                        this.username,
+                        this.email
+                ).send();
+                return "LogIn Successfully";
+            } catch (Exception e) {
+                return e.getMessage();
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            Toast.makeText(mContext, "Login Successfully", Toast.LENGTH_LONG).show();
+            progressDialog.dismiss();
+            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+            startActivity(intent);
+        }
     }
 
     @Override

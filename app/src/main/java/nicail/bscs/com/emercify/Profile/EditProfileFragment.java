@@ -1,12 +1,16 @@
 package nicail.bscs.com.emercify.Profile;
 
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,9 +35,21 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.web3j.crypto.Credentials;
+import org.web3j.protocol.Web3j;
+import org.web3j.protocol.Web3jFactory;
+import org.web3j.protocol.http.HttpService;
+import org.web3j.tuples.generated.Tuple5;
+import org.web3j.tx.Contract;
+import org.web3j.tx.ManagedTransaction;
+
 import de.hdodenhof.circleimageview.CircleImageView;
+import nicail.bscs.com.emercify.Home.HomeActivity;
+import nicail.bscs.com.emercify.Likes.LikesActivity;
+import nicail.bscs.com.emercify.Login.LoginActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Share.ShareActivity;
+import nicail.bscs.com.emercify.Utils.Emercify;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.UniversalImageLoader;
 import nicail.bscs.com.emercify.dialogs.ConfirmPasswordDialog;
@@ -110,7 +126,7 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
     private FirebaseMethods mFirebaseMethods;
     private String userID;
 
-
+    private ProgressDialog progressDialog;
 
     @Nullable
     @Override
@@ -126,7 +142,7 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
         mFirebaseMethods = new FirebaseMethods(getActivity());
         mChangeProfilePhoto = (TextView) view.findViewById(R.id.changeProfilePhoto);
         mContext = getActivity();
-
+        progressDialog = new ProgressDialog(mContext);
         //setProfileImage();
         setupFireBaseAuth();
 
@@ -162,6 +178,11 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
         final String email = mEmail.getText().toString();
         final long phoneNumber = Long.parseLong(mPhoneNumber.getText().toString());
 
+        progressDialog.setTitle("Saving Profile Settings");
+        progressDialog.setMessage("Please Wait...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
         if(!mUserSettings.getUser().getUsername().equals(username)){
             checkIfUsernameExists(username);
         }
@@ -172,18 +193,22 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
         }
         if(!mUserSettings.getSettings().getDisplay_name().equals(displayName)){
             mFirebaseMethods.updateUserAccountSettings(displayName,null,null,0);
-            Toast.makeText(getActivity(), "Saved Display Name", Toast.LENGTH_SHORT).show();
+            new InitWeb3j(FirebaseAuth.getInstance().getCurrentUser().getUid(),displayName,"","name")
+                    .execute(getString(R.string.infura));
         }
         if(!mUserSettings.getSettings().getWebsite().equals(website)){
             mFirebaseMethods.updateUserAccountSettings(null,null,website,0);
+            progressDialog.dismiss();
             Toast.makeText(getActivity(), "Saved Website", Toast.LENGTH_SHORT).show();
         }
         if(!mUserSettings.getSettings().getDescription().equals(description)){
             mFirebaseMethods.updateUserAccountSettings(null,description,null,0);
+            progressDialog.dismiss();
             Toast.makeText(getActivity(), "Saved Description", Toast.LENGTH_SHORT).show();
         }
         if(mUserSettings.getUser().getPhone_number() != phoneNumber){
             mFirebaseMethods.updateUserAccountSettings(null,null,null,phoneNumber);
+            progressDialog.dismiss();
             Toast.makeText(getActivity(), "Saved PhoneNumber", Toast.LENGTH_SHORT).show();
         }
     }
@@ -201,6 +226,8 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(!dataSnapshot.exists()){
                     mFirebaseMethods.updateUsername(username);
+                    new InitWeb3j(FirebaseAuth.getInstance().getCurrentUser().getUid(),"",username,"username")
+                            .execute(getActivity().getString(R.string.infura));
                     Toast.makeText(getActivity(), "Saved username", Toast.LENGTH_SHORT).show();
                 }
                 for(DataSnapshot singleSnapshot: dataSnapshot.getChildren()){
@@ -280,6 +307,56 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
 
             }
         });
+    }
+
+    private class InitWeb3j extends AsyncTask<String, String, String> {
+
+        String user_id, name, username, type;
+
+        public InitWeb3j(String user_id, String name, String username, String type) {
+            this.user_id = user_id;
+            this.name = name;
+            this.username = username;
+            this.type = type;
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String url = strings[0];
+            try {
+                Web3j web3 = Web3jFactory.build(new HttpService(url));
+                Credentials credentials = Credentials.create(getString(R.string.private_key));
+                Emercify contract = Emercify.load(
+                        getString(R.string.contract_address),
+                        web3, credentials,
+                        ManagedTransaction.GAS_PRICE,
+                        Contract.GAS_LIMIT
+                );
+                if(type == "name"){
+                    contract._editName(
+                            this.user_id,
+                            this.name
+                    ).send();
+                }
+                else{
+                    contract._editUsername(
+                            this.user_id,
+                            this.username
+                    ).send();
+                }
+                return "Saved Successfully";
+            } catch (Exception e) {
+                return e.getMessage();
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            Toast.makeText(mContext, "Successfully Saved", Toast.LENGTH_LONG).show();
+            progressDialog.dismiss();
+        }
     }
 
     @Override

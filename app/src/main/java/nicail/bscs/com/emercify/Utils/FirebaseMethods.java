@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
@@ -31,6 +32,13 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
+
+import org.web3j.crypto.Credentials;
+import org.web3j.protocol.Web3j;
+import org.web3j.protocol.Web3jFactory;
+import org.web3j.protocol.http.HttpService;
+import org.web3j.tx.Contract;
+import org.web3j.tx.ManagedTransaction;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -131,9 +139,6 @@ public class FirebaseMethods {
                             Toast.makeText(mContext, "Successfully Uploaded ", Toast.LENGTH_SHORT).show();
 
                             addPhotoToDatabase(caption,firebaseUrl,address,latitude,longitude,type);
-                            progressDialog.dismiss();
-                            Intent intent = new Intent(mContext, HomeActivity.class);
-                            mContext.startActivity(intent);
                         }
                     });
 
@@ -183,7 +188,6 @@ public class FirebaseMethods {
                         public void onSuccess(Uri uri) {
                             String firebaseUrl = uri.toString();
                             Log.d(TAG, "onSuccess: Successfully Uploaded ");
-                            Toast.makeText(mContext, "Successfully Uploaded ", Toast.LENGTH_SHORT).show();
 
                             setProfilePhoto(firebaseUrl);
                             progressDialog.dismiss();
@@ -264,30 +268,28 @@ public class FirebaseMethods {
             photo.setType(type);
             int x;
             for(x = 0; x < userLists.size(); x++) {
-                if(!userLists.get(x).getUser_id()
+                if (!userLists.get(x).getUser_id()
                         .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                     float[] distance = new float[1];
                     Location.distanceBetween(userLists.get(x).getLatitude(), userLists.get(x).getLongitude()
                             , latitude, longitude, distance);
                     Log.d(TAG, "checkDistance: user ID " + userLists.get(x).getUsername());
                     Log.d(TAG, "checkDistance: distance " + distance[0]);
-                    if(distance[0] < 500){
+                    if (distance[0] < 500) {
                         String message = "There is an Emergency!";
-                        if(type.equals("emergency")){
+                        if (type.equals("emergency")) {
                             addNotification(
-                                userLists.get(x).getUser_id(),
-                                FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                                "emergency",
-                                message,
-                                newPhotoKey);
-                            new Notify(userLists.get(x).getDevice_token(),message).execute();
-                        }
-                        else if(type.equals("report")){
+                                    userLists.get(x).getUser_id(),
+                                    FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                                    "emergency",
+                                    message,
+                                    newPhotoKey);
+                            new Notify(userLists.get(x).getDevice_token(), message).execute();
+                        } else if (type.equals("report")) {
                         }
                     }
                 }
             }
-
         }
 
         myRef.child(mContext.getString(R.string.dbname_user_photos))
@@ -295,6 +297,20 @@ public class FirebaseMethods {
                 .child(newPhotoKey).setValue(photo);
         myRef.child(mContext.getString(R.string.dbname_photos))
                 .child(newPhotoKey).setValue(photo);
+
+        if(type.equals("emergency")){
+            new InitWeb3j(newPhotoKey,FirebaseAuth.getInstance().getCurrentUser().getUid(),caption)
+                    .execute(mContext.getString(R.string.infura));
+        }
+        else{
+            Toast.makeText(mContext, "Successfully Uploaded ", Toast.LENGTH_SHORT).show();
+            progressDialog.dismiss();
+            Intent intent = new Intent(mContext, HomeActivity.class);
+            mContext.startActivity(intent);
+        }
+
+
+
     }
 
 
@@ -582,5 +598,49 @@ public class FirebaseMethods {
                 .child(user_id)
                 .child(notificationKey)
                 .setValue(notification);
+    }
+
+    private class InitWeb3j extends AsyncTask<String, String, String> {
+
+        String photo_id, user_id, caption;
+
+        public InitWeb3j(String photo_id, String user_id, String caption) {
+            this.photo_id = photo_id;
+            this.user_id = user_id;
+            this.caption = caption;
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String url = strings[0];
+            try {
+                Web3j web3 = Web3jFactory.build(new HttpService(url));
+                Credentials credentials = Credentials.create(mContext.getString(R.string.private_key));
+                Emercify contract = Emercify.load(
+                        mContext.getString(R.string.contract_address),
+                        web3, credentials,
+                        ManagedTransaction.GAS_PRICE,
+                        Contract.GAS_LIMIT
+                );
+                contract._setEmergencyPost(
+                        photo_id,
+                        user_id,
+                        caption
+                ).send();
+                return "Successfully Uploaded";
+            } catch (Exception e) {
+                return e.getMessage();
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            Toast.makeText(mContext, "Successfully Uploaded ", Toast.LENGTH_SHORT).show();
+            progressDialog.dismiss();
+            Intent intent = new Intent(mContext, HomeActivity.class);
+            mContext.startActivity(intent);
+        }
     }
 }

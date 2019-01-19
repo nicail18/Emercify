@@ -31,18 +31,14 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
-import org.web3j.abi.datatypes.Utf8String;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
-import org.web3j.protocol.core.RemoteCall;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.web3j.protocol.core.methods.response.Web3ClientVersion;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tuples.generated.Tuple5;
 import org.web3j.tx.Contract;
 import org.web3j.tx.ManagedTransaction;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -54,11 +50,10 @@ import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.BlockChain;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
 import nicail.bscs.com.emercify.Utils.CheckInternet;
+import nicail.bscs.com.emercify.Utils.Emercify;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
-import nicail.bscs.com.emercify.Utils.MessageContract;
 import nicail.bscs.com.emercify.Utils.NotifRecyclerAdapter;
 import nicail.bscs.com.emercify.models.Comment;
-import nicail.bscs.com.emercify.models.Message;
 import nicail.bscs.com.emercify.models.Notifications;
 import nicail.bscs.com.emercify.models.Photo;
 import nicail.bscs.com.emercify.models.User;
@@ -136,12 +131,10 @@ public class LikesActivity extends AppCompatActivity implements
             }
         });
 
-        getNotifications();
-
     }
 
     private void web3j(){
-        String infura = "https://ropsten.infura.io/v3/1f7164b0fe774aed805a297c99736218";
+        String infura = getString(R.string.infura);
         InitWeb3j task = new InitWeb3j();
         progressDialog = new ProgressDialog(LikesActivity.this);
         progressDialog.setTitle("Loading");
@@ -159,29 +152,24 @@ public class LikesActivity extends AppCompatActivity implements
             String walletFileName = "";
             try {
                 Web3j web3 = Web3jFactory.build(new HttpService(url));
-                Credentials credentials = Credentials.create("0x83FC7F52521183D064A23B5D29423AC9A9AB26F768FBA183FE858BA5A763FDD3");
-                MessageContract contract = MessageContract.load(
-                        "0xaf6d4b550a44466ff02bd22115395ad775472f1d",
+                Credentials credentials = Credentials.create(getString(R.string.private_key));
+                Emercify contract = Emercify.load(
+                        getString(R.string.contract_address),
                         web3, credentials,
                         ManagedTransaction.GAS_PRICE,
                         Contract.GAS_LIMIT
                 );
-                boolean isValid = contract.isValid();
-                String output = contract.getMessage().send();
-                String contractAddress = contract.getContractAddress();
-                TransactionReceipt transactionReceipt = contract.setMessage("Hi World").send();
-                String transaction = transactionReceipt.getTransactionHash();
-                return "IsValid: " + isValid + "\n\n" +
-                        "First Message" + output + "\n\n" +
-                        "ContractAddress: " +contractAddress + "\n\n" +
-                        "Block Hash" + transaction + "\n\n" +
-                        "Message" + contract.getMessage().send();
-            } catch (IOException e) {
-                Log.d(TAG, "doInBackground: web3j IOException " + e.getMessage() );
-                return "IOException" + e.getMessage();
+                contract._setUser(
+                        "hello",
+                        "world",
+                        "fake",
+                        "email"
+                ).send();
+                Tuple5<String, String, String, String, Boolean> output = contract._getUser("hello").send();
+                return output.toString();
             } catch (Exception e){
                 Log.d(TAG, "doInBackground: web3j Exception: " + e.getMessage());
-                return "Excepti on" + e.getMessage();
+                return "Exception" + e.getMessage();
             }
 
         }
@@ -246,11 +234,9 @@ public class LikesActivity extends AppCompatActivity implements
         protected void onPostExecute(Boolean result) {
             if (CheckInternet.isNetwork(LikesActivity.this)) {
                 //internet is connected do something
-                pbnotif.setVisibility(View.GONE);
-                displaynotif();
                 //rellayoutnotif.setVisibility(View.VISIBLE);
                 //nonotification.setVisibility(View.GONE);
-
+                getNotifications();
             }else{
                 //do something, net is not connected
                 pbnotif.setVisibility(View.GONE);
@@ -271,17 +257,6 @@ public class LikesActivity extends AppCompatActivity implements
                 e.printStackTrace();
             }
             return null;
-        }
-    }
-
-    public void displaynotif(){
-        if(notifRecyclerAdapter.getItemCount()!=0){
-            notifsRecyclerView.setAdapter(notifRecyclerAdapter);
-            rellayoutnotif.setVisibility(View.VISIBLE);
-        }else{
-            //Toast.makeText(LikesActivity.this, "No Notifications Available",Toast.LENGTH_SHORT).show();
-            nonotification.setVisibility(View.VISIBLE);
-            nonotifimage.setVisibility(View.VISIBLE);
         }
     }
 
@@ -313,7 +288,13 @@ public class LikesActivity extends AppCompatActivity implements
                     count[0]++;
                 }
                 if(count[0] > notifications.size()-1){
+                    pbnotif.setVisibility(View.GONE);
+                    rellayoutnotif.setVisibility(View.VISIBLE);
                     displayNotifs();
+                }else{
+                    //Toast.makeText(LikesActivity.this, "No Notifications Available",Toast.LENGTH_SHORT).show();
+                    nonotification.setVisibility(View.VISIBLE);
+                    nonotifimage.setVisibility(View.VISIBLE);
                 }
             }
 
