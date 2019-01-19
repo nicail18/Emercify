@@ -50,7 +50,7 @@
 
     <string name="infura">https://ropsten.infura.io/v3/1f7164b0fe774aed805a297c99736218</string>
     <string name="private_key">0x83FC7F52521183D064A23B5D29423AC9A9AB26F768FBA183FE858BA5A763FDD3</string>
-    <string name="contract_address">0x4cb6cbb773e83e227bd36496afb621638069373d</string>
+    <string name="contract_address">0xb7e2d7271d07328caebdc227a7a844ce53255720</string>
 
 
 
