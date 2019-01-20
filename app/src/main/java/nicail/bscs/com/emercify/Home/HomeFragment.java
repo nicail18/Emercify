@@ -105,6 +105,7 @@ public class HomeFragment extends Fragment implements
     private TextView noposts;
     private ImageView nonetimage;
     private ImageView nopostimage;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -168,8 +169,6 @@ public class HomeFragment extends Fragment implements
 
     }
 
-
-
     public int getItemCount() {
         if (mPhotos.size() == 0) {
             noposts.setVisibility(View.VISIBLE);
@@ -188,7 +187,6 @@ public class HomeFragment extends Fragment implements
         mPaginatedPhotos.remove(position);
         recyclerAdapter.notifyDataSetChanged();
     }
-
 
     private void getFollowing(){
         Log.d(TAG, "getFollowing: searching for following");
@@ -213,7 +211,6 @@ public class HomeFragment extends Fragment implements
             }
         });
     }
-
 
     public void getPhotos(){
         Log.d(TAG, "getPhotos: getting photos");

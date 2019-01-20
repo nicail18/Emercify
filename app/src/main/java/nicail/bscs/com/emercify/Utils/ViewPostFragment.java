@@ -1,6 +1,9 @@
 package nicail.bscs.com.emercify.Utils;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +17,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -46,6 +50,8 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import nicail.bscs.com.emercify.Home.HomeActivity;
+import nicail.bscs.com.emercify.Likes.LikesActivity;
+import nicail.bscs.com.emercify.Likes.MapActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.models.Comment;
 import nicail.bscs.com.emercify.models.Like;
@@ -70,7 +76,7 @@ public class ViewPostFragment extends Fragment {
 
     private SquareImageView mPostImage;
     private BottomNavigationViewEx bottomNavigationView;
-    private TextView mBackLabel,mCaption,mUsername,mTimeStamp, mLikes, mComments;
+    private TextView mBackLabel,mCaption,mUsername,mTimeStamp, mLikes, mComments, mAddress;
     private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage, mComment;
 
     private Photo mPhoto;
@@ -87,6 +93,7 @@ public class ViewPostFragment extends Fragment {
     private RelativeLayout rellayout2;
     private ProgressBar viewpost1;
     private Context mContext;
+    private Button respondButton;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -112,7 +119,9 @@ public class ViewPostFragment extends Fragment {
         mLikes = (TextView) view.findViewById(R.id.image_likes);
         mComment = (ImageView) view.findViewById(R.id.speech_bubble);
         mComments = (TextView) view.findViewById(R.id.image_comments_Link);
+        mAddress = (TextView) view.findViewById(R.id.address);
         rellayout2 = (RelativeLayout) view.findViewById(R.id.rellayout2);
+        respondButton = (Button) view.findViewById(R.id.respondButton);
         viewpost1 = (ProgressBar) view.findViewById(R.id.progress_Barviewpost);
         mContext = getActivity();
 
@@ -162,7 +171,35 @@ public class ViewPostFragment extends Fragment {
                     .into(mPostImage);
             mActivityNumber = getActivityNumFromBundle();
             String photo_id = getPhotoFromBundle().getPhoto_id();
-
+            if(getEmergencyFromBundle() != null){
+                respondButton.setVisibility(View.VISIBLE);
+                respondButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setMessage("Are you sure you want to respond to the photo's location?")
+                                .setCancelable(false)
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Intent intent = new Intent(getActivity(), MapActivity.class);
+                                        intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
+                                        intent.putExtra("INTENT PHOTO",getPhotoFromBundle());
+                                        Log.d(TAG, "onDataChange: " + intent);
+                                        startActivity(intent);
+                                    }
+                                });
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    }
+                });
+            }
             Query query = FirebaseDatabase.getInstance().getReference()
                     .child(getString(R.string.dbname_photos))
                     .orderByChild("photo_id")
@@ -180,7 +217,7 @@ public class ViewPostFragment extends Fragment {
                         newPhoto.setUser_id(objectMap.get("user_id").toString());
                         newPhoto.setDate_created(objectMap.get("date_created").toString());
                         newPhoto.setImage_path(objectMap.get("image_path").toString());
-
+                        newPhoto.setAddress(objectMap.get("address").toString());
                         GlideApp
                                 .with(mContext)
                                 .load(newPhoto.getImage_path())
@@ -452,6 +489,20 @@ public class ViewPostFragment extends Fragment {
             return null;
         }
     }
+    private String getEmergencyFromBundle(){
+        Bundle bundle = this.getArguments();
+        if(bundle != null){
+            if(bundle.getString(getString(R.string.intent_emergency)) != null){
+                return bundle.getString(getString(R.string.intent_emergency));
+            }
+            else{
+                return null;
+            }
+        }
+        else{
+            return  null;
+        }
+    }
 
     private void setupWidgets(){
         if(mLikeString == ""){
@@ -468,7 +519,18 @@ public class ViewPostFragment extends Fragment {
         mUsername.setText(mUserAccountSettings.getUsername());
         mLikes.setText(mLikeString);
         mCaption.setText(mPhoto.getCaption());
-
+        mAddress.setText(mPhoto.getAddress());
+        mAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle b = new Bundle();
+                b.putParcelable("PHOTO",mPhoto);
+                Log.d(TAG, "onClick: " + b.getParcelable("PHOTO"));
+                Intent intent = new Intent(mContext, MapActivity.class);
+                intent.putExtras(b);
+                mContext.startActivity(intent);
+            }
+        });
         if(mPhoto.getComments().size() > 0){
             mComments.setVisibility(View.VISIBLE);
             mComments.setText("View all " + mPhoto.getComments().size() + " comments");

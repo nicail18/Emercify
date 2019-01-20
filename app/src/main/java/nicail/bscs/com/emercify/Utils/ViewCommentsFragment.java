@@ -7,6 +7,8 @@ import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,10 +65,12 @@ public class ViewCommentsFragment extends Fragment {
 
     private ImageView mBackArrow, mCheckMark;
     private EditText mComment;
-    private ListView mListView;
+    private RecyclerView mListView;
     private RelativeLayout rellayout2;
     private ProgressBar commentbar;
     private CommentListAdapter commentListAdapter;
+    private CommentRecyclerAdapter commentRecyclerAdapter;
+    private LinearLayoutManager manager;
     private TextView nocomment;
     private CircleImageView mCircleImageView;
 
@@ -83,7 +87,7 @@ public class ViewCommentsFragment extends Fragment {
         mBackArrow = (ImageView) view.findViewById(R.id.backArrow);
         mCheckMark = (ImageView) view.findViewById(R.id.ivPostComment);
         mComment = (EditText) view.findViewById(R.id.comment);
-        mListView = (ListView) view.findViewById(R.id.listView);
+        mListView = (RecyclerView) view.findViewById(R.id.listView);
         rellayout2 = (RelativeLayout) view.findViewById(R.id.rellayout2);
         commentbar = (ProgressBar) view.findViewById(R.id.progress_Barcomment);
         nocomment = (TextView) view.findViewById(R.id.no_comment);
@@ -98,22 +102,21 @@ public class ViewCommentsFragment extends Fragment {
             Log.e(TAG, "onCreateView: NullPointerException" + e.getMessage());
         }
 
-        setupFireBaseAuth();
 
+        commentbar.setVisibility(View.VISIBLE);
+        rellayout2.setVisibility(View.GONE);
+        nocomment.setVisibility(View.GONE);
+        setupFireBaseAuth();
         return view;
     }
 
     class Task extends AsyncTask<String, Integer, Boolean> {
         @Override
         protected void onPreExecute() {
-            commentbar.setVisibility(View.VISIBLE);
-            rellayout2.setVisibility(View.GONE);
-            nocomment.setVisibility(View.GONE);
             super.onPreExecute();
         }
         @Override
         protected void onPostExecute(Boolean result) {
-            displaynotif();
             super.onPostExecute(result);
         }
         @Override
@@ -128,14 +131,11 @@ public class ViewCommentsFragment extends Fragment {
         }
     }
 
-    public void displaynotif(){
-        CommentListAdapter adapter = new CommentListAdapter(mContext,R.layout.layout_comment,mComments);
-        if(adapter.getCount()!=0){
-            mListView.setAdapter(adapter);
+    public void displayComments() {
+        if(mComments.size() > 0){
             commentbar.setVisibility(View.GONE);
             rellayout2.setVisibility(View.VISIBLE);
         }else{
-            //Toast.makeText(LikesActivity.this, "No Notifications Available",Toast.LENGTH_SHORT).show();
             commentbar.setVisibility(View.GONE);
             nocomment.setVisibility(View.VISIBLE);
         }
@@ -144,15 +144,17 @@ public class ViewCommentsFragment extends Fragment {
 
     private void setupWidgets(){
 
-        CommentListAdapter adapter = new CommentListAdapter(mContext,R.layout.layout_comment, mComments);
-        mListView.setAdapter(adapter);
+        commentRecyclerAdapter = new CommentRecyclerAdapter(mComments);
+        mListView.setAdapter(commentRecyclerAdapter);
+        manager = new LinearLayoutManager(getActivity());
+        mListView.setLayoutManager(manager);
+
 //        GlideApp
 //                .with(mContext)
 //                .load(mPhoto)
 //                .placeholder(R.color.grey)
 //                .centerCrop()
 //                .into(mCircleImageView);
-
         mCheckMark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -253,8 +255,6 @@ public class ViewCommentsFragment extends Fragment {
                     mPhoto.getCaption() + "\"";
             mFirebaseMethods.addNotification(user_id,from_id,type,message,mPhoto.getPhoto_id());
             new Notify(token,message).execute();
-
-
         }
     }
 
@@ -319,6 +319,7 @@ public class ViewCommentsFragment extends Fragment {
         mComments.add(firstComment);
         mPhoto.setComments(mComments);
 
+        displayComments();
         setupWidgets();
 
         myRef.child(getString(R.string.dbname_photos))
@@ -327,6 +328,7 @@ public class ViewCommentsFragment extends Fragment {
                 .addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        Log.d(TAG, "onChildAdded: childAdded");
                         Query query = myRef
                                 .child(mContext.getString(R.string.dbname_photos))
                                 .orderByChild("photo_id")
@@ -364,8 +366,8 @@ public class ViewCommentsFragment extends Fragment {
                                     photo.setComments(mComments);
 
                                     mPhoto = photo;
-
-                                    setupWidgets();
+                                    
+                                    commentRecyclerAdapter.notifyDataSetChanged();
 
                                     /*List<Like> likesList = new ArrayList<Like>();
                                     for(DataSnapshot dSnapshot: singleSnapshot.child("likes").getChildren()){

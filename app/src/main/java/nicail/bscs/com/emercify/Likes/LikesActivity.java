@@ -551,7 +551,7 @@ public class LikesActivity extends AppCompatActivity implements
                 }
             });
         }
-        else if(type.equals("emergency") || type.equals("report")){
+        else if(type.equals("emergency")){
             Query query = myRef
                     .child(getString(R.string.dbname_photos))
                     .orderByChild("photo_id")
@@ -574,11 +574,17 @@ public class LikesActivity extends AppCompatActivity implements
                         photo.setDate_created(objectMap.get("date_created").toString());
                         photo.setImage_path(objectMap.get("image_path").toString());
 
-                        Intent intent = new Intent(LikesActivity.this, MapActivity.class);
+                        Intent intent = new Intent(LikesActivity.this, ProfileActivity.class);
                         intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
-                        intent.putExtra("INTENT PHOTO",photo);
+                        intent.putExtra(getString(R.string.intent_emergency),photo);
                         Log.d(TAG, "onDataChange: " + intent);
                         startActivity(intent);
+//                        Intent intent = new Intent(LikesActivity.this, MapActivity.class);
+//                        intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
+//                        intent.putExtra("INTENT PHOTO",photo);
+//                        Log.d(TAG, "onDataChange: " + intent);
+//                        startActivity(intent);
+
 
                         Log.d(TAG, "onDataChange: " + photo.toString());
                     }

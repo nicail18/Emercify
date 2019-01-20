@@ -28,7 +28,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
-                android:text="sample.text"
                 android:id="@+id/username"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
@@ -125,7 +124,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
-                    android:text="address"
                     android:id="@+id/address"
                     android:layout_marginBottom="5dp"
                     android:layout_marginLeft="5dp"
@@ -136,7 +134,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Liked by test, test1, test2 and 100 others"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 android:layout_below="@+id/rellayout4"

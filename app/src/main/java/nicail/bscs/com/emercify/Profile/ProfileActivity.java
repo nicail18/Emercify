@@ -49,9 +49,12 @@ public class ProfileActivity extends AppCompatActivity implements
     @Override
     public void onGridImageSelected(Photo photo, int activityNumber) {
         Log.d(TAG, "onGridImageSelected: selected an image gridview: " + photo.toString());
-
+        Intent intent = getIntent();
         ViewPostFragment fragment = new ViewPostFragment();
         Bundle args = new Bundle();
+        if(intent.hasExtra(getString(R.string.intent_emergency))){
+            args.putString("emergency","emergency");
+        }
         args.putParcelable("PHOTO",photo);
         args.putInt(getString(R.string.activity_number),activityNumber);
         if(callingActivity != null){
@@ -114,6 +117,12 @@ public class ProfileActivity extends AppCompatActivity implements
                 callingActivity = "Likes Activity";
                 Log.d(TAG, "init: " + photo);
                 onCommentThreadSelecetedListener(photo);
+            }
+            else if(intent.hasExtra(getString(R.string.intent_emergency))){
+                Photo photo = new Photo();
+                photo = intent.getParcelableExtra(getString(R.string.intent_emergency));
+                callingActivity = "Likes Activity";
+                onGridImageSelected(photo,3);
             }
             else{
                 Toast.makeText(mContext, "Something Went Wrong", Toast.LENGTH_SHORT).show();

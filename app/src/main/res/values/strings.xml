@@ -11,6 +11,7 @@
     <string name="intent_user">intent_user</string>
     <string name="intent_comment">intent_comment</string>
     <string name="intent_like">intent_like</string>
+    <string name="intent_emergency">intent_emergency</string>
 
 
     <string name="dbname_users">users</string>
