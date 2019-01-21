@@ -395,6 +395,49 @@ public class MapActivity extends AppCompatActivity implements
         });
     }
 
+    private void startNotificationRunnable(){
+        handler.postDelayed(runnable = new Runnable() {
+            @Override
+            public void run() {
+                retrieveNotifs();
+                handler.postDelayed(runnable,LOCATION_UPDATE_INTERVAL);
+            }
+        },LOCATION_UPDATE_INTERVAL);
+    }
+
+    private void stopNotificationRunnable(){
+        handler.removeCallbacks(runnable);
+    }
+
+    private void retrieveNotifs(){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference
+                .child(getString(R.string.dbname_user_notification))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds: dataSnapshot.getChildren()){
+                    boolean check = (boolean) ds.child("badge_seen").getValue();
+                    if(!check){
+                        BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
+                        BottomNavigationViewHelper.showBadge(
+                                mContext,
+                                bottomNavigationViewEx,
+                                R.id.ic_alert,
+                                "1");
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void setCameraView() {
         LatLng latLng = new LatLng(latitude,longitude);
 
@@ -571,6 +614,7 @@ public class MapActivity extends AppCompatActivity implements
     public void onResume() {
         super.onResume();
         firebaseMethods.updateOnlineStatus(true);
+        startNotificationRunnable();
         mMapView.onResume();
     }
 
@@ -584,6 +628,7 @@ public class MapActivity extends AppCompatActivity implements
     @Override
     public void onStop() {
         super.onStop();
+        stopNotificationRunnable();
         mMapView.onStop();
     }
 

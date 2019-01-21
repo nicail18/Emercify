@@ -3,6 +3,7 @@ package nicail.bscs.com.emercify.Search;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -42,6 +43,8 @@ import nicail.bscs.com.emercify.models.UserAccountSettings;
 public class SearchActivity extends AppCompatActivity {
     private static final String TAG = "SearchActivity";
     private static final int ACTIVITY_NUM = 1;
+    private static final int INTERVAL = 3000;
+
     private Context mContext = SearchActivity.this;
     private FirebaseMethods firebaseMethods;
 
@@ -51,6 +54,9 @@ public class SearchActivity extends AppCompatActivity {
 
     private List<User> mUserList;
     private UserListAdapter mAdapter;
+
+    private Handler handler = new Handler();
+    private Runnable runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -177,10 +183,61 @@ public class SearchActivity extends AppCompatActivity {
         menuItem.setChecked(true);
     }
 
+    private void startNotificationRunnable(){
+        handler.postDelayed(runnable = new Runnable() {
+            @Override
+            public void run() {
+                retrieveNotifs();
+                handler.postDelayed(runnable,INTERVAL);
+            }
+        },INTERVAL);
+    }
+
+    private void stopNotificationRunnable(){
+        handler.removeCallbacks(runnable);
+    }
+
+    private void retrieveNotifs(){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference
+                .child(getString(R.string.dbname_user_notification))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds: dataSnapshot.getChildren()){
+                    boolean check = (boolean) ds.child("badge_seen").getValue();
+                    if(!check){
+                        BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
+                        BottomNavigationViewHelper.showBadge(
+                                mContext,
+                                bottomNavigationViewEx,
+                                R.id.ic_alert,
+                                "1");
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         firebaseMethods.updateOnlineStatus(true);
+        startNotificationRunnable();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        firebaseMethods.updateOnlineStatus(false);
+        stopNotificationRunnable();
     }
 
     @Override

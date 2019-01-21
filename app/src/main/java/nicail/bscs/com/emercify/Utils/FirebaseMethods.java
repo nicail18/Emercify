@@ -571,11 +571,28 @@ public class FirebaseMethods {
         }
     }
 
-    public void updateBadgeSeen(String user_id,boolean status_seen,String notification_id){
-        myRef.child(mContext.getString(R.string.dbname_user_notification))
-                .child(user_id).child(notification_id).child("badge_seen").setValue(true);
-        myRef.child(mContext.getString(R.string.dbname_notification))
-                .child(notification_id).child("badge_seen").setValue(true);
+    public void updateBadgeSeen(){
+        Query query = myRef.child(mContext.getString(R.string.dbname_user_notification))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds: dataSnapshot.getChildren()){
+                    String notification_id = ds.child("notification_id").getValue().toString();
+                    String user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    myRef.child(mContext.getString(R.string.dbname_user_notification))
+                        .child(user_id).child(notification_id).child("badge_seen").setValue(true);
+                    myRef.child(mContext.getString(R.string.dbname_notification))
+                            .child(notification_id).child("badge_seen").setValue(true);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     public void deletePhoto(String user_id, String photo_id){
