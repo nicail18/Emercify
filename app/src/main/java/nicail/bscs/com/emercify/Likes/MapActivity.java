@@ -476,6 +476,7 @@ public class MapActivity extends AppCompatActivity implements
                         latitude = lat;
                         longitude = lon;
                         setCameraView();
+                        progressDialog.dismiss();
                     }
                     startLocationService();
                 }

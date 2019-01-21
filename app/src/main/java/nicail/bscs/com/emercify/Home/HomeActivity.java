@@ -312,6 +312,8 @@ public class HomeActivity extends AppCompatActivity implements
                         fragment.updateMainFeed(position);
                     }
                 });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     public void hideLayout(){
