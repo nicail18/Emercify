@@ -52,9 +52,9 @@ public class View_Delete_Dialog extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.view_delete_dialog, container, false);
-        mView = (TextView) view.findViewById(R.id.view_dialog);
-        mDelete = (TextView) view.findViewById(R.id.delete_dialog);
-        mReport = (TextView) view.findViewById(R.id.report_dialog1);
+        mView = (TextView) view.findViewById(R.id.view_text);
+        mDelete = (TextView) view.findViewById(R.id.delete_text);
+        mReport = (TextView) view.findViewById(R.id.report_text);
         ic_report = (ImageView) view.findViewById(R.id.ic_report);
         ic_delete = (ImageView) view.findViewById(R.id.ic_delete);
         photo = getPhotoFromBundle();
