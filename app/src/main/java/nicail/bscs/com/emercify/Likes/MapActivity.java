@@ -50,6 +50,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PendingResult;
@@ -71,7 +72,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
@@ -80,6 +83,7 @@ import nicail.bscs.com.emercify.Utils.FetchURL;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.LocationService;
 import nicail.bscs.com.emercify.Utils.MyClusterManagerRenderer;
+import nicail.bscs.com.emercify.Utils.Notify;
 import nicail.bscs.com.emercify.Utils.TaskLoadedCallback;
 import nicail.bscs.com.emercify.models.ClusterMarker;
 import nicail.bscs.com.emercify.models.Photo;
@@ -93,6 +97,7 @@ public class MapActivity extends AppCompatActivity implements
     private static final String TAG = "MapActivity";
 
     private static final int ACTIVITY_NUM = 3;
+    private static final int LOCATION_UPDATE_INTERVAL = 3000;
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
     private MapView mMapView;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -112,6 +117,8 @@ public class MapActivity extends AppCompatActivity implements
     private GeoApiContext geoApiContext = null;
     private Polyline polyline;
     private ProgressDialog progressDialog;
+    private Handler handler = new Handler();
+    private Runnable runnable;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -302,6 +309,7 @@ public class MapActivity extends AppCompatActivity implements
                         .title("Your Location"));
                 String url = getUrl(new LatLng(lat,lon),new LatLng(latitude,longitude),"driving");
                 new FetchURL(MapActivity.this).execute(url,"driving");
+                startUserLocationsRunnable();
             }
             progressDialog.dismiss();
         }
@@ -331,6 +339,60 @@ public class MapActivity extends AppCompatActivity implements
         }
         Log.d(TAG, "isLocationServiceRunning: location service is not running.");
         return false;
+    }
+
+    private void startUserLocationsRunnable(){
+        Log.d(TAG, "startUserLocationsRunnable: starting runnable for retrieving update locations.");
+        handler.postDelayed(runnable = new Runnable() {
+            @Override
+            public void run() {
+                retrieveUserlocation();
+                handler.postDelayed(runnable,LOCATION_UPDATE_INTERVAL);
+            }
+        },LOCATION_UPDATE_INTERVAL);
+    }
+
+    private void stopUserLocationRunnable(){
+        handler.removeCallbacks(runnable);
+    }
+
+    private void retrieveUserlocation(){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference
+                .child(getString(R.string.dbname_users))
+                .orderByChild("user_id")
+                .equalTo(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onDataChange: ");
+                for(DataSnapshot ds: dataSnapshot.getChildren()){
+                    String device_token = ds.child("device_token").toString();
+                    double userLat = (double) ds.child("latitude").getValue();
+                    double userLong = (double) ds.child("longitude").getValue();
+                    float[] distance = new float[1];
+                    Location.distanceBetween(userLat, userLong
+                            , latitude, longitude, distance);
+                    Log.d(TAG, "onDataChange: retrieveUserlocation " + device_token);
+                    Log.d(TAG, "onDataChange: retrieveUserlocation " + FirebaseInstanceId.getInstance().getToken());
+                    Log.d(TAG, "onDataChange: retrieveUserlocation photo " + latitude);
+                    Log.d(TAG, "onDataChange: retrieveUserlocation photo " + longitude);
+                    Log.d(TAG, "onDataChange: retrieveUserlocation user " + userLat);
+                    Log.d(TAG, "onDataChange: retrieveUserlocation user " + userLong);
+                    if(distance[0] <= 25){
+                        String message = "You Have Arrived In The Photo's Destination";
+                        Log.d(TAG, "onDataChange: You Have Arrived In The Photo's Destination");
+                        stopUserLocationRunnable();
+                        new Notify(FirebaseInstanceId.getInstance().getToken(),message).execute();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void setCameraView() {

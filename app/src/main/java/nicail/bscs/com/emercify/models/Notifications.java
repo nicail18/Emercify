@@ -10,10 +10,10 @@ public class Notifications {
     private String message;
     private boolean status_seen;
     private String activity_id;
+    private boolean badge_seen;
 
-    public Notifications(String user_id, String notification_id,
-                         String type, String timestamp, String from_id,
-                         String message, boolean status_seen, String activity_id) {
+
+    public Notifications(String user_id, String notification_id, String type, String timestamp, String from_id, String message, boolean status_seen, String activity_id, boolean badge_seen) {
         this.user_id = user_id;
         this.notification_id = notification_id;
         this.type = type;
@@ -22,33 +22,10 @@ public class Notifications {
         this.message = message;
         this.status_seen = status_seen;
         this.activity_id = activity_id;
+        this.badge_seen = badge_seen;
     }
 
     public Notifications() {
-    }
-
-    public String getActivity_id() {
-        return activity_id;
-    }
-
-    public void setActivity_id(String activity_id) {
-        this.activity_id = activity_id;
-    }
-
-    public boolean isStatus_seen() {
-        return status_seen;
-    }
-
-    public void setStatus_seen(boolean status_seen) {
-        this.status_seen = status_seen;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     public String getUser_id() {
@@ -91,6 +68,38 @@ public class Notifications {
         this.from_id = from_id;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public boolean isStatus_seen() {
+        return status_seen;
+    }
+
+    public void setStatus_seen(boolean status_seen) {
+        this.status_seen = status_seen;
+    }
+
+    public String getActivity_id() {
+        return activity_id;
+    }
+
+    public void setActivity_id(String activity_id) {
+        this.activity_id = activity_id;
+    }
+
+    public boolean isBadge_seen() {
+        return badge_seen;
+    }
+
+    public void setBadge_seen(boolean badge_seen) {
+        this.badge_seen = badge_seen;
+    }
+
     @Override
     public String toString() {
         return "Notifications{" +
@@ -101,6 +110,8 @@ public class Notifications {
                 ", from_id='" + from_id + '\'' +
                 ", message='" + message + '\'' +
                 ", status_seen=" + status_seen +
+                ", activity_id='" + activity_id + '\'' +
+                ", badge_seen=" + badge_seen +
                 '}';
     }
 }

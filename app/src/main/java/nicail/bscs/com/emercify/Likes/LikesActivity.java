@@ -283,6 +283,9 @@ public class LikesActivity extends AppCompatActivity implements
                     notification.setNotification_id(objectMap.get("notification_id").toString());
                     notification.setStatus_seen((boolean) objectMap.get("status_seen"));
                     notification.setActivity_id(objectMap.get("activity_id").toString());
+                    if(objectMap.get("badge_seen").toString() != null){
+                        notification.setBadge_seen((boolean) objectMap.get("badge_seen"));
+                    }
 
                     notifications.add(notification);
                     count[0]++;

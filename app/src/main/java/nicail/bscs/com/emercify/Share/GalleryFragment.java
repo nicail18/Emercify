@@ -533,9 +533,11 @@ public class GalleryFragment extends Fragment implements
                 Address returnedAddress = addresses.get(0);
                 StringBuilder strReturnedAddress = new StringBuilder("");
 
-                for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
-                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
-                }
+//                for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
+//                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
+//                }
+                strReturnedAddress.append(returnedAddress.getLocality()).append(", ")
+                        .append(returnedAddress.getCountryName());
                 strAdd = strReturnedAddress.toString();
                 Log.d(TAG,"My Current loction address" + strReturnedAddress.toString());
             } else {

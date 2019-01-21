@@ -57,6 +57,5 @@ public class FirebaseMessageService extends FirebaseMessagingService{
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         mNotificationManager.notify(1,notificationBuilder.build());
-        BottomNavigationViewHelper.showBadge(getApplicationContext(),R.id.ic_alert,"1");
     }
 }

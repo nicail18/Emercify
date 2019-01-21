@@ -144,7 +144,6 @@ public class ViewProfileFragment extends Fragment {
                     message = currentUser.getUsername() +  " followed you" ;
                     firebaseMethods.addNotification(user_id,from_id,type,message,from_id);
                     new Notify(token,message).execute();
-
                 setFollowing();
             }
         });
