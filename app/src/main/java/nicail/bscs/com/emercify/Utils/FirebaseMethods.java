@@ -275,7 +275,7 @@ public class FirebaseMethods {
                             , latitude, longitude, distance);
                     Log.d(TAG, "checkDistance: user ID " + userLists.get(x).getUsername());
                     Log.d(TAG, "checkDistance: distance " + distance[0]);
-                    if (distance[0] < 500) {
+                    if (distance[0] < 1000) {
                         String message = "There is an Emergency!";
                         if (type.equals("emergency")) {
                             addNotification(
@@ -571,6 +571,13 @@ public class FirebaseMethods {
         }
     }
 
+    public void updateBadgeSeen(String user_id,boolean status_seen,String notification_id){
+        myRef.child(mContext.getString(R.string.dbname_user_notification))
+                .child(user_id).child(notification_id).child("badge_seen").setValue(true);
+        myRef.child(mContext.getString(R.string.dbname_notification))
+                .child(notification_id).child("badge_seen").setValue(true);
+    }
+
     public void deletePhoto(String user_id, String photo_id){
         myRef.child(mContext.getString(R.string.dbname_photos))
                 .child(photo_id).removeValue();
@@ -589,6 +596,7 @@ public class FirebaseMethods {
         notification.setNotification_id(notificationKey);
         notification.setStatus_seen(false);
         notification.setActivity_id(activity_id);
+        notification.setBadge_seen(false);
 
         myRef.child(mContext.getString(R.string.dbname_notification))
                 .child(notificationKey)

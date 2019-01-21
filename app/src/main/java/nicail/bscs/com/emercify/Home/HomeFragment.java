@@ -89,6 +89,7 @@ public class HomeFragment extends Fragment implements
         ((HomeActivity)getContext()).OnDeleteClickListener(photo,position);
 
     }
+
     private ArrayList<Photo> mPhotos;
     private ArrayList<String> mFollowing;
     private ArrayList<Photo> mPaginatedPhotos;

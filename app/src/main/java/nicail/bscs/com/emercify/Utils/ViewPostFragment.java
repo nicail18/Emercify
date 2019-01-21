@@ -31,6 +31,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import org.json.JSONObject;
@@ -192,6 +193,9 @@ public class ViewPostFragment extends Fragment {
                                         intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
                                         intent.putExtra("INTENT PHOTO",getPhotoFromBundle());
                                         Log.d(TAG, "onDataChange: " + intent);
+                                        String message = mCurrentUser.getUsername() + " is reposding to your event";
+                                        String token = mUserAccountSettings.getDevice_token();
+                                        new Notify(token,message).execute();
                                         startActivity(intent);
                                     }
                                 });

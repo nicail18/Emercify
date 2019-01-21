@@ -61,6 +61,7 @@ import nicail.bscs.com.emercify.Utils.CheckInternet;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.MainfeedListAdapter;
 import nicail.bscs.com.emercify.Utils.MainfeedRecyclerAdapter;
+import nicail.bscs.com.emercify.Utils.Notify;
 import nicail.bscs.com.emercify.Utils.SectionsPagerAdapter;
 import nicail.bscs.com.emercify.Utils.UniversalImageLoader;
 import nicail.bscs.com.emercify.Utils.ViewCommentsFragment;
@@ -342,8 +343,22 @@ public class HomeActivity extends AppCompatActivity implements
     public void OnDeleteClickListener(Photo photo,int position){
         Log.d(TAG, "OnDeleteClickListener: HomeActivity " + photo.toString());
         Log.d(TAG, "OnDeleteClickListener: " + position);
-        firebaseMethods.deletePhoto(photo.getUser_id(),photo.getPhoto_id());
-        fragment.updateMainFeed(position);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to delete this post?");
+        builder.setCancelable(false)
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        firebaseMethods.deletePhoto(photo.getUser_id(),photo.getPhoto_id());
+                        fragment.updateMainFeed(position);
+                    }
+                });
     }
 
     public void hideLayout(){
