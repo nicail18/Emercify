@@ -2,6 +2,7 @@ package nicail.bscs.com.emercify.Likes;
 
 import android.Manifest;
 import android.app.ActivityManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -110,6 +111,7 @@ public class MapActivity extends AppCompatActivity implements
     private FirebaseMethods firebaseMethods;
     private GeoApiContext geoApiContext = null;
     private Polyline polyline;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -119,6 +121,11 @@ public class MapActivity extends AppCompatActivity implements
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         ivBackArrow = (ImageView) findViewById(R.id.ivBackarrow);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setTitle("Loading");
+        progressDialog.setMessage("Please Wait...");
 
         firebaseMethods = new FirebaseMethods(this);
 
@@ -296,6 +303,7 @@ public class MapActivity extends AppCompatActivity implements
                 String url = getUrl(new LatLng(lat,lon),new LatLng(latitude,longitude),"driving");
                 new FetchURL(MapActivity.this).execute(url,"driving");
             }
+            progressDialog.dismiss();
         }
     }
 
@@ -469,6 +477,7 @@ public class MapActivity extends AppCompatActivity implements
                     .apiKey(getString(R.string.google_api_key))
                     .build();
         }
+        progressDialog.show();
     }
 
     //Bottom Navigation View Setup

@@ -211,6 +211,8 @@ public class ViewPostFragment extends Fragment {
                         Photo newPhoto = new Photo();
                         Map<String, Object> objectMap = (HashMap<String, Object>) singleSnapshot.getValue();
 
+                        newPhoto.setLatitude((double) objectMap.get("latitude"));
+                        newPhoto.setLongitude((double) objectMap.get("longitude"));
                         newPhoto.setCaption(objectMap.get("caption").toString());
                         newPhoto.setTags(objectMap.get("tags").toString());
                         newPhoto.setPhoto_id(objectMap.get("photo_id").toString());
@@ -492,8 +494,8 @@ public class ViewPostFragment extends Fragment {
     private String getEmergencyFromBundle(){
         Bundle bundle = this.getArguments();
         if(bundle != null){
-            if(bundle.getString(getString(R.string.intent_emergency)) != null){
-                return bundle.getString(getString(R.string.intent_emergency));
+            if(bundle.getString("emergency") != null){
+                return bundle.getString("emergency");
             }
             else{
                 return null;
@@ -515,7 +517,6 @@ public class ViewPostFragment extends Fragment {
         if(!timestampDiff.equals("0")){
             mTimeStamp.setText(timestampDiff);
         }
-//        UniversalImageLoader.setImage(mUserAccountSettings.getProfile_photo(),mProfileImage,null,"");
         mUsername.setText(mUserAccountSettings.getUsername());
         mLikes.setText(mLikeString);
         mCaption.setText(mPhoto.getCaption());
