@@ -1,72 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="200dp"
     android:layout_height="wrap_content">
 
-    <RelativeLayout
-        android:layout_width="280dp"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/kindofpost"
+
+        <RelativeLayout
+            android:id="@+id/rell2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="What kind of post?"
-            android:layout_centerHorizontal="true"
-            android:gravity="center_horizontal"
-            android:fontFamily="sans-serif-condensed"
-            android:layout_marginBottom="10dp"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            />
-        <RelativeLayout
-            android:id="@+id/dialogrel1"
-            android:layout_below="@+id/kindofpost"
-            android:layout_centerHorizontal="true"
-            android:layout_width="150dp"
             android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/normal_post"
-                android:clickable="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-condensed"
-                android:text="Normal"
-                android:layout_centerHorizontal="true"
-                android:padding="10dp"
-                android:textColor="@drawable/text_changecolor"
-                android:textSize="18sp"/>
-        </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/solidcolorrel"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:background="@color/pearl_white">
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/emer" />
+            </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/dialogrel2"
-            android:layout_below="@+id/dialogrel1"
-            android:layout_centerHorizontal="true"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@id/emergency_post"
-                android:layout_marginRight="0dp"
-                android:background="@mipmap/ic_emerdialog"/>
-            <TextView
-                android:id="@+id/emergency_post"
-                android:clickable="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:padding="10dp"
-                android:fontFamily="sans-serif-condensed"
-                android:textSize="18sp"
-                android:layout_centerVertical="true"
-                android:textColor="@drawable/text_changecolor"
-                android:text="Emergency"/>
-        </RelativeLayout>
 
-        
+            <RelativeLayout
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/solidcolorrel">
+
+                <TextView
+                    android:id="@+id/kindofpost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="What kind of post?"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center_horizontal"
+                    android:fontFamily="sans-serif-condensed"
+                    android:layout_marginBottom="10dp"
+                    android:textSize="20sp"
+                    android:textColor="@color/black" />
+
+                <ImageView
+                    android:layout_below="@+id/kindofpost"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@+id/normal_post"
+                    android:layout_marginRight="0dp"
+                    android:src="@mipmap/ic_normalpost"/>
+
+                <TextView
+                    android:id="@+id/normal_post"
+                    android:layout_below="@+id/kindofpost"
+                    android:clickable="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed"
+                    android:layout_centerHorizontal="true"
+                    android:text="Normal"
+                    android:textColor="@drawable/text_changecolor"
+                    android:textSize="18sp"/>
+
+                <ImageView
+                    android:id="@+id/emergency_icon"
+                    android:layout_below="@+id/normal_post"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_toStartOf="@id/emergency_post"
+                    android:src="@mipmap/ic_emerdialog"/>
+
+                <TextView
+                    android:id="@+id/emergency_post"
+                    android:layout_below="@+id/normal_post"
+                    android:clickable="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textSize="18sp"
+                    android:textColor="@drawable/text_changecolor"
+                    android:layout_marginTop="10dp"
+                    android:layout_centerHorizontal="true"
+                    android:text="Emergency"/>
+
+            </RelativeLayout>
+
     </RelativeLayout>
 
 </RelativeLayout>
