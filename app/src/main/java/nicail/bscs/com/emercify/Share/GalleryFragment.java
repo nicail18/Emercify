@@ -580,8 +580,7 @@ public class GalleryFragment extends Fragment implements
 
         GlideApp
                 .with(getActivity())
-                .load(
-                        imgURL)
+                .load(imgURL)
                 .placeholder(R.color.grey)
                 .centerCrop()
                 .into(image);
