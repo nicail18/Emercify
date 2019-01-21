@@ -132,6 +132,7 @@ public class ProfileFragment extends Fragment {
         mFollowers.setVisibility(View.GONE);
         mFollowing.setVisibility(View.GONE);
         mPosts.setVisibility(View.GONE);
+
         class Task extends AsyncTask<String, Integer, Boolean> {
             @Override
             protected void onPreExecute() {

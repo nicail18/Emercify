@@ -19,7 +19,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="45dp"
             android:layout_marginRight="10dp"
             android:layout_marginLeft="20dp"
             android:background="@drawable/white_rounded_border">
@@ -43,7 +43,7 @@
                 android:fontFamily="sans-serif"
                 android:hint="Search"
                 android:textColor="@color/black"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
         </RelativeLayout>
 
