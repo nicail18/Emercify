@@ -3,6 +3,7 @@ package nicail.bscs.com.emercify.Home;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -42,6 +44,7 @@ import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.MainfeedListAdapter;
 import nicail.bscs.com.emercify.Utils.MainfeedRecyclerAdapter;
+import nicail.bscs.com.emercify.Utils.RecyclerViewDivider;
 import nicail.bscs.com.emercify.Utils.ViewPostFragment;
 import nicail.bscs.com.emercify.dialogs.View_Delete_Dialog;
 import nicail.bscs.com.emercify.models.Comment;
@@ -293,6 +296,10 @@ public class HomeFragment extends Fragment implements
                 recyclerView.setAdapter(recyclerAdapter);
                 manager = new LinearLayoutManager(getActivity());
                 recyclerView.setLayoutManager(manager);
+                Drawable dividerDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.line_divider);
+                recyclerView.addItemDecoration(new RecyclerViewDivider(
+                        dividerDrawable
+                ));
                 recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                     @Override
                     public void onScrollStateChanged(RecyclerView recyclerView, int newState) {

@@ -28,13 +28,14 @@
                     android:text="SHARE"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="10dp"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:textAlignment="center"
                     android:gravity="center"
                     android:textColor="@color/white"
                     android:layout_centerVertical="true"
                     android:background="@drawable/rounded_border_blue"
-                    android:id="@+id/tvShare"/>
+                    android:id="@+id/tvShare"
+                    style="@style/com_facebook_button"/>
 
 
             </RelativeLayout>

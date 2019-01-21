@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white">
 
@@ -20,28 +21,45 @@
                 android:id="@+id/profile_photo"
                 app:civ_border_color="@color/black"
                 app:civ_border_width="0.5dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="15dp"
                 android:layout_centerVertical="true"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:id="@+id/username"
-                android:layout_centerVertical="true"
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="10dp"
-                android:layout_toRightOf="@+id/profile_photo"
-                android:textColor="@color/black"/>
+                android:layout_toRightOf="@+id/profile_photo">
 
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginEnd="20dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:id="@+id/ivEllipses"
-                android:src="@drawable/ic_ellipses"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Profile Name"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:id="@+id/username"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Location"
+                    android:textSize="12sp"
+                    android:id="@+id/address"
+                    android:layout_below="@+id/username"
+                    android:layout_centerVertical="true"/>
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/ivEllipses"
+                    android:src="@drawable/ic_ellipses"/>
+
+            </RelativeLayout>
 
         </RelativeLayout>
 
@@ -54,20 +72,20 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="45dp"
             android:id="@+id/rellayout2"
             android:layout_below="@+id/post_image"
             android:background="@color/white">
 
             <RelativeLayout
-                android:layout_width="60dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="@color/white"
                 android:id="@+id/heart_layout">
 
                 <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:id="@+id/image_heart_red"
                     android:layout_centerInParent="true"
                     android:layout_marginLeft="20dp"
@@ -75,8 +93,8 @@
                     android:visibility="invisible"/>
 
                 <ImageView
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:id="@+id/image_heart"
                     android:layout_centerInParent="true"
                     android:layout_marginLeft="20dp"
@@ -86,11 +104,10 @@
             </RelativeLayout>
 
             <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:id="@+id/speech_bubble"
                 android:layout_toRightOf="@+id/heart_layout"
-                android:layout_marginLeft="10dp"
                 android:src="@drawable/ic_speech_bubble"
                 android:layout_centerVertical="true"
                 android:visibility="visible"/>
@@ -102,73 +119,48 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/rellayout2"
             android:id="@+id/rellayout3"
-            android:paddingTop="5dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingBottom="20dp"
-            android:layout_marginBottom="20dp"
-            android:background="@color/white">
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/rellayout4">
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_map_marker"
-                    android:id="@+id/map_marker"
-                    android:layout_centerVertical="true"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:id="@+id/address"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_toRightOf="@+id/map_marker"
-                    android:layout_centerVertical="true"/>
-            </RelativeLayout>
+            android:background="@color/white"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                android:layout_below="@+id/rellayout4"
+                android:text="Liked by"
                 android:id="@+id/image_likes"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="sample.text hell world #hello"
+                android:text="Caption"
                 android:textColor="@color/black"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:id="@+id/image_caption"
                 android:layout_below="@+id/image_likes"
-                android:layout_marginTop="5dp"/>
+                android:layout_marginTop="10dp"/>
 
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Test View comments"
+                android:text="Comments"
                 android:textColor="@color/grey"
                 android:textSize="14sp"
                 android:id="@+id/image_comments_Link"
                 android:layout_below="@+id/image_caption"
-                android:layout_marginTop="5dp"/>
+                android:layout_marginTop="10dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="3 days ago"
+                android:text="Time Posted"
                 android:textColor="@color/grey"
                 android:textSize="14sp"
                 android:id="@+id/image_time_posted"
                 android:layout_below="@+id/image_comments_Link"
-                android:layout_marginTop="5dp"/>
+                android:layout_marginTop="10dp"/>
 
         </RelativeLayout>
 
