@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     
     <ScrollView
@@ -53,16 +54,6 @@
                         android:layout_below="@+id/username"
                         android:layout_centerVertical="true"/>
 
-                    <Button
-                        android:id="@+id/respondButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="40dp"
-                        android:text="RESPOND"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        style="@style/com_facebook_button"
-                        android:layout_marginRight="10dp"
-                        android:visibility="gone"/>
 
                 </RelativeLayout>
 
@@ -77,7 +68,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="45dp"
                 android:id="@+id/rellayout2"
                 android:layout_below="@+id/post_image"
                 android:background="@color/white">
@@ -116,6 +107,21 @@
                     android:src="@drawable/ic_speech_bubble"
                     android:layout_centerVertical="true"
                     android:visibility="visible"/>
+
+                <Button
+                    android:id="@+id/respondButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:fontFamily="sans-serif-condensed"
+                    android:text="RESPOND"
+                    android:textSize="18sp"
+                    android:background="@drawable/rounded_border_blue"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:gravity="center"
+                    style="@style/com_facebook_button"
+                    android:layout_marginRight="10dp"
+                    android:visibility="gone"/>
 
             </RelativeLayout>
 
