@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -65,6 +67,7 @@ public class LikesActivity extends AppCompatActivity implements
     private static final String TAG = "LikesActivity";
 
     private static final int ACTIVITY_NUM = 3;
+    private static final int INTERVAL = 3000;
 
     private Context mContext = LikesActivity.this;
     private ImageView ivMap;
@@ -91,11 +94,15 @@ public class LikesActivity extends AppCompatActivity implements
     private RecyclerView notifsRecyclerView;
     private ProgressDialog progressDialog;
     private static ArrayList<BlockChain> blockchain = new ArrayList<BlockChain>();
+    private Handler handler = new Handler();
+    private Runnable runnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notifs);
+
+
         ivMap = (ImageView) findViewById(R.id.ivMap);
         bcTest = (ImageView) findViewById(R.id.bcTest);
         pbnotif = (ProgressBar) findViewById(R.id.progress_Barnotif);
@@ -283,19 +290,18 @@ public class LikesActivity extends AppCompatActivity implements
                     notification.setNotification_id(objectMap.get("notification_id").toString());
                     notification.setStatus_seen((boolean) objectMap.get("status_seen"));
                     notification.setActivity_id(objectMap.get("activity_id").toString());
-                    if(objectMap.get("badge_seen").toString() != null){
-                        notification.setBadge_seen((boolean) objectMap.get("badge_seen"));
-                    }
+                    notification.setBadge_seen((boolean) objectMap.get("badge_seen"));
 
                     notifications.add(notification);
                     count[0]++;
                 }
-                if(count[0] > notifications.size()-1){
+                if(notifications.size() != 0){
                     pbnotif.setVisibility(View.GONE);
                     rellayoutnotif.setVisibility(View.VISIBLE);
                     displayNotifs();
                 }else{
-                    //Toast.makeText(LikesActivity.this, "No Notifications Available",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LikesActivity.this, "No Notifications Available", Toast.LENGTH_SHORT).show();
+                    pbnotif.setVisibility(View.GONE);rellayoutnotif.setVisibility(View.GONE);
                     nonotification.setVisibility(View.VISIBLE);
                     nonotifimage.setVisibility(View.VISIBLE);
                 }
@@ -399,7 +405,8 @@ public class LikesActivity extends AppCompatActivity implements
         Log.d(TAG, "setupBottomNavigationView: setting up bottom navigation view");
 
         BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
-
+        BottomNavigationViewHelper.removeBadge(bottomNavigationViewEx,R.id.ic_alert);
+        mFirebaseMethods.updateBadgeSeen();
         int incoming = 0;
 
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationViewEx);
@@ -602,10 +609,54 @@ public class LikesActivity extends AppCompatActivity implements
 
     }
 
+    private void startNotificationRunnable(){
+        handler.postDelayed(runnable = new Runnable() {
+            @Override
+            public void run() {
+                retrieveNotifs();
+                handler.postDelayed(runnable,INTERVAL);
+            }
+        },INTERVAL);
+    }
+
+    private void stopNotificationRunnable(){
+        handler.removeCallbacks(runnable);
+    }
+
+    private void retrieveNotifs(){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference
+                .child(getString(R.string.dbname_user_notification))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds: dataSnapshot.getChildren()){
+                    boolean check = (boolean) ds.child("badge_seen").getValue();
+                    if(!check){
+                        BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
+                        BottomNavigationViewHelper.showBadge(
+                                mContext,
+                                bottomNavigationViewEx,
+                                R.id.ic_alert,
+                                "1");
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         mFirebaseMethods.updateOnlineStatus(true);
+        startNotificationRunnable();
     }
 
     @Override

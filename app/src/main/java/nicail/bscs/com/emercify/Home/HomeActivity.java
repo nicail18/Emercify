@@ -11,6 +11,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -46,6 +47,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -88,6 +95,7 @@ public class HomeActivity extends AppCompatActivity implements
     private static final String TAG = "HomeActivity";
     private static final int ACTIVITY_NUM = 0;
     private static final int HOME_FRAGMENT = 1;
+    private static final int INTERVAL = 3000;
     private static final int ERROR_DIALOG_REQUEST = 9001;
     private static final int PERMISSIONS_REQUEST_ENABLE_GPS = 9002;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 9003;
@@ -108,7 +116,10 @@ public class HomeActivity extends AppCompatActivity implements
     private TextView noposts;
     private ImageView nopostimage;
     private MainfeedRecyclerAdapter mainfeedRecyclerAdapter;
-    RecyclerView recyclerView;
+    private RecyclerView recyclerView;
+    private Handler handler = new Handler();
+    private Runnable runnable;
+
 
 
 
@@ -128,52 +139,6 @@ public class HomeActivity extends AppCompatActivity implements
         recyclerView = (RecyclerView) findViewById(R.id.listViewhome);
         nonetimage = (ImageView) findViewById(R.id.no_netimage);
         nopostimage = (ImageView) findViewById(R.id.nopost_image);
-        //pb.setVisibility(View.VISIBLE);
-        /*class Task extends AsyncTask<String, Integer, Boolean> {
-            @Override
-            protected void onPreExecute() {
-                pb.setVisibility(View.VISIBLE);
-                mViewPager.setVisibility(View.GONE);
-                nonet.setVisibility(View.GONE);
-                noposts.setVisibility(View.GONE);
-                nonetimage.setVisibility(View.GONE);
-                nopostimage.setVisibility(View.GONE);
-                super.onPreExecute();
-            }
-            @Override
-            protected void onPostExecute(Boolean result) {
-                if (CheckInternet.isNetwork(HomeActivity.this)) {
-                    //internet is connected do something
-                    pb.setVisibility(View.GONE);
-                    //displayfeed();
-                    //getItemCount();
-                    mViewPager.setVisibility(View.VISIBLE);
-//                    setupViewPager();
-                    //nopost.setVisibility(View.GONE);
-
-                }else{
-                    //do something, net is not connected
-                    pb.setVisibility(View.GONE);
-                    nonet.setVisibility(View.VISIBLE);
-                    nonetimage.setVisibility(View.VISIBLE);
-                    noposts.setVisibility(View.GONE);
-                }
-
-                super.onPostExecute(result);
-            }
-            @Override
-            protected Boolean doInBackground(String... params) {
-
-                try {
-                    Thread.sleep(1000);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        }
-        new Task().execute();*/
-
         setupFireBaseAuth();
         if (checkMapServices()) {
             if (mLocationPermissionGranted) {
@@ -194,18 +159,6 @@ public class HomeActivity extends AppCompatActivity implements
         }
         return false;
     }
-    /*public int getItemCount() {
-        if (recyclerView == null) {
-            noposts.setVisibility(View.VISIBLE);
-            nopostimage.setVisibility(View.VISIBLE);
-            return 0;
-        }else
-            noposts.setVisibility(View.GONE);
-            nopostimage.setVisibility(View.GONE);
-        return  recyclerView.getChildCount();
-    }*/
-
-
 
     private void buildAlertMessageNoGps() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -477,6 +430,49 @@ public class HomeActivity extends AppCompatActivity implements
         });
     }
 
+    private void startNotificationRunnable(){
+        handler.postDelayed(runnable = new Runnable() {
+            @Override
+            public void run() {
+                retrieveNotifs();
+                handler.postDelayed(runnable,INTERVAL);
+            }
+        },INTERVAL);
+    }
+
+    private void stopNotificationRunnable(){
+        handler.removeCallbacks(runnable);
+    }
+
+    private void retrieveNotifs(){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference
+                .child(getString(R.string.dbname_user_notification))
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot ds: dataSnapshot.getChildren()){
+                    boolean check = (boolean) ds.child("badge_seen").getValue();
+                    if(!check){
+                        BottomNavigationViewEx bottomNavigationViewEx = (BottomNavigationViewEx) findViewById(R.id.bottomNavViewBar);
+                        BottomNavigationViewHelper.showBadge(
+                                mContext,
+                                bottomNavigationViewEx,
+                                R.id.ic_alert,
+                                "1");
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -490,17 +486,19 @@ public class HomeActivity extends AppCompatActivity implements
         if(mAuthListener != null){
             mAuth.removeAuthStateListener(mAuthListener);
         }
+        stopNotificationRunnable();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         firebaseMethods.updateOnlineStatus(true);
+        startNotificationRunnable();
     }
 
     @Override
     public void onPause() {
-        super.onPause();;
+        super.onPause();
         firebaseMethods.updateOnlineStatus(false);
     }
 }

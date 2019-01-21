@@ -26,9 +26,7 @@ public class BottomNavigationViewHelper {
 
     private static final String TAG = "BottomNavigationViewHel";
 
-    public static void showBadge(Context context, @IdRes int itemId, String value) {
-        View rootView = LayoutInflater.from(context).inflate(R.layout.activity_notifs,null);
-        BottomNavigationView bottomNavigationView = rootView.findViewById(R.id.bottomNavViewBar);
+    public static void showBadge(Context context, BottomNavigationView bottomNavigationView, @IdRes int itemId, String value) {
         BottomNavigationItemView itemView = bottomNavigationView.findViewById(itemId);
         View badge = LayoutInflater.from(context).inflate(R.layout.notification_badge, bottomNavigationView, false);
 
