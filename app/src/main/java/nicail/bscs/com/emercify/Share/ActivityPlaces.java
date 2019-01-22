@@ -1,5 +1,6 @@
 package nicail.bscs.com.emercify.Share;
 
+import android.content.pm.ActivityInfo;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ public class ActivityPlaces extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_places);
         etPlaces = (EditText) findViewById(R.id.etPlaces);
 

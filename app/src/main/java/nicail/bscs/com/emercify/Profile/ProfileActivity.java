@@ -2,6 +2,7 @@ package nicail.bscs.com.emercify.Profile;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -97,6 +98,7 @@ public class ProfileActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_profile);
         Log.d(TAG, "onCreate: starting.");
         firebaseMethods = new FirebaseMethods(this);
