@@ -56,6 +56,7 @@ public class HomeFragment extends Fragment implements
         View_Delete_Dialog.OnReportClickListener{
     private static final String TAG = "HomeFragment";
 
+
     @Override
     public void onReportClickListener(Photo photo) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
