@@ -51,6 +51,7 @@ import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Share.ShareActivity;
 import nicail.bscs.com.emercify.Utils.Emercify;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
+import nicail.bscs.com.emercify.Utils.GlideApp;
 import nicail.bscs.com.emercify.Utils.UniversalImageLoader;
 import nicail.bscs.com.emercify.dialogs.ConfirmPasswordDialog;
 import nicail.bscs.com.emercify.models.User;
@@ -253,7 +254,13 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
 
         mUserSettings = userSettings;
 
-        UniversalImageLoader.setImage(settings.getProfile_photo(),mProfilePhoto, null,"");
+//        UniversalImageLoader.setImage(settings.getProfile_photo(),mProfilePhoto, null,"");
+        GlideApp
+                .with(this)
+                .load(settings.getProfile_photo())
+                .placeholder(R.color.grey)
+                .centerCrop()
+                .into(mProfilePhoto);
         mDisplayName.setText(settings.getDisplay_name());
         mUsername.setText(settings.getUsername());
         mWebsite.setText(settings.getWebsite());

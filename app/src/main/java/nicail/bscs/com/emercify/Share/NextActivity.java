@@ -37,6 +37,7 @@ import java.util.List;
 
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
+import nicail.bscs.com.emercify.Utils.GlideApp;
 import nicail.bscs.com.emercify.Utils.UniversalImageLoader;
 import nicail.bscs.com.emercify.models.User;
 import nicail.bscs.com.emercify.models.UserAccountSettings;
@@ -162,8 +163,14 @@ public class NextActivity extends AppCompatActivity {
             else{
                 select_location.setVisibility(View.GONE);
             }
-            Log.d(TAG, "setImage: got new image url " + imgUrl);
-            UniversalImageLoader.setImage(intent.getStringExtra(getString(R.string.selected_image)),image,null,mAppend);
+//            Log.d(TAG, "setImage: got new image url " + imgUrl);
+//            UniversalImageLoader.setImage(intent.getStringExtra(getString(R.string.selected_image)),image,null,mAppend);
+            GlideApp
+                    .with(this)
+                    .load(intent.getStringExtra(getString(R.string.selected_image)))
+                    .placeholder(R.color.grey)
+                    .centerCrop()
+                    .into(image);
         }
         else if(intent.hasExtra(getString(R.string.selected_bitmap))){
             bitmap = (Bitmap) intent.getParcelableExtra(getString(R.string.selected_bitmap));
@@ -177,8 +184,14 @@ public class NextActivity extends AppCompatActivity {
             else{
                 select_location.setVisibility(View.GONE);
             }
-            Log.d(TAG, "setImage: got new bitmap " + bitmap);
-            image.setImageBitmap(bitmap);
+//            Log.d(TAG, "setImage: got new bitmap " + bitmap);
+//            image.setImageBitmap(bitmap);
+            GlideApp
+                    .with(this)
+                    .load(bitmap)
+                    .placeholder(R.color.grey)
+                    .centerCrop()
+                    .into(image);
         }
         Log.d(TAG, "setImage: address " + address);
         Log.d(TAG, "setImage: latitude " + latitude);
