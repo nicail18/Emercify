@@ -20,9 +20,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/profile_photo"
-            android:text=""
+            android:text="Profile Name"
             android:textSize="14sp"
-            android:fontFamily="sans-serif-condensed"
             android:textStyle="bold"
             android:textColor="@color/black"/>
 
@@ -33,7 +32,7 @@
             android:layout_toRightOf="@+id/profile_photo"
             android:layout_below="@+id/username"
             android:layout_marginLeft="10dp"
-            android:text=""
+            android:text="Message"
             android:textSize="12sp"
             android:textColor="@color/black"/>
 

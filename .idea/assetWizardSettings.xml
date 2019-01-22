@@ -19,11 +19,13 @@
                                   <option name="children">
                                     <map>
                                       <entry key="clipartAsset">
+                                      <entry key="image">
                                         <value>
                                           <PersistentState>
                                             <option name="values">
                                               <map>
                                                 <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_delete_black_24dp.xml" />
+                                                <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -35,6 +37,9 @@
                                     <map>
                                       <entry key="imageAsset" value="D:\search_location.png" />
                                       <entry key="outputName" value="ic_deletedialog1" />
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="C:\Users\DELL\Desktop\emercency_icon.png" />
+                                      <entry key="theme" value="HOLO_DARK" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -61,8 +66,21 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="D:\current_location.png" />
-                                      <entry key="outputName" value="ic_currentloc" />
+                                      <entry key="iconShape" value="NONE" />
+                                      <entry key="imageAsset" value="C:\Users\DELL\Desktop\emercency_icon.png" />
+                                      <entry key="outputName" value="emergency_icon" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
+                            <entry key="notification">
+                              <value>
+                                <PersistentState>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="C:\Users\DELL\Desktop\emercency_icon.png" />
                                     </map>
                                   </option>
                                 </PersistentState>

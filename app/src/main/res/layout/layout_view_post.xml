@@ -30,11 +30,10 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@+id/profile_photo">
+                    android:layout_toRightOf="@+id/profile_photo"
+                    android:layout_centerVertical="true">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -51,26 +50,43 @@
                         android:textSize="12sp"
                         android:text="Location"
                         android:id="@+id/address"
-                        android:layout_below="@+id/username"
-                        android:layout_centerVertical="true"/>
+                        android:layout_below="@+id/username"/>
 
 
                 </RelativeLayout>
 
             </RelativeLayout>
 
-            <nicail.bscs.com.emercify.Utils.SquareImageView
-                android:id="@+id/post_image"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/rellayout1"
-                android:scaleType="centerCrop" />
+                android:id="@+id/squarerel"
+                android:layout_below="@+id/rellayout1">
+
+                <nicail.bscs.com.emercify.Utils.SquareImageView
+                    android:id="@+id/post_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scaleType="centerCrop" />
+
+                <ImageView
+                    android:id="@+id/emergency_icon"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:foregroundGravity="center"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:src="@mipmap/emergency_icon"/>
+
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:id="@+id/rellayout2"
-                android:layout_below="@+id/post_image"
+                android:layout_below="@+id/squarerel"
                 android:background="@color/white">
                 
                 <RelativeLayout

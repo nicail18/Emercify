@@ -51,6 +51,7 @@ import nicail.bscs.com.emercify.Profile.AccountSettingsActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.models.Notifications;
 import nicail.bscs.com.emercify.models.Photo;
+import nicail.bscs.com.emercify.models.Responder;
 import nicail.bscs.com.emercify.models.User;
 import nicail.bscs.com.emercify.models.UserAccountSettings;
 import nicail.bscs.com.emercify.models.UserSettings;
@@ -124,7 +125,7 @@ public class FirebaseMethods {
             if(bm == null) {
                 bm = ImageManager.getBitmap(imgUrl);
             }
-            byte[] bytes = ImageManager.getBytesFromBitmap(bm,100);
+            byte[] bytes = ImageManager.getBytesFromBitmap(bm,40);
             UploadTask uploadTask = null;
             uploadTask = storageReference.putBytes(bytes);
 
@@ -600,6 +601,24 @@ public class FirebaseMethods {
                 .child(photo_id).removeValue();
         myRef.child(mContext.getString(R.string.dbname_user_photos))
                 .child(user_id).child(photo_id).removeValue();
+    }
+
+    public void addNewResponder(Photo photo){
+        String responderID = myRef.push().getKey();
+        Responder responder = new Responder();
+        responder.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        myRef.child(mContext.getString(R.string.dbname_photos))
+                .child(photo.getPhoto_id())
+                .child("responder")
+                .child(responderID)
+                .setValue(responder);
+        myRef.child(mContext.getString(R.string.dbname_user_photos))
+                .child(photo.getUser_id())
+                .child(photo.getPhoto_id())
+                .child("responder")
+                .child(responderID)
+                .setValue(responder);
     }
 
     public void addNotification(String user_id, String from_id, String type, String message,String activity_id){
