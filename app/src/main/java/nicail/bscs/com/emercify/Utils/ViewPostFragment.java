@@ -57,6 +57,7 @@ import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.models.Comment;
 import nicail.bscs.com.emercify.models.Like;
 import nicail.bscs.com.emercify.models.Photo;
+import nicail.bscs.com.emercify.models.Responder;
 import nicail.bscs.com.emercify.models.User;
 import nicail.bscs.com.emercify.models.UserAccountSettings;
 
@@ -163,7 +164,7 @@ public class ViewPostFragment extends Fragment {
 
     private void init(){
         try{
-            //mPhoto = getPhotoFromBundle();
+            mPhoto = getPhotoFromBundle();
             GlideApp
                     .with(mContext)
                     .load(getPhotoFromBundle().getImage_path())
@@ -173,36 +174,61 @@ public class ViewPostFragment extends Fragment {
             mActivityNumber = getActivityNumFromBundle();
             String photo_id = getPhotoFromBundle().getPhoto_id();
             if(getEmergencyFromBundle() != null){
-                respondButton.setVisibility(View.VISIBLE);
-                respondButton.setOnClickListener(new View.OnClickListener() {
+                Query query = myRef
+                        .child(getActivity().getString(R.string.dbname_photos))
+                        .child(mPhoto.getPhoto_id())
+                        .child("responder");
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onClick(View v) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setMessage("Are you sure you want to respond to the photo's location?")
-                                .setCancelable(false)
-                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                })
-                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        Intent intent = new Intent(getActivity(), MapActivity.class);
-                                        intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
-                                        intent.putExtra("INTENT PHOTO",getPhotoFromBundle());
-                                        Log.d(TAG, "onDataChange: " + intent);
-                                        String message = mCurrentUser.getUsername() + " is reposding to your event";
-                                        String token = mUserAccountSettings.getDevice_token();
-                                        new Notify(token,message).execute();
-                                        startActivity(intent);
-                                    }
-                                });
-                        AlertDialog alert = builder.create();
-                        alert.show();
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        boolean respondedByUser = false;
+                        for(DataSnapshot ds: dataSnapshot.getChildren()){
+                            if(ds.getValue(Responder.class).getUser_id()
+                                    .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                respondedByUser = true;
+                            }
+                        }
+                        if(!dataSnapshot.exists() || !respondedByUser){
+                            respondButton.setVisibility(View.VISIBLE);
+                            respondButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                    builder.setMessage("Are you sure you want to respond to the photo's location?")
+                                            .setCancelable(false)
+                                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                }
+                                            })
+                                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    Intent intent = new Intent(getActivity(), MapActivity.class);
+                                                    intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
+                                                    intent.putExtra("INTENT PHOTO",getPhotoFromBundle());
+                                                    Log.d(TAG, "onDataChange: " + intent);
+                                                    String message = mCurrentUser.getUsername() +
+                                                            " is reposding to your emergency post";
+                                                    String token = mUserAccountSettings.getDevice_token();
+                                                    new Notify(token,message).execute();
+                                                    startActivity(intent);
+                                                }
+                                            });
+                                    AlertDialog alert = builder.create();
+                                    alert.show();
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
                     }
                 });
+
             }
             Query query = FirebaseDatabase.getInstance().getReference()
                     .child(getString(R.string.dbname_photos))
