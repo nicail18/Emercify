@@ -191,6 +191,8 @@ public class MapActivity extends AppCompatActivity implements
                 600,
                 null
         );
+
+        startUserLocationsRunnable();
     }
 
     private void addMapMarkers(){
@@ -309,7 +311,6 @@ public class MapActivity extends AppCompatActivity implements
                         .title("Your Location"));
                 String url = getUrl(new LatLng(lat,lon),new LatLng(latitude,longitude),"driving");
                 new FetchURL(MapActivity.this).execute(url,"driving");
-                startUserLocationsRunnable();
             }
             progressDialog.dismiss();
         }
@@ -367,7 +368,7 @@ public class MapActivity extends AppCompatActivity implements
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.d(TAG, "onDataChange: ");
                 for(DataSnapshot ds: dataSnapshot.getChildren()){
-                    String device_token = ds.child("device_token").toString();
+                    String device_token = ds.child("device_token").getValue().toString();
                     double userLat = (double) ds.child("latitude").getValue();
                     double userLong = (double) ds.child("longitude").getValue();
                     float[] distance = new float[1];
