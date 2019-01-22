@@ -25,13 +25,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ImageView
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="5dp"
             android:id="@+id/view_image"
             android:layout_width="15dp"
             android:layout_height="15dp"
             android:layout_toStartOf="@id/view_text"
-            android:layout_marginRight="6dp"
-            android:background="@mipmap/ic_viewdialog"/>
+            android:layout_marginRight="11dp"
+            android:background="@drawable/ic_viewdialog1"/>
         <TextView
             android:id="@+id/view_text"
             android:clickable="true"
@@ -39,7 +39,6 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:textColor="@drawable/text_changecolor"
-            android:paddingTop="3dp"
             android:layout_centerHorizontal="true"
             android:fontFamily="sans-serif-condensed"
             android:text="View"/>
@@ -48,12 +47,12 @@
         <ImageView
             android:id="@+id/ic_report"
             android:layout_below="@id/view_text"
-            android:layout_marginTop="19dp"
+            android:layout_marginTop="15dp"
             android:layout_width="15dp"
             android:layout_height="15dp"
             android:layout_toStartOf="@id/report_text"
             android:layout_marginRight="5dp"
-            android:background="@mipmap/ic_reportdialog"/>
+            android:background="@drawable/ic_reportdialog1"/>
         <TextView
             android:id="@+id/report_text"
             android:layout_below="@+id/view_text"
@@ -65,19 +64,18 @@
             android:textSize="18sp"
             android:layout_centerHorizontal="true"
             android:textColor="@drawable/text_changecolor"
-            android:paddingTop="3dp"
             android:text="Report" />
 
 
          <ImageView
              android:id="@+id/ic_delete"
              android:layout_below="@+id/report_text"
-             android:layout_marginTop="18dp"
+             android:layout_marginTop="15dp"
              android:layout_width="15dp"
              android:layout_height="15dp"
              android:layout_toStartOf="@id/delete_text"
-             android:layout_marginRight="5dp"
-             android:background="@mipmap/ic_deletedialog"/>
+             android:layout_marginRight="6dp"
+             android:background="@drawable/ic_deletedialog1"/>
          <TextView
              android:id="@+id/delete_text"
              android:layout_below="@id/report_text"
@@ -87,7 +85,6 @@
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
              android:fontFamily="sans-serif-condensed"
-             android:paddingTop="3dp"
              android:layout_centerHorizontal="true"
              android:textSize="18sp"
              android:text="Delete" />

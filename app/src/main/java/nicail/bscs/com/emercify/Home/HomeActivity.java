@@ -120,7 +120,7 @@ public class HomeActivity extends AppCompatActivity implements
     private RecyclerView recyclerView;
     private Handler handler = new Handler();
     private Runnable runnable;
-
+    private ImageView emercifyhome;
 
 
 
@@ -130,7 +130,7 @@ public class HomeActivity extends AppCompatActivity implements
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_home);
         Log.d(TAG, "onCreate: starting.");
-
+        emercifyhome = findViewById(R.id.emercify_text);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         pb = (ProgressBar) findViewById(R.id.progress_Bar1);
         mViewPager = (RelativeLayout) findViewById(R.id.rellayout2);
@@ -151,6 +151,10 @@ public class HomeActivity extends AppCompatActivity implements
                 getLocationPermission();
             }
         }
+    }
+    public void onButtonClick(View v){
+        Intent myIntent = new Intent (getBaseContext(),HomeActivity.class);
+        startActivity(myIntent);
     }
 
     private boolean checkMapServices(){
