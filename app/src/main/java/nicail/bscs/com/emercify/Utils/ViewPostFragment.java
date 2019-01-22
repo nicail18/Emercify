@@ -95,7 +95,7 @@ public class ViewPostFragment extends Fragment {
     private RelativeLayout rellayout2;
     private ProgressBar viewpost1;
     private Context mContext;
-    private Button respondButton;
+    private Button respondButton,fakeButton,legitButton;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -124,9 +124,12 @@ public class ViewPostFragment extends Fragment {
         mAddress = (TextView) view.findViewById(R.id.address);
         rellayout2 = (RelativeLayout) view.findViewById(R.id.rellayout2);
         respondButton = (Button) view.findViewById(R.id.respondButton);
+        fakeButton = (Button) view.findViewById(R.id.fakeButton);
+        legitButton = (Button) view.findViewById(R.id.legitButton);
         viewpost1 = (ProgressBar) view.findViewById(R.id.progress_Barviewpost);
         mContext = getActivity();
 
+        mFirebaseMethods = new FirebaseMethods(getActivity());
 
         mHeart = new Heart(mHeartWhite,mHeartRed);
         mGestureDetector = new GestureDetector(getActivity(), new GestureListener());
@@ -182,10 +185,13 @@ public class ViewPostFragment extends Fragment {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         boolean respondedByUser = false;
+                        String responder_id = "";
                         for(DataSnapshot ds: dataSnapshot.getChildren()){
                             if(ds.getValue(Responder.class).getUser_id()
                                     .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                                 respondedByUser = true;
+                                responder_id = ds.child("responder_id").getValue().toString();
+                                break;
                             }
                         }
                         if(!dataSnapshot.exists() || !respondedByUser){
@@ -218,6 +224,23 @@ public class ViewPostFragment extends Fragment {
                                             });
                                     AlertDialog alert = builder.create();
                                     alert.show();
+                                }
+                            });
+                        }
+                        else{
+                            fakeButton.setVisibility(View.VISIBLE);
+                            legitButton.setVisibility(View.VISIBLE);
+                            String finalResponder_id = responder_id;
+                            fakeButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mFirebaseMethods.updateResponder(mPhoto, finalResponder_id,false);
+                                }
+                            });
+                            legitButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mFirebaseMethods.updateResponder(mPhoto, finalResponder_id,true);
                                 }
                             });
                         }
