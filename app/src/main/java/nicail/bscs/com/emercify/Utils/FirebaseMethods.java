@@ -33,6 +33,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
@@ -603,22 +605,60 @@ public class FirebaseMethods {
                 .child(user_id).child(photo_id).removeValue();
     }
 
-    public void addNewResponder(Photo photo){
-        String responderID = myRef.push().getKey();
+    public void updateResponder(Photo photo, String responder_id, boolean isLegit){
         Responder responder = new Responder();
-        responder.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
+        responder.setUser_id(photo.getUser_id());
+        responder.setResponder_id(responder_id);
+        responder.setLegit(isLegit);
         myRef.child(mContext.getString(R.string.dbname_photos))
                 .child(photo.getPhoto_id())
                 .child("responder")
-                .child(responderID)
+                .child(responder_id)
                 .setValue(responder);
         myRef.child(mContext.getString(R.string.dbname_user_photos))
                 .child(photo.getUser_id())
                 .child(photo.getPhoto_id())
                 .child("responder")
-                .child(responderID)
+                .child(responder_id)
                 .setValue(responder);
+
+    }
+
+    public void addNewResponder(Photo photo) throws JSONException {
+        String responderID = myRef.push().getKey();
+        Responder responder = new Responder();
+        responder.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+
+        myRef.child(mContext.getString(R.string.dbname_photos))
+                .child(photo.getPhoto_id())
+                .child("responder")
+                .child(responderID)
+                .child("user_id")
+                .setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        myRef.child(mContext.getString(R.string.dbname_photos))
+                .child(photo.getPhoto_id())
+                .child("responder")
+                .child(responderID)
+                .child("responder_id")
+                .setValue(responderID);
+
+        myRef.child(mContext.getString(R.string.dbname_user_photos))
+                .child(photo.getUser_id())
+                .child(photo.getPhoto_id())
+                .child("responder")
+                .child(responderID)
+                .child("user_id")
+                .setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        myRef.child(mContext.getString(R.string.dbname_user_photos))
+                .child(photo.getUser_id())
+                .child(photo.getPhoto_id())
+                .child("responder")
+                .child(responderID)
+                .child("responder_id")
+                .setValue(responderID);
     }
 
     public void addNotification(String user_id, String from_id, String type, String message,String activity_id){

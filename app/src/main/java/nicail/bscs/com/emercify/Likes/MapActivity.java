@@ -63,6 +63,8 @@ import com.google.maps.model.DirectionsRoute;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.nostra13.universalimageloader.core.imageaware.ImageViewAware;
 
+import org.json.JSONException;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -387,7 +389,11 @@ public class MapActivity extends AppCompatActivity implements
                         Log.d(TAG, "onDataChange: You Have Arrived In The Photo's Destination");
                         stopUserLocationRunnable();
                         new Notify(FirebaseInstanceId.getInstance().getToken(),message).execute();
-                        firebaseMethods.addNewResponder(mPhoto);
+                        try {
+                            firebaseMethods.addNewResponder(mPhoto);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }

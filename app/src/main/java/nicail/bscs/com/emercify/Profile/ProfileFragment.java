@@ -379,8 +379,6 @@ public class ProfileFragment extends Fragment {
                             comments.add(comment);
                         }
 
-
-
                         photo.setComments(comments);
 
                         List<Like> likesList = new ArrayList<Like>();
