@@ -23,12 +23,11 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/emercifytext1"
                     android:id="@+id/emercify_text"
+                    android:onClick="onButtonClick"
                     android:layout_centerHorizontal="true"/>
 
 
             </RelativeLayout>
-
-
         </android.support.v7.widget.Toolbar>
 
         <!--</android.support.design.widget.AppBarLayout>-->
