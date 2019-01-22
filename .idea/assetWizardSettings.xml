@@ -13,6 +13,34 @@
                       <PersistentState>
                         <option name="children">
                           <map>
+                            <entry key="actionbar">
+                              <value>
+                                <PersistentState>
+                                  <option name="children">
+                                    <map>
+                                      <entry key="image">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="trimmed" value="true" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                    </map>
+                                  </option>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="C:\Users\DELL\Desktop\emercency_icon.png" />
+                                      <entry key="theme" value="HOLO_DARK" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
                             <entry key="launcherLegacy">
                               <value>
                                 <PersistentState>
@@ -34,8 +62,21 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="D:\current_location.png" />
-                                      <entry key="outputName" value="ic_currentloc" />
+                                      <entry key="iconShape" value="NONE" />
+                                      <entry key="imageAsset" value="C:\Users\DELL\Desktop\emercency_icon.png" />
+                                      <entry key="outputName" value="emergency_icon" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
+                            <entry key="notification">
+                              <value>
+                                <PersistentState>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="C:\Users\DELL\Desktop\emercency_icon.png" />
                                     </map>
                                   </option>
                                 </PersistentState>
