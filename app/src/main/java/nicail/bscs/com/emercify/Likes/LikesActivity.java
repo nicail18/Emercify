@@ -1,15 +1,14 @@
 package nicail.bscs.com.emercify.Likes;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,11 +36,13 @@ import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
-import org.web3j.tuples.generated.Tuple5;
+import org.web3j.tuples.generated.Tuple3;
 import org.web3j.tx.Contract;
 import org.web3j.tx.ManagedTransaction;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -50,7 +51,6 @@ import java.util.Map;
 
 import nicail.bscs.com.emercify.Profile.ProfileActivity;
 import nicail.bscs.com.emercify.R;
-import nicail.bscs.com.emercify.Utils.BlockChain;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
 import nicail.bscs.com.emercify.Utils.CheckInternet;
 import nicail.bscs.com.emercify.Utils.Emercify;
@@ -94,7 +94,7 @@ public class LikesActivity extends AppCompatActivity implements
     private ImageView nonotifimage,nowifiimage,bcTest;
     private RecyclerView notifsRecyclerView;
     private ProgressDialog progressDialog;
-    private static ArrayList<BlockChain> blockchain = new ArrayList<BlockChain>();
+
     private Handler handler = new Handler();
     private Runnable runnable;
 
@@ -135,30 +135,22 @@ public class LikesActivity extends AppCompatActivity implements
         bcTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String output = "";
-                web3j();
+                progressDialog = new ProgressDialog(LikesActivity.this);
+                progressDialog.setTitle("Loading");
+                progressDialog.setMessage("Please Wait");
+                progressDialog.show();
+                new InitWeb3j().execute(getString(R.string.infura));
             }
         });
 
     }
 
-    private void web3j(){
-        String infura = getString(R.string.infura);
-        InitWeb3j task = new InitWeb3j();
-        progressDialog = new ProgressDialog(LikesActivity.this);
-        progressDialog.setTitle("Loading");
-        progressDialog.setMessage("Please Wait..");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-        task.execute(infura);
-    }
-
-    private class InitWeb3j extends AsyncTask<String, String, String>{
+    private class InitWeb3j extends AsyncTask<String, String, String> {
 
         @Override
         protected String doInBackground(String... strings) {
             String url = strings[0];
-            String walletFileName = "";
+            Tuple3<String, BigInteger, BigInteger> output = null;
             try {
                 Web3j web3 = Web3jFactory.build(new HttpService(url));
                 Credentials credentials = Credentials.create(getString(R.string.private_key));
@@ -168,17 +160,10 @@ public class LikesActivity extends AppCompatActivity implements
                         ManagedTransaction.GAS_PRICE,
                         Contract.GAS_LIMIT
                 );
-                contract._setUser(
-                        "hello",
-                        "world",
-                        "fake",
-                        "email"
-                ).send();
-                Tuple5<String, String, String, String, Boolean> output = contract._getUser("hello").send();
+                output = contract.getUserReports("hello").send();
                 return output.toString();
-            } catch (Exception e){
-                Log.d(TAG, "doInBackground: web3j Exception: " + e.getMessage());
-                return "Exception" + e.getMessage();
+            } catch (Exception e) {
+                return e.getMessage();
             }
 
         }
@@ -186,46 +171,12 @@ public class LikesActivity extends AppCompatActivity implements
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            AlertDialog.Builder builder = new AlertDialog.Builder(LikesActivity.this);
+            builder.setMessage(s);
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
             progressDialog.dismiss();
-            final AlertDialog.Builder builder = new AlertDialog.Builder(LikesActivity.this);
-            builder.setMessage(s)
-                    .setCancelable(false)
-                    .setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                        public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-
-                        }
-                    });
-            final AlertDialog alert = builder.create();
-            alert.show();
         }
-    }
-
-    public static Boolean isChainValid() {
-        BlockChain currentBlock;
-        BlockChain previousBlock;
-        String hashTarget = new String(new char[2]).replace('\0', '0');
-
-        //loop through blockchain to check hashes:
-        for(int i=1; i < blockchain.size(); i++) {
-            currentBlock = blockchain.get(i);
-            previousBlock = blockchain.get(i-1);
-            //compare registered hash and calculated hash:
-            if(!currentBlock.hash.equals(currentBlock.calculateHash()) ){
-                Log.d(TAG, "isChainValid: Current Hashes not equal");
-                return false;
-            }
-            //compare previous hash and registered previous hash
-            if(!previousBlock.hash.equals(currentBlock.previousHash) ) {
-                Log.d(TAG, "isChainValid: Previous Hashes not equal");
-                return false;
-            }
-            //check if hash is solved
-            if(!currentBlock.hash.substring( 0, 2).equals(hashTarget)) {
-                Log.d(TAG, "isChainValid: This block hasn't been mined");
-                return false;
-            }
-        }
-        return true;
     }
 
     class Task extends AsyncTask<String, Integer, Boolean> {
@@ -585,6 +536,7 @@ public class LikesActivity extends AppCompatActivity implements
                         photo.setUser_id(objectMap.get("user_id").toString());
                         photo.setDate_created(objectMap.get("date_created").toString());
                         photo.setImage_path(objectMap.get("image_path").toString());
+                        photo.setType(objectMap.get("type").toString());
 
                         Intent intent = new Intent(LikesActivity.this, ProfileActivity.class);
                         intent.putExtra(getString(R.string.calling_activity),"Likes Activity");

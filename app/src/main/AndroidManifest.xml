@@ -114,8 +114,6 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".Utils.layout_messages_chatitem_s" />
-
         <service
             android:name=".Utils.FirebaseMessageService"
             android:exported="false">

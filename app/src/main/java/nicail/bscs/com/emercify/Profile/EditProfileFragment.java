@@ -2,7 +2,6 @@ package nicail.bscs.com.emercify.Profile;
 
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,7 +9,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,20 +37,15 @@ import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.http.HttpService;
-import org.web3j.tuples.generated.Tuple5;
 import org.web3j.tx.Contract;
 import org.web3j.tx.ManagedTransaction;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import nicail.bscs.com.emercify.Home.HomeActivity;
-import nicail.bscs.com.emercify.Likes.LikesActivity;
-import nicail.bscs.com.emercify.Login.LoginActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Share.ShareActivity;
 import nicail.bscs.com.emercify.Utils.Emercify;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.GlideApp;
-import nicail.bscs.com.emercify.Utils.UniversalImageLoader;
 import nicail.bscs.com.emercify.dialogs.ConfirmPasswordDialog;
 import nicail.bscs.com.emercify.models.User;
 import nicail.bscs.com.emercify.models.UserAccountSettings;

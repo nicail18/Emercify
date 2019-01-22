@@ -243,6 +243,7 @@ public class HomeFragment extends Fragment implements
                         photo.setUser_id(objectMap.get("user_id").toString());
                         photo.setDate_created(objectMap.get("date_created").toString());
                         photo.setImage_path(objectMap.get("image_path").toString());
+                        photo.setType(objectMap.get("type").toString());
 
                         Log.d(TAG, "onDataChange: " + photo.toString());
 

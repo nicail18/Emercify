@@ -369,6 +369,7 @@ public class ProfileFragment extends Fragment {
                         photo.setUser_id(objectMap.get("user_id").toString());
                         photo.setDate_created(objectMap.get("date_created").toString());
                         photo.setImage_path(objectMap.get("image_path").toString());
+                        photo.setType(objectMap.get("type").toString());
 
                         ArrayList<Comment> comments = new ArrayList<Comment>();
                         for (DataSnapshot dSnapshot : singleSnapshot.child("comments").getChildren()) {
