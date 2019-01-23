@@ -22,8 +22,8 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true">
             <ProgressBar
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:id="@+id/progress_Barnotif"
                 android:indeterminateTint="@color/emercifycolor"
                 android:layout_centerHorizontal="true"
@@ -44,19 +44,23 @@
             android:layout_height="50dp"
             android:layout_above="@+id/no_internet"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/ic_no_wifi"
-            android:backgroundTint="@color/black"/>
+            android:background="@drawable/ic_nonet"
+            android:backgroundTint="@color/darkRed"/>
         <TextView
             android:id="@+id/no_internet"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No internet connection"
+            android:fontFamily="sans-serif-condensed"
+            android:text="No Internet connection"
+            android:textSize="15sp"
             android:layout_centerInParent="true"/>
         <TextView
             android:id="@+id/no_notification"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No Notifications available"
+            android:text="No Notifications Available"
+            android:textSize="15sp"
+            android:fontFamily="sans-serif-condensed"
             android:layout_centerInParent="true"/>
 
         <RelativeLayout

@@ -36,7 +36,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:text="No internet Connection"
+            android:text="No Internet Connection"
+            android:fontFamily="sans-serif-condensed"
             android:layout_centerInParent="true"/>
         <ImageView
             android:id="@+id/no_netimageprof"
@@ -44,11 +45,11 @@
             android:layout_height="50dp"
             android:layout_above="@+id/no_netprof"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/ic_no_wifi"
-            android:backgroundTint="@color/black"/>
+            android:background="@drawable/ic_nonet"
+            android:backgroundTint="@color/darkRed"/>
         <ProgressBar
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:indeterminateTint="@color/emercifycolor"
             android:id="@+id/profileProgressBar"
             android:layout_centerHorizontal="true" />
