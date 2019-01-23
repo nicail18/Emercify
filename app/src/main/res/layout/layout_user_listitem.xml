@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="70dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="100dp">
-
         <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="75dp"
-            android:layout_height="75dp"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
             app:civ_border_color="@color/black"
             app:civ_border_width="0.5dp"
             android:id="@+id/profile_image"
@@ -21,13 +17,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/profile_image"
-            android:layout_centerVertical="true">
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:textSize="22sp"
+                android:textSize="16sp"
                 android:textColor="@color/black"
                 android:text="Raymart Gutierrez"
                 android:fontFamily="sans-serif"
@@ -36,9 +32,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:textSize="15sp"
-                android:layout_centerVertical="true"
+                android:textSize="14sp"
                 android:textColor="@color/grey"
                 android:text="raymartg23@gmail.com"
                 android:fontFamily="sans-serif"
@@ -46,7 +40,5 @@
                 android:layout_below="@+id/username"/>
 
         </RelativeLayout>
-        
-    </RelativeLayout>
 
 </RelativeLayout>

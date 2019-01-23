@@ -4,47 +4,50 @@
     android:background="@drawable/seen_bg_color"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
+
         <de.hdodenhof.circleimageview.CircleImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/profile_photo"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginTop="5dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginLeft="10dp"
-            app:civ_border_width="2dp"/>
+            android:layout_centerVertical="true"/>
 
-        <TextView
-            android:id="@+id/username"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/profile_photo"
-            android:text="Profile Name"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"/>
+            android:layout_marginStart="10dp"
+            android:layout_centerVertical="true">
 
-        <TextView
-            android:id="@+id/notif_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/profile_photo"
-            android:layout_below="@+id/username"
-            android:layout_marginLeft="10dp"
-            android:text="Message"
-            android:textSize="12sp"
-            android:textColor="@color/black"/>
+                <TextView
+                    android:id="@+id/username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Profile Name"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"/>
 
-        <TextView
-            android:id="@+id/timestamp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/profile_photo"
-            android:layout_below="@id/notif_message"
-            android:layout_marginLeft="10dp"
-            android:text=""/>
+                <TextView
+                    android:id="@+id/notif_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/username"
+                    android:text="Message"
+                    android:textSize="12sp"
+                    android:textColor="@color/black"
+                    android:layout_marginTop="3dp"/>
 
+                <TextView
+                    android:id="@+id/timestamp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/notif_message"
+                    android:text="Time"
+                    android:textSize="12sp"/>
 
+        </RelativeLayout>
 
 </RelativeLayout>

@@ -70,7 +70,7 @@
                         android:layout_below="@id/linLayout"
                         android:padding="20dp"
                         android:id="@+id/linLayout2"
-                        android:background="@drawable/white_gray_border_bottom">
+                        android:background="@drawable/border_bottom">
 
                         <TextView
                             android:layout_width="match_parent"
@@ -79,6 +79,7 @@
                             android:textColor="@color/black"
                             android:textStyle="bold"
                             android:textSize="16sp"
+                            android:text="Profile Name"
                             android:fontFamily="sans-serif-condensed"/>
 
                         <TextView
@@ -86,6 +87,8 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/description"
                             android:textColor="@color/black"
+                            android:text="Description"
+                            android:textSize="14sp"
                             android:layout_marginTop="5dp"/>
 
                         <TextView
@@ -93,8 +96,19 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/website"
                             android:textColor="@color/link_blue"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
+                            android:text="Website"
                             android:layout_marginTop="5dp"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/extratext"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            android:text="Extra Text"
+                            android:layout_marginTop="5dp"
+                            android:visibility="gone"/>
 
                     </LinearLayout>
                 </RelativeLayout>

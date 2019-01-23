@@ -60,7 +60,7 @@
                 android:layout_below="@id/linLayout"
                 android:padding="20dp"
                 android:id="@+id/linLayout2"
-                android:background="@drawable/white_gray_border_bottom">
+                android:background="@drawable/border_bottom">
                 
                 <TextView
                     android:layout_width="match_parent"

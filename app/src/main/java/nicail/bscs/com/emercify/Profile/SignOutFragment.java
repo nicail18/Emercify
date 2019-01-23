@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.facebook.AccessToken;
@@ -40,20 +39,19 @@ public class SignOutFragment extends Fragment {
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseMethods firebaseMethods;
 
-    private ProgressBar mProgressBar;
-    private TextView tvSignout, tvSigningOut;
+
     private GoogleSignInClient googleSignInClient;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_signout,container,false);
-        tvSignout = (TextView) view.findViewById(R.id.tvConfirmSignout);
-        tvSigningOut = (TextView) view.findViewById(R.id.tvSigningOut);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+
+
+
         firebaseMethods = new FirebaseMethods(getActivity());
-        mProgressBar.setVisibility(View.GONE);
-        tvSigningOut.setVisibility(View.GONE);
+
+
         FacebookSdk.sdkInitialize(getActivity());
         setupFireBaseAuth();
         Log.d(TAG, "onCreateView: " + mAuth.getCurrentUser().getUid());
@@ -63,9 +61,6 @@ public class SignOutFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: attempting sign out");
-                mProgressBar.setVisibility(View.VISIBLE);
-                tvSigningOut.setVisibility(View.VISIBLE);
-
                 firebaseMethods.updateOnlineStatus(false);
                 signOut();
                 mAuth.signOut();
