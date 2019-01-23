@@ -1,5 +1,6 @@
 package nicail.bscs.com.emercify.Likes;
 
+import android.app.Dialog;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -10,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -58,6 +58,7 @@ import nicail.bscs.com.emercify.Utils.CheckInternet;
 import nicail.bscs.com.emercify.Utils.Emercify;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.NotifRecyclerAdapter;
+import nicail.bscs.com.emercify.dialogs.Agreedisagree_Dialog;
 import nicail.bscs.com.emercify.models.Comment;
 import nicail.bscs.com.emercify.models.Notifications;
 import nicail.bscs.com.emercify.models.Photo;
@@ -100,6 +101,7 @@ public class LikesActivity extends AppCompatActivity implements
 
     private Handler handler = new Handler();
     private Runnable runnable;
+    private ImageView testingdialog;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
@@ -108,7 +110,7 @@ public class LikesActivity extends AppCompatActivity implements
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_notifs);
 
-
+        testingdialog = (ImageView) findViewById(R.id.testdialog);
         ivMap = (ImageView) findViewById(R.id.ivMap);
         bcTest = (ImageView) findViewById(R.id.bcTest);
         pbnotif = (ProgressBar) findViewById(R.id.progress_Barnotif);
@@ -125,7 +127,13 @@ public class LikesActivity extends AppCompatActivity implements
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setOnRefreshListener(LikesActivity.this);
         Log.d(TAG, "onCreate: starting.");
-
+        testingdialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Agreedisagree_Dialog agreedisagree_dialog = new Agreedisagree_Dialog(LikesActivity.this);
+                agreedisagree_dialog.show();
+            }
+        });
         new Task().execute();
         setupFireBaseAuth();
         setupBottomNavigationView();
