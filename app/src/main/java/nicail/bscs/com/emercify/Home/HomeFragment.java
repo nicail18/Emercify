@@ -14,12 +14,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -113,12 +115,14 @@ public class HomeFragment extends Fragment implements
     private ImageView nonetimage;
     private ImageView nopostimage;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private ImageView emercifyText;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home,container,false);
         //mListView = (ListView) view.findViewById(R.id.listView);
+        emercifyText = (ImageView) getActivity().findViewById(R.id.emercify_text);
         recyclerView = (RecyclerView) view.findViewById(R.id.listViewhome);
         pb = (ProgressBar) view.findViewById(R.id.progress_Bar1);
         mViewPager = (RelativeLayout) view.findViewById(R.id.rellayout2);
@@ -131,6 +135,24 @@ public class HomeFragment extends Fragment implements
 
         mFollowing = new ArrayList<>();
         mPhotos = new ArrayList<>();
+        
+        emercifyText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: emercifyText");
+                RecyclerView.SmoothScroller smoothScroller = new
+                        LinearSmoothScroller(getActivity()) {
+                            @Override protected int getVerticalSnapPreference() {
+                                return LinearSmoothScroller.SNAP_TO_START;
+                            }
+                        };
+                smoothScroller.setTargetPosition(0);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView
+                        .getLayoutManager();
+                layoutManager.startSmoothScroll(smoothScroller);
+            }
+        });
+        
         class Task extends AsyncTask<String, Integer, Boolean> {
             @Override
             protected void onPreExecute() {
@@ -251,6 +273,7 @@ public class HomeFragment extends Fragment implements
                         photo.setUser_id(objectMap.get("user_id").toString());
                         photo.setDate_created(objectMap.get("date_created").toString());
                         photo.setImage_path(objectMap.get("image_path").toString());
+                        photo.setType(objectMap.get("type").toString());
 
                         Log.d(TAG, "onDataChange: " + photo.toString());
 

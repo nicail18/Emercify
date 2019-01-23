@@ -79,7 +79,7 @@ public class ViewPostFragment extends Fragment {
     private SquareImageView mPostImage;
     private BottomNavigationViewEx bottomNavigationView;
     private TextView mBackLabel,mCaption,mUsername,mTimeStamp, mLikes, mComments, mAddress;
-    private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage, mComment;
+    private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage, mComment, emergencyIcon;
 
     private Photo mPhoto;
     private int mActivityNumber = 0;
@@ -127,6 +127,7 @@ public class ViewPostFragment extends Fragment {
         fakeButton = (Button) view.findViewById(R.id.fakeButton);
         legitButton = (Button) view.findViewById(R.id.legitButton);
         viewpost1 = (ProgressBar) view.findViewById(R.id.progress_Barviewpost);
+        emergencyIcon = (ImageView) view.findViewById(R.id.emergency_icon);
         mContext = getActivity();
 
         mFirebaseMethods = new FirebaseMethods(getActivity());
@@ -177,6 +178,7 @@ public class ViewPostFragment extends Fragment {
             mActivityNumber = getActivityNumFromBundle();
             String photo_id = getPhotoFromBundle().getPhoto_id();
             if(getEmergencyFromBundle() != null){
+                emergencyIcon.setVisibility(View.VISIBLE);
                 Query query = myRef
                         .child(getActivity().getString(R.string.dbname_photos))
                         .child(mPhoto.getPhoto_id())
@@ -216,7 +218,7 @@ public class ViewPostFragment extends Fragment {
                                                     intent.putExtra("INTENT PHOTO",getPhotoFromBundle());
                                                     Log.d(TAG, "onDataChange: " + intent);
                                                     String message = mCurrentUser.getUsername() +
-                                                            " is reposding to your emergency post";
+                                                            " is responding to your emergency post";
                                                     String token = mUserAccountSettings.getDevice_token();
                                                     new Notify(token,message).execute();
                                                     startActivity(intent);

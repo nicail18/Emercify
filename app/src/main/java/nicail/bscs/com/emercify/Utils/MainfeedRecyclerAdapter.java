@@ -2,6 +2,7 @@ package nicail.bscs.com.emercify.Utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -89,7 +90,12 @@ public class MainfeedRecyclerAdapter extends RecyclerView.Adapter<MainfeedRecycl
                 new GestureListener((ViewHolder)holder));
         firebaseMethods = new FirebaseMethods(mContext);
 
-
+        if(((ViewHolder)holder).photo.getType().equals("emergency")){
+            ((ViewHolder)holder).emergencyIcon.setVisibility(View.VISIBLE);
+        }
+        else{
+            ((ViewHolder)holder).emergencyIcon.setVisibility(View.GONE);
+        }
 
         getCurrentUsername();
         getLikeString(((ViewHolder)holder));
@@ -165,7 +171,6 @@ public class MainfeedRecyclerAdapter extends RecyclerView.Adapter<MainfeedRecycl
                             .centerCrop()
                             .into(((ViewHolder)holder).mProfileImage);
 
-                    //imageLoader.displayImage(singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo(),holder.mProfileImage);
                     ((ViewHolder)holder).mProfileImage.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -237,7 +242,7 @@ public class MainfeedRecyclerAdapter extends RecyclerView.Adapter<MainfeedRecycl
         CircleImageView mProfileImage;
         TextView username, timeStamp, caption, likes, comments,address;
         SquareImageView image;
-        ImageView heartRed, heartWhite, comment, map, ellipses;
+        ImageView heartRed, heartWhite, comment, map, ellipses, emergencyIcon;
 
         UserAccountSettings settings = new UserAccountSettings();
         User user = new User();
@@ -263,6 +268,7 @@ public class MainfeedRecyclerAdapter extends RecyclerView.Adapter<MainfeedRecycl
             address = (TextView) itemView.findViewById(R.id.address);
             map = (ImageView) itemView.findViewById(R.id.ivMap);
             ellipses = (ImageView) itemView.findViewById(R.id.ivEllipses);
+            emergencyIcon = (ImageView) itemView.findViewById(R.id.emergency_icon);
         }
     }
 
