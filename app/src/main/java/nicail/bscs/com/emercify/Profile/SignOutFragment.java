@@ -48,9 +48,7 @@ public class SignOutFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_signout,container,false);
 
 
-
         firebaseMethods = new FirebaseMethods(getActivity());
-
 
         FacebookSdk.sdkInitialize(getActivity());
         setupFireBaseAuth();
