@@ -60,7 +60,6 @@ public class HomeFragment extends Fragment implements
         SwipeRefreshLayout.OnRefreshListener{
     private static final String TAG = "HomeFragment";
 
-
     @Override
     public void onReportClickListener(Photo photo) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -108,6 +107,7 @@ public class HomeFragment extends Fragment implements
 
     private int mResults,currentItems,totalItems,scrollOutItems;
     private Boolean isScrolling = false;
+    private boolean first = true;
     private ProgressBar pb;
     private RelativeLayout mViewPager;
     private TextView nonet;
@@ -149,7 +149,14 @@ public class HomeFragment extends Fragment implements
                 smoothScroller.setTargetPosition(0);
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView
                         .getLayoutManager();
-                layoutManager.startSmoothScroll(smoothScroller);
+                if(layoutManager.findFirstCompletelyVisibleItemPosition()==0){
+                    swipeRefreshLayout.setRefreshing(true);
+                    getFollowing();
+                }
+                else{
+                    layoutManager.startSmoothScroll(smoothScroller);
+                }
+
             }
         });
         
@@ -331,9 +338,12 @@ public class HomeFragment extends Fragment implements
                 manager = new LinearLayoutManager(getActivity());
                 recyclerView.setLayoutManager(manager);
                 Drawable dividerDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.line_divider);
-                recyclerView.addItemDecoration(new RecyclerViewDivider(
-                        dividerDrawable
-                ));
+                if(first){
+                    recyclerView.addItemDecoration(new RecyclerViewDivider(
+                            dividerDrawable
+                    ));
+                    first = false;
+                }
                 recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                     @Override
                     public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -398,6 +408,6 @@ public class HomeFragment extends Fragment implements
     @Override
     public void onRefresh() {
         swipeRefreshLayout.setRefreshing(true);
-
+        getFollowing();
     }
 }
