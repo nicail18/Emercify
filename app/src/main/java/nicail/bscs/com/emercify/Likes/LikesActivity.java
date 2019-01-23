@@ -1,5 +1,6 @@
 package nicail.bscs.com.emercify.Likes;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -56,6 +57,7 @@ import nicail.bscs.com.emercify.Utils.CheckInternet;
 import nicail.bscs.com.emercify.Utils.Emercify;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.NotifRecyclerAdapter;
+import nicail.bscs.com.emercify.dialogs.Agreedisagree_Dialog;
 import nicail.bscs.com.emercify.models.Comment;
 import nicail.bscs.com.emercify.models.Notifications;
 import nicail.bscs.com.emercify.models.Photo;
@@ -97,14 +99,14 @@ public class LikesActivity extends AppCompatActivity implements
     private static ArrayList<BlockChain> blockchain = new ArrayList<BlockChain>();
     private Handler handler = new Handler();
     private Runnable runnable;
-
+    private ImageView testingdialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_notifs);
 
-
+        testingdialog = (ImageView) findViewById(R.id.testdialog);
         ivMap = (ImageView) findViewById(R.id.ivMap);
         bcTest = (ImageView) findViewById(R.id.bcTest);
         pbnotif = (ProgressBar) findViewById(R.id.progress_Barnotif);
@@ -119,7 +121,13 @@ public class LikesActivity extends AppCompatActivity implements
         nonotifimage = (ImageView) findViewById(R.id.nonotif_image);
         nowifiimage = (ImageView) findViewById(R.id.nowifi_image);
         Log.d(TAG, "onCreate: starting.");
-
+        testingdialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Agreedisagree_Dialog agreedisagree_dialog = new Agreedisagree_Dialog(LikesActivity.this);
+                agreedisagree_dialog.show();
+            }
+        });
         new Task().execute();
         setupFireBaseAuth();
         setupBottomNavigationView();
