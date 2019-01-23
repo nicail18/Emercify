@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -63,7 +64,8 @@ import nicail.bscs.com.emercify.models.User;
 import nicail.bscs.com.emercify.models.UserSettings;
 
 public class LikesActivity extends AppCompatActivity implements
-        NotifRecyclerAdapter.NotifRecyclerAdapterClickListener {
+        NotifRecyclerAdapter.NotifRecyclerAdapterClickListener,
+        SwipeRefreshLayout.OnRefreshListener{
 
     private static final String TAG = "LikesActivity";
 
@@ -97,6 +99,7 @@ public class LikesActivity extends AppCompatActivity implements
     private static ArrayList<BlockChain> blockchain = new ArrayList<BlockChain>();
     private Handler handler = new Handler();
     private Runnable runnable;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +121,8 @@ public class LikesActivity extends AppCompatActivity implements
         rellayoutnotif = (RelativeLayout) findViewById(R.id.rellayoutnotif);
         nonotifimage = (ImageView) findViewById(R.id.nonotif_image);
         nowifiimage = (ImageView) findViewById(R.id.nowifi_image);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        swipeRefreshLayout.setOnRefreshListener(LikesActivity.this);
         Log.d(TAG, "onCreate: starting.");
 
         new Task().execute();
@@ -151,6 +156,12 @@ public class LikesActivity extends AppCompatActivity implements
         progressDialog.setCancelable(false);
         progressDialog.show();
         task.execute(infura);
+    }
+
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+        getNotifications();
     }
 
     private class InitWeb3j extends AsyncTask<String, String, String>{
@@ -270,6 +281,7 @@ public class LikesActivity extends AppCompatActivity implements
     }
 
     public void getNotifications(){
+        notifications = new ArrayList<>();
         Log.d(TAG, "getNotifications: getting notifications");
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         final int[] count = {0};
@@ -339,6 +351,7 @@ public class LikesActivity extends AppCompatActivity implements
 
                 notifRecyclerAdapter = new NotifRecyclerAdapter(paginatedNotif,this);
                 notifsRecyclerView.setAdapter(notifRecyclerAdapter);
+                swipeRefreshLayout.setRefreshing(false);
                 manager = new LinearLayoutManager(this);
                 notifsRecyclerView.setLayoutManager(manager);
                 notifsRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -365,8 +378,10 @@ public class LikesActivity extends AppCompatActivity implements
                 });
 
             }catch(NullPointerException e){
+                swipeRefreshLayout.setRefreshing(false);
                 Log.e(TAG, "displayNotifs: " + e.getMessage() );
             }catch(IndexOutOfBoundsException e){
+                swipeRefreshLayout.setRefreshing(false);
                 Log.e(TAG, "displayNotifs: " + e.getMessage() );
             }
         }

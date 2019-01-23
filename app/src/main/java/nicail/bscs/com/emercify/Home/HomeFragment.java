@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -53,7 +54,8 @@ import nicail.bscs.com.emercify.models.Photo;
 public class HomeFragment extends Fragment implements
         View_Delete_Dialog.OnViewClickListener,
         View_Delete_Dialog.OnDeleteClickListener,
-        View_Delete_Dialog.OnReportClickListener{
+        View_Delete_Dialog.OnReportClickListener,
+        SwipeRefreshLayout.OnRefreshListener{
     private static final String TAG = "HomeFragment";
 
 
@@ -110,6 +112,7 @@ public class HomeFragment extends Fragment implements
     private TextView noposts;
     private ImageView nonetimage;
     private ImageView nopostimage;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Nullable
     @Override
@@ -123,6 +126,9 @@ public class HomeFragment extends Fragment implements
         noposts = (TextView) view.findViewById(R.id.no_postavail);
         nonetimage = (ImageView) view.findViewById(R.id.no_netimage);
         nopostimage = (ImageView) view.findViewById(R.id.nopost_image);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
         mFollowing = new ArrayList<>();
         mPhotos = new ArrayList<>();
         class Task extends AsyncTask<String, Integer, Boolean> {
@@ -194,6 +200,7 @@ public class HomeFragment extends Fragment implements
     }
 
     private void getFollowing(){
+        mFollowing = new ArrayList<>();
         Log.d(TAG, "getFollowing: searching for following");
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         Query query = reference
@@ -218,6 +225,7 @@ public class HomeFragment extends Fragment implements
     }
 
     public void getPhotos(){
+        mPhotos = new ArrayList<>();
         Log.d(TAG, "getPhotos: getting photos");
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         for(int i = 0; i <mFollowing.size(); i++) {
@@ -296,6 +304,7 @@ public class HomeFragment extends Fragment implements
 
                 recyclerAdapter = new MainfeedRecyclerAdapter(mPaginatedPhotos,HomeFragment.this);
                 recyclerView.setAdapter(recyclerAdapter);
+                swipeRefreshLayout.setRefreshing(false);
                 manager = new LinearLayoutManager(getActivity());
                 recyclerView.setLayoutManager(manager);
                 Drawable dividerDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.line_divider);
@@ -327,8 +336,10 @@ public class HomeFragment extends Fragment implements
                 pb.setVisibility(View.GONE);
                 getItemCount();
             }catch(NullPointerException e){
+                swipeRefreshLayout.setRefreshing(false);
                 Log.e(TAG, "displayPhotos: NullPointerException" + e.getMessage() );
             }catch(IndexOutOfBoundsException e){
+                swipeRefreshLayout.setRefreshing(false);
                 Log.e(TAG, "displayPhotos: IndexOutOfBoundsException" + e.getMessage() );
             }
         }
@@ -359,5 +370,11 @@ public class HomeFragment extends Fragment implements
         }catch(IndexOutOfBoundsException e){
             Log.e(TAG, "displayPhotos: IndexOutOfBoundsException" + e.getMessage() );
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        swipeRefreshLayout.setRefreshing(true);
+
     }
 }
