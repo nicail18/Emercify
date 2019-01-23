@@ -1,6 +1,7 @@
 package nicail.bscs.com.emercify.Profile;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
@@ -132,6 +133,12 @@ public class AccountSettingsActivity extends AppCompatActivity {
                 }
                 else{
                     SignOutDialog signOutDialog = new SignOutDialog(AccountSettingsActivity.this);
+                    signOutDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            finish();
+                        }
+                    });
                     signOutDialog.show();
                 }
             }
