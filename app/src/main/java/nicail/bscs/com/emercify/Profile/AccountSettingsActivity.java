@@ -26,6 +26,7 @@ import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.SectionsStatePagerAdapater;
+import nicail.bscs.com.emercify.dialogs.SignOutDialog;
 
 public class AccountSettingsActivity extends AppCompatActivity {
     private static final String TAG = "AccountSettingsActivity";
@@ -126,7 +127,13 @@ public class AccountSettingsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(TAG, "onItemClick: navigating to fragment#:" + position);
-                setViewPager(position);
+                if(position == 0){
+                    setViewPager(position);
+                }
+                else{
+                    SignOutDialog signOutDialog = new SignOutDialog(AccountSettingsActivity.this);
+                    signOutDialog.show();
+                }
             }
         });
     }

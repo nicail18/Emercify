@@ -22,14 +22,14 @@
                     <TextView
                         android:id="@+id/notifword"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:text="Notifications"
                         android:textSize="20sp"
                         android:layout_marginStart="15dp"
                         android:fontFamily="sans-serif-condensed"
                         android:textColor="@color/black"
                         android:textStyle="bold"
-                        android:gravity="center_vertical"/>
+                        android:layout_centerVertical="true"/>
 
 
                     <ImageView
@@ -40,6 +40,7 @@
                         android:layout_centerVertical="true"
                         android:id="@+id/ivMap"
                         android:src="@drawable/ic_map"
+                        android:padding="3dp"
                         android:background="@drawable/circle_shape"/>
 
                     <ImageView

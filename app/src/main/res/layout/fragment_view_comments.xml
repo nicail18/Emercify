@@ -72,13 +72,13 @@
             android:background="@drawable/white_rounded_border"/>
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_checkmark"
+            android:src="@drawable/ic_blue_check"
             android:id="@+id/ivPostComment"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="5dp"/>
+            android:layout_marginRight="10dp"/>
 
     </RelativeLayout>
 
