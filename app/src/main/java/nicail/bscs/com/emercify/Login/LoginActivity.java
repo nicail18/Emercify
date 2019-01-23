@@ -225,7 +225,6 @@ public class LoginActivity extends AppCompatActivity{
                 }).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
             @Override
             public void onSuccess(AuthResult authResult) {
-                Toast.makeText(mContext, "Login Successfully", Toast.LENGTH_SHORT).show();
                 String email = authResult.getUser().getEmail();
                 String username = authResult.getUser().getDisplayName();
                 mFirebaseMethods.addNewUser(email,username,"","","" );
