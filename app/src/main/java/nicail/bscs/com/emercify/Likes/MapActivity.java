@@ -120,6 +120,8 @@ public class MapActivity extends AppCompatActivity implements
     private GeoApiContext geoApiContext = null;
     private Polyline polyline;
     private ProgressDialog progressDialog;
+    private UserAccountSettings settings;
+    private boolean report = false;
     private Handler handler = new Handler();
     private Runnable runnable;
 
@@ -169,6 +171,31 @@ public class MapActivity extends AppCompatActivity implements
             latitude = mPhoto.getLatitude();
             longitude = mPhoto.getLongitude();
             getLastKnownLocation();
+        }
+        else if(intent.hasExtra("REPORT PHOTO")){
+            Log.d(TAG, "checkIntent: " + settings);
+            mPhoto = intent.getParcelableExtra("REPORT PHOTO");
+            report = true;
+            Query query =  FirebaseDatabase.getInstance().getReference()
+                    .child(getString(R.string.dbname_user_account_settings))
+                    .orderByChild("user_id")
+                    .equalTo(mPhoto.getUser_id());
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    for(DataSnapshot ds: dataSnapshot.getChildren()){
+                        settings = ds.getValue(UserAccountSettings.class);
+                        latitude = settings.getLatitude();
+                        longitude = settings.getLongitude();
+                        addMapMarkers();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
         }
         else {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -225,15 +252,27 @@ public class MapActivity extends AppCompatActivity implements
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for(DataSnapshot ds: dataSnapshot.getChildren()){
                             username = ds.getValue(User.class).getUsername();
-                            if(mPhoto.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-                                snippet[0] = "This is your Post";
-                            }
-                            else{
-                                snippet[0] = "This is " + ds.getValue(User.class).getUsername() +"'s post";
-                            }
                             int avatar = R.mipmap.ic_emercify;
+                            if(report){
+                                Log.d(TAG, "onDataChange: report: " + report);
+                                username = settings.getUsername();
+                                snippet[0] = "This is " + settings.getUsername();
+                                if(settings.getProfile_photo().equals("")){
+                                    avatar = R.drawable.ic_profile;
+                                    Log.d(TAG, "onDataChange: avatar");
+                                }else{
+                                    new AsyncImageBitmap().execute(settings.getProfile_photo());
+                                }
+                            }
+                            else {
+                                if (mPhoto.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                    snippet[0] = "This is your Post";
+                                } else {
+                                    snippet[0] = "This is " + ds.getValue(User.class).getUsername() + "'s post";
+                                }
+                            }
                             Log.d(TAG, "onDataChange: " + avatar);
-                            new AsyncImageBitmap().execute(mPhoto.getImage_path());
+
 
                             ClusterMarker newClusterMarker = new ClusterMarker(
                                     new LatLng(mPhoto.getLatitude(),mPhoto.getLongitude()),
@@ -249,6 +288,9 @@ public class MapActivity extends AppCompatActivity implements
                         mClusterManager.cluster();
                         Intent intent = getIntent();
                         if(intent.hasExtra("PHOTO")){
+                            setCameraView();
+                        }
+                        else if(intent.hasExtra("REPORT PHOTO")){
                             setCameraView();
                         }
                     }
@@ -453,6 +495,7 @@ public class MapActivity extends AppCompatActivity implements
 
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng,18);
         mGoogleMap.animateCamera(cameraUpdate);
+        progressDialog.dismiss();
     }
 
     private void getLastKnownLocation() {
