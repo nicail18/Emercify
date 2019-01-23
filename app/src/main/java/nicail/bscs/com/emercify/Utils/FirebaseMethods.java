@@ -607,7 +607,7 @@ public class FirebaseMethods {
 
     public void updateResponder(Photo photo, String responder_id, boolean isLegit){
         Responder responder = new Responder();
-        responder.setUser_id(photo.getUser_id());
+        responder.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
         responder.setResponder_id(responder_id);
         responder.setLegit(isLegit);
         myRef.child(mContext.getString(R.string.dbname_photos))
@@ -616,12 +616,11 @@ public class FirebaseMethods {
                 .child(responder_id)
                 .setValue(responder);
         myRef.child(mContext.getString(R.string.dbname_user_photos))
-                .child(photo.getUser_id())
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child(photo.getPhoto_id())
                 .child("responder")
                 .child(responder_id)
                 .setValue(responder);
-
     }
 
     public void addNewResponder(Photo photo) throws JSONException {

@@ -9,8 +9,8 @@
         android:layout_height="130dp"
         android:layout_centerInParent="true">
         <ProgressBar
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:id="@+id/progress_Bar1"
             android:indeterminateTint="@color/emercifycolor"
             android:layout_centerHorizontal="true"
@@ -22,8 +22,8 @@
             android:layout_height="50dp"
             android:layout_above="@+id/no_net"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/ic_no_wifi"
-            android:backgroundTint="@color/black"/>
+            android:background="@drawable/ic_nonet"
+            android:backgroundTint="@color/darkRed"/>
         <ImageView
             android:id="@+id/nopost_image"
             android:layout_width="50dp"
@@ -37,14 +37,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:text="No internet Connection"
+            android:text="No Internet Connection"
+            android:fontFamily="sans-serif-condensed"
             android:layout_centerInParent="true"/>
         <TextView
             android:id="@+id/no_postavail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="15sp"
-            android:text="No posts Available"
+            android:text="No Posts Available"
+            android:fontFamily="sans-serif-condensed"
             android:layout_centerInParent="true"/>
     </RelativeLayout>
 

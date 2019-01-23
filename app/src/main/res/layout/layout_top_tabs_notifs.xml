@@ -51,7 +51,14 @@
                         android:layout_toLeftOf="@+id/ivMap"
                         android:layout_marginRight="10dp"
                         android:id="@+id/bcTest"/>
-
+                    <ImageView
+                        android:id="@+id/testdialog"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_toLeftOf="@+id/bcTest"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="5dp"
+                        android:src="@drawable/roundcorner"/>
 
                     <!--<ImageView-->
                         <!--android:layout_width="40dp"-->

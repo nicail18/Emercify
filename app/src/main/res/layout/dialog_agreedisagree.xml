@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:id="@+id/solidcolorrel2"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="@color/pearl_white">
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/emer" />
+        </RelativeLayout>
+        <ScrollView
+            android:id="@+id/scroll_1"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:layout_below="@+id/solidcolorrel2">
+            <RelativeLayout
+                android:id="@+id/terms_body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/terms1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="10dp"
+                    android:text="Terms and Agreement"
+                    android:textColor="@color/black"
+                    android:fontFamily="sans-serif-condensed"
+                    android:textSize="18sp" />
+                <TextView
+                    android:id="@+id/terms2"
+                    android:layout_below="@+id/terms1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-condensed"
+                    android:padding="5dp"
+                    android:text="      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."/>
+                <TextView
+                    android:id="@+id/terms3"
+                    android:layout_below="@+id/terms2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-condensed"
+                    android:padding="5dp"
+                    android:text="      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."/>
+            </RelativeLayout>
+        </ScrollView>
+        <RelativeLayout
+            android:id="@+id/agreement_box1"
+            android:layout_below="@+id/scroll_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <CheckBox
+                android:id="@+id/checkbox1"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="5dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:buttonTint="@color/emercifycolor"/>
+            <TextView
+                android:id="@+id/textagreement"
+                android:layout_toRightOf="@+id/checkbox1"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-condensed"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="15dp"
+                android:layout_width="wrap_content"
+                android:text="I have read this Agreement and agree to the terms and conditions"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_marginTop="13dp"
+            android:id="@+id/agreediagree_button"
+            android:layout_below="@id/agreement_box1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp">
+            <TextView
+                android:id="@+id/agreeButton"
+                android:layout_toLeftOf="@+id/disagreeButton"
+                android:layout_marginEnd="20dp"
+                android:layout_below="@+id/kindofpost"
+                android:clickable="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-condensed"
+                android:layout_centerVertical="true"
+                android:text="Agree"
+                android:textColor="@drawable/text_changecolor"
+                android:textSize="16sp"/>
+            <TextView
+                android:id="@+id/disagreeButton"
+                android:layout_below="@+id/kindofpost"
+                android:clickable="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-condensed"
+                android:layout_centerVertical="true"
+                android:text="Disagree"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="10dp"
+                android:textColor="@drawable/text_changecolor"
+                android:textSize="16sp"/>
+        </RelativeLayout>
+    </RelativeLayout>
+</RelativeLayout>

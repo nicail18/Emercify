@@ -94,7 +94,6 @@ public class ViewCommentsFragment extends Fragment {
         mCircleImageView = (CircleImageView) view.findViewById(R.id.comment_profile_image);
         mComments = new ArrayList<>();
         mContext = getActivity();
-        new Task().execute();
         try{
             mPhoto = getPhotoFromBundle();
             Log.d(TAG, "onCreateView: " + mPhoto);
@@ -110,44 +109,20 @@ public class ViewCommentsFragment extends Fragment {
         return view;
     }
 
-    class Task extends AsyncTask<String, Integer, Boolean> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-        @Override
-        protected void onPostExecute(Boolean result) {
-            super.onPostExecute(result);
-        }
-        @Override
-        protected Boolean doInBackground(String... params) {
-
-            try {
-                Thread.sleep(1000);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
-
     public void displayComments() {
         if(mComments.size() > 0){
             commentbar.setVisibility(View.GONE);
+            nocomment.setVisibility(View.GONE);
             rellayout2.setVisibility(View.VISIBLE);
         }else{
             commentbar.setVisibility(View.GONE);
             nocomment.setVisibility(View.VISIBLE);
+            rellayout2.setVisibility(View.GONE);
         }
     }
 
 
     private void setupWidgets(){
-
-        commentRecyclerAdapter = new CommentRecyclerAdapter(mComments);
-        mListView.setAdapter(commentRecyclerAdapter);
-        manager = new LinearLayoutManager(getActivity());
-        mListView.setLayoutManager(manager);
 
 //        GlideApp
 //                .with(mContext)
@@ -311,14 +286,6 @@ public class ViewCommentsFragment extends Fragment {
         getUserSettings();
         Log.d(TAG, "setupFireBaseAuth: " + mPhoto);
 
-        mComments.clear();
-        Comment firstComment = new Comment();
-        firstComment.setComment(mPhoto.getCaption());
-        firstComment.setUser_id(mPhoto.getUser_id());
-        firstComment.setDate_created(mPhoto.getDate_created());
-        mComments.add(firstComment);
-        mPhoto.setComments(mComments);
-
         displayComments();
         setupWidgets();
 
@@ -348,12 +315,6 @@ public class ViewCommentsFragment extends Fragment {
                                     photo.setImage_path(objectMap.get("image_path").toString());
 
                                     mComments.clear();
-                                    Comment firstComment = new Comment();
-                                    firstComment.setComment(mPhoto.getCaption());
-                                    firstComment.setUser_id(mPhoto.getUser_id());
-                                    firstComment.setDate_created(mPhoto.getDate_created());
-
-                                    mComments.add(firstComment);
 
                                     for(DataSnapshot dSnapshot: singleSnapshot.child("comments").getChildren()){
                                         Comment comment = new Comment();
@@ -366,8 +327,12 @@ public class ViewCommentsFragment extends Fragment {
                                     photo.setComments(mComments);
 
                                     mPhoto = photo;
-                                    
-                                    commentRecyclerAdapter.notifyDataSetChanged();
+
+                                    displayComments();
+                                    commentRecyclerAdapter = new CommentRecyclerAdapter(mComments);
+                                    mListView.setAdapter(commentRecyclerAdapter);
+                                    manager = new LinearLayoutManager(getActivity());
+                                    mListView.setLayoutManager(manager);
 
                                     /*List<Like> likesList = new ArrayList<Like>();
                                     for(DataSnapshot dSnapshot: singleSnapshot.child("likes").getChildren()){

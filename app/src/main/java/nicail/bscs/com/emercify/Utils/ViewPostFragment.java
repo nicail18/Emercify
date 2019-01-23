@@ -189,9 +189,12 @@ public class ViewPostFragment extends Fragment {
                         boolean respondedByUser = false;
                         String responder_id = "";
                         for(DataSnapshot ds: dataSnapshot.getChildren()){
+                            Log.d(TAG, "onDataChange: " + ds.child("user_id").getValue().toString());
+                            Log.d(TAG, "onDataChange: " + FirebaseAuth.getInstance().getCurrentUser().getUid());
                             if(ds.getValue(Responder.class).getUser_id()
                                     .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                                 respondedByUser = true;
+                                Log.d(TAG, "onDataChange: " + true);
                                 responder_id = ds.child("responder_id").getValue().toString();
                                 break;
                             }
@@ -233,16 +236,52 @@ public class ViewPostFragment extends Fragment {
                             fakeButton.setVisibility(View.VISIBLE);
                             legitButton.setVisibility(View.VISIBLE);
                             String finalResponder_id = responder_id;
-                            fakeButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    mFirebaseMethods.updateResponder(mPhoto, finalResponder_id,false);
-                                }
-                            });
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                             legitButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    mFirebaseMethods.updateResponder(mPhoto, finalResponder_id,true);
+                                    builder.setTitle("We assume that you really are in the destination. ");
+                                    builder.setMessage("Do you still want to mark this post as legit?");
+                                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            mFirebaseMethods.updateResponder(mPhoto, finalResponder_id,true);
+                                            dialog.dismiss();
+                                        }
+                                    }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                    AlertDialog dialog = builder.create();
+                                    dialog.show();
+                                }
+                            });
+                            fakeButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    builder.setTitle("We assume that you really are in the destination.");
+                                    builder.setMessage("Once you marked this post as fake. You will receive the location of the user. " +
+                                            "\nDo you still want to mark this post as fake?");
+                                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            mFirebaseMethods.updateResponder(mPhoto, finalResponder_id,false);
+                                            dialog.dismiss();
+                                            Intent intent = new Intent(getActivity(), MapActivity.class);
+                                            intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
+                                            intent.putExtra("REPORT PHOTO",getPhotoFromBundle());
+                                            startActivity(intent);
+                                        }
+                                    }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                    AlertDialog dialog = builder.create();
+                                    dialog.show();
                                 }
                             });
                         }

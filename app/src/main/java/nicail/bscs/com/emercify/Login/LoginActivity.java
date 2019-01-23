@@ -2,6 +2,7 @@ package nicail.bscs.com.emercify.Login;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
@@ -51,6 +52,7 @@ import nicail.bscs.com.emercify.Home.HomeActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.Emercify;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
+import nicail.bscs.com.emercify.dialogs.Agreedisagree_Dialog;
 
 public class LoginActivity extends AppCompatActivity{
 
@@ -69,6 +71,8 @@ public class LoginActivity extends AppCompatActivity{
     private EditText mEmail, mPassword;
     private TextView mPleaseWait;
     private ProgressDialog progressDialog;
+    private LoginResult mLoginResult;
+    private boolean isGoogle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,6 +87,18 @@ public class LoginActivity extends AppCompatActivity{
         loginButton = (LoginButton) findViewById(R.id.facebook_login);
         mContext = LoginActivity.this;
         progressDialog = new ProgressDialog(mContext);
+        progressDialog.setTitle("Logging In To Emercify");
+        progressDialog.setMessage("Please Wait");
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Please Wait...");
+        progressDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
         Log.d(TAG, "onCreate: started");
 
         loginButton.setReadPermissions("email");
@@ -105,6 +121,25 @@ public class LoginActivity extends AppCompatActivity{
         }
     }
 
+    private void openDialog(){
+        Agreedisagree_Dialog agreedisagree_dialog = new Agreedisagree_Dialog(LoginActivity.this);
+        agreedisagree_dialog.setSetAgreeClickListener(new Agreedisagree_Dialog.OnAgreeClickListener() {
+            @Override
+            public void onAgreeClickListener() {
+                if(isGoogle){
+                    Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                    startActivityForResult(signInIntent, 101);
+                }
+                else{
+                    handleFacebookAccessToken(mLoginResult.getAccessToken());
+                }
+            }
+        });
+        agreedisagree_dialog.setCancelable(false);
+        agreedisagree_dialog.show();
+
+    }
+
     //Firebase Section
     private void init(){
 
@@ -114,8 +149,8 @@ public class LoginActivity extends AppCompatActivity{
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                startActivityForResult(signInIntent, 101);
+                isGoogle = true;
+                openDialog();
             }
         });
 
@@ -125,7 +160,9 @@ public class LoginActivity extends AppCompatActivity{
                 loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                        handleFacebookAccessToken(loginResult.getAccessToken());
+                        mLoginResult = loginResult;
+                        isGoogle = false;
+                        openDialog();
                     }
 
                     @Override
@@ -232,10 +269,6 @@ public class LoginActivity extends AppCompatActivity{
                 mFirebaseMethods.updateDevice_token(
                         FirebaseInstanceId.getInstance().getToken());
                 mFirebaseMethods.updateOnlineStatus(true);
-                progressDialog.setTitle("Logging In To Emercify");
-                progressDialog.setMessage("Please Wait");
-                progressDialog.setCancelable(false);
-                progressDialog.setMessage("Please Wait...");
                 progressDialog.show();
                 new InitWeb3j(FirebaseAuth.getInstance().getCurrentUser().getUid(),username,username,email).execute(getString(R.string.infura));
             }
@@ -315,10 +348,6 @@ public class LoginActivity extends AppCompatActivity{
                             mFirebaseMethods.updateDevice_token(
                                     FirebaseInstanceId.getInstance().getToken());
                             mFirebaseMethods.updateOnlineStatus(true);
-                            progressDialog.setTitle("Logging In To Emercify");
-                            progressDialog.setMessage("Please Wait");
-                            progressDialog.setCancelable(false);
-                            progressDialog.setMessage("Please Wait...");
                             progressDialog.show();
                             new InitWeb3j(FirebaseAuth.getInstance().getCurrentUser().getUid(),username,username,email).execute(getString(R.string.infura));;
                         } else {
@@ -372,8 +401,6 @@ public class LoginActivity extends AppCompatActivity{
             super.onPostExecute(s);
             Toast.makeText(mContext, "Login Successfully", Toast.LENGTH_LONG).show();
             progressDialog.dismiss();
-            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-            startActivity(intent);
         }
     }
 

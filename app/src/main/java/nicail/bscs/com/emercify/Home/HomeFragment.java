@@ -1,13 +1,16 @@
 package nicail.bscs.com.emercify.Home;
 
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -37,9 +40,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,36 +63,47 @@ import nicail.bscs.com.emercify.models.Photo;
 public class HomeFragment extends Fragment implements
         View_Delete_Dialog.OnViewClickListener,
         View_Delete_Dialog.OnDeleteClickListener,
-        View_Delete_Dialog.OnReportClickListener,
+        View_Delete_Dialog.OnDownloadClickListener,
         SwipeRefreshLayout.OnRefreshListener{
     private static final String TAG = "HomeFragment";
 
-
     @Override
-    public void onReportClickListener(Photo photo) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("Are you sure you want to Report the user?")
-                .setCancelable(false)
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-        AlertDialog alert = builder.create();
-        alert.show();
+    public void onDownloadClickListener(Photo photo) {
+        file_download(photo.getImage_path());
+    }
+
+    public void file_download(String url) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        Date now = new Date();
+        String date = simpleDateFormat.format(now);
+
+        File direct = new File(Environment.getExternalStorageDirectory()
+                + "/Emercify");
+
+        if (!direct.exists()) {
+            direct.mkdirs();
+        }
+
+        DownloadManager mgr = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+
+        Uri downloadUri = Uri.parse(url);
+        DownloadManager.Request request = new DownloadManager.Request(
+                downloadUri);
+
+        request.setAllowedNetworkTypes(
+                DownloadManager.Request.NETWORK_WIFI
+                        | DownloadManager.Request.NETWORK_MOBILE)
+                .setAllowedOverRoaming(false).setTitle("Demo")
+                .setDescription("Emercify Photo")
+                .setDestinationInExternalPublicDir("/Emercify", "EMERCIFY_IMG_"+date+".jpg");
+
+        mgr.enqueue(request);
+
     }
 
     @Override
     public void onViewClickListener(Photo photo) {
         Log.d(TAG, "onViewClickListener: " + photo.toString());
-
         ((HomeActivity)getContext()).OnViewClickListener(photo);
         ((HomeActivity)getContext()).hideLayout();
     }
@@ -93,7 +111,6 @@ public class HomeFragment extends Fragment implements
     @Override
     public void onDeleteClickListener(Photo photo, int position) {
         Log.d(TAG, "onDeleteClickListener: " + photo.toString());
-
         ((HomeActivity)getContext()).OnDeleteClickListener(photo,position);
 
     }
@@ -108,6 +125,7 @@ public class HomeFragment extends Fragment implements
 
     private int mResults,currentItems,totalItems,scrollOutItems;
     private Boolean isScrolling = false;
+    private boolean first = true;
     private ProgressBar pb;
     private RelativeLayout mViewPager;
     private TextView nonet;
@@ -149,7 +167,14 @@ public class HomeFragment extends Fragment implements
                 smoothScroller.setTargetPosition(0);
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView
                         .getLayoutManager();
-                layoutManager.startSmoothScroll(smoothScroller);
+                if(layoutManager.findFirstCompletelyVisibleItemPosition()==0){
+                    swipeRefreshLayout.setRefreshing(true);
+                    getFollowing();
+                }
+                else{
+                    layoutManager.startSmoothScroll(smoothScroller);
+                }
+
             }
         });
         
@@ -331,9 +356,12 @@ public class HomeFragment extends Fragment implements
                 manager = new LinearLayoutManager(getActivity());
                 recyclerView.setLayoutManager(manager);
                 Drawable dividerDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.line_divider);
-                recyclerView.addItemDecoration(new RecyclerViewDivider(
-                        dividerDrawable
-                ));
+                if(first){
+                    recyclerView.addItemDecoration(new RecyclerViewDivider(
+                            dividerDrawable
+                    ));
+                    first = false;
+                }
                 recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                     @Override
                     public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -398,6 +426,6 @@ public class HomeFragment extends Fragment implements
     @Override
     public void onRefresh() {
         swipeRefreshLayout.setRefreshing(true);
-
+        getFollowing();
     }
 }
