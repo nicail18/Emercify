@@ -59,6 +59,7 @@ import nicail.bscs.com.emercify.Utils.ViewWeightAnimationWrapper;
 import nicail.bscs.com.emercify.models.Comment;
 import nicail.bscs.com.emercify.models.Like;
 import nicail.bscs.com.emercify.models.Photo;
+import nicail.bscs.com.emercify.models.Responder;
 import nicail.bscs.com.emercify.models.UserAccountSettings;
 import nicail.bscs.com.emercify.models.UserSettings;
 
@@ -99,6 +100,7 @@ public class ProfileFragment extends Fragment {
     private static final int MAP_LAYOUT_STATE_CONTRACTED = 0;
     private static final int MAP_LAYOUT_STATE_EXPANDED = 1;
     private int mMapLayoutState = 0;
+    private int legit = 0, fake = 0;
 
     @Nullable
     @Override
@@ -318,8 +320,9 @@ public class ProfileFragment extends Fragment {
         mWebsite.setText(settings.getWebsite());
         mDescription.setText(settings.getDescription());
 
+
+
         mProgressBar.setVisibility(View.GONE);
-//        UniversalImageLoader.setImage(settings.getProfile_photo(),mProfilePhoto, null,"");
         if(settings.getProfile_photo().equals("")) {
             GlideApp
                     .with(mContext)
@@ -388,6 +391,28 @@ public class ProfileFragment extends Fragment {
                             like.setUser_id(dSnapshot.getValue(Like.class).getUser_id());
                             likesList.add(like);
                         }
+                        List<Responder> responders = new ArrayList<Responder>();
+                        for(DataSnapshot ds: singleSnapshot.child("responder").getChildren()){
+                            Log.d(TAG, "onDataChange: responder");
+                            Responder responder = new Responder();
+                            responder.setUser_id(ds.getValue(Responder.class).getUser_id());
+                            responder.setResponder_id(ds.getValue(Responder.class).getResponder_id());
+                            if(ds.child("legit").getValue() != null){
+                                Log.d(TAG, "onDataChange: responder: legit");
+                                responder.setLegit(ds.getValue(Responder.class).isLegit());
+                                responders.add(responder);
+                                boolean check = (boolean) ds.child("legit").getValue();
+                                if(check){
+                                    legit++;
+                                    Log.d(TAG, "onDataChange: responder: " + legit);
+                                }
+                                else{
+                                    fake++;
+                                    Log.d(TAG, "onDataChange: " + fake);
+                                }
+                            }
+                        }
+
                         photo.setLikes(likesList);
                         photos.add(photo);
                     }catch (NullPointerException e){
