@@ -4,10 +4,11 @@
     android:layout_height="wrap_content"
     android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    
+
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -78,7 +79,8 @@
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
-                    android:src="@mipmap/emergency_icon"/>
+                    android:src="@mipmap/emergency_icon"
+                    android:visibility="gone"/>
 
             </RelativeLayout>
 
@@ -139,6 +141,36 @@
                     android:layout_marginRight="10dp"
                     android:visibility="gone"/>
 
+                <Button
+                    android:id="@+id/fakeButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:fontFamily="sans-serif-condensed"
+                    android:text="FAKE"
+                    android:textSize="18sp"
+                    android:background="@drawable/rounded_border_blue"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:gravity="center"
+                    style="@style/com_facebook_button"
+                    android:layout_marginRight="10dp"
+                    android:visibility="gone"/>
+
+                <Button
+                    android:id="@+id/legitButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:fontFamily="sans-serif-condensed"
+                    android:text="LEGIT"
+                    android:textSize="18sp"
+                    android:background="@drawable/rounded_border_blue"
+                    android:layout_toLeftOf="@+id/fakeButton"
+                    android:layout_centerVertical="true"
+                    android:gravity="center"
+                    style="@style/com_facebook_button"
+                    android:layout_marginRight="10dp"
+                    android:visibility="gone"/>
+
             </RelativeLayout>
 
             <RelativeLayout
@@ -155,7 +187,6 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
                     android:textSize="14sp"
-                    android:text="Liked by"
                     android:id="@+id/image_likes"/>
 
                 <TextView

@@ -40,6 +40,7 @@ import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.models.Comment;
 import nicail.bscs.com.emercify.models.Like;
 import nicail.bscs.com.emercify.models.Photo;
+import nicail.bscs.com.emercify.models.Responder;
 import nicail.bscs.com.emercify.models.User;
 import nicail.bscs.com.emercify.models.UserAccountSettings;
 import nicail.bscs.com.emercify.models.UserSettings;
@@ -55,6 +56,7 @@ public class ViewProfileFragment extends Fragment {
 
     private static final int NUM_GRID_COLUMNS = 3;
     private static final int ACTIVITY_NUM = 4;
+    private int legit = 0, fake = 0;
 
     private TextView mPosts, mFollowers, mFollowing, mDisplayName, mUsername, mWebsite, mDescription, mFollow, mUnfollow;
     private ProgressBar mProgressBar;
@@ -274,6 +276,28 @@ public class ViewProfileFragment extends Fragment {
                         Like like = new Like();
                         like.setUser_id(dSnapshot.getValue(Like.class).getUser_id());
                         likesList.add(like);
+                    }
+
+                    List<Responder> responders = new ArrayList<Responder>();
+                    for(DataSnapshot ds: singleSnapshot.child("responder").getChildren()){
+                        Log.d(TAG, "onDataChange: responder");
+                        Responder responder = new Responder();
+                        responder.setUser_id(ds.getValue(Responder.class).getUser_id());
+                        responder.setResponder_id(ds.getValue(Responder.class).getResponder_id());
+                        if(ds.child("legit").getValue() != null){
+                            Log.d(TAG, "onDataChange: responder: legit");
+                            responder.setLegit(ds.getValue(Responder.class).isLegit());
+                            responders.add(responder);
+                            boolean check = (boolean) ds.child("legit").getValue();
+                            if(check){
+                                legit++;
+                                Log.d(TAG, "onDataChange: responder: " + legit);
+                            }
+                            else{
+                                fake++;
+                                Log.d(TAG, "onDataChange: " + fake);
+                            }
+                        }
                     }
                     photo.setLikes(likesList);
                     photos.add(photo);

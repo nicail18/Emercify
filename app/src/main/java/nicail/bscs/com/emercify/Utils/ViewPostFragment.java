@@ -79,7 +79,7 @@ public class ViewPostFragment extends Fragment {
     private SquareImageView mPostImage;
     private BottomNavigationViewEx bottomNavigationView;
     private TextView mBackLabel,mCaption,mUsername,mTimeStamp, mLikes, mComments, mAddress;
-    private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage, mComment;
+    private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage, mComment, emergencyIcon;
 
     private Photo mPhoto;
     private int mActivityNumber = 0;
@@ -95,7 +95,7 @@ public class ViewPostFragment extends Fragment {
     private RelativeLayout rellayout2;
     private ProgressBar viewpost1;
     private Context mContext;
-    private Button respondButton;
+    private Button respondButton,fakeButton,legitButton;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -124,9 +124,13 @@ public class ViewPostFragment extends Fragment {
         mAddress = (TextView) view.findViewById(R.id.address);
         rellayout2 = (RelativeLayout) view.findViewById(R.id.rellayout2);
         respondButton = (Button) view.findViewById(R.id.respondButton);
+        fakeButton = (Button) view.findViewById(R.id.fakeButton);
+        legitButton = (Button) view.findViewById(R.id.legitButton);
         viewpost1 = (ProgressBar) view.findViewById(R.id.progress_Barviewpost);
+        emergencyIcon = (ImageView) view.findViewById(R.id.emergency_icon);
         mContext = getActivity();
 
+        mFirebaseMethods = new FirebaseMethods(getActivity());
 
         mHeart = new Heart(mHeartWhite,mHeartRed);
         mGestureDetector = new GestureDetector(getActivity(), new GestureListener());
@@ -174,6 +178,7 @@ public class ViewPostFragment extends Fragment {
             mActivityNumber = getActivityNumFromBundle();
             String photo_id = getPhotoFromBundle().getPhoto_id();
             if(getEmergencyFromBundle() != null){
+                emergencyIcon.setVisibility(View.VISIBLE);
                 Query query = myRef
                         .child(getActivity().getString(R.string.dbname_photos))
                         .child(mPhoto.getPhoto_id())
@@ -182,10 +187,13 @@ public class ViewPostFragment extends Fragment {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         boolean respondedByUser = false;
+                        String responder_id = "";
                         for(DataSnapshot ds: dataSnapshot.getChildren()){
                             if(ds.getValue(Responder.class).getUser_id()
                                     .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                                 respondedByUser = true;
+                                responder_id = ds.child("responder_id").getValue().toString();
+                                break;
                             }
                         }
                         if(!dataSnapshot.exists() || !respondedByUser){
@@ -210,7 +218,7 @@ public class ViewPostFragment extends Fragment {
                                                     intent.putExtra("INTENT PHOTO",getPhotoFromBundle());
                                                     Log.d(TAG, "onDataChange: " + intent);
                                                     String message = mCurrentUser.getUsername() +
-                                                            " is reposding to your emergency post";
+                                                            " is responding to your emergency post";
                                                     String token = mUserAccountSettings.getDevice_token();
                                                     new Notify(token,message).execute();
                                                     startActivity(intent);
@@ -218,6 +226,23 @@ public class ViewPostFragment extends Fragment {
                                             });
                                     AlertDialog alert = builder.create();
                                     alert.show();
+                                }
+                            });
+                        }
+                        else{
+                            fakeButton.setVisibility(View.VISIBLE);
+                            legitButton.setVisibility(View.VISIBLE);
+                            String finalResponder_id = responder_id;
+                            fakeButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mFirebaseMethods.updateResponder(mPhoto, finalResponder_id,false);
+                                }
+                            });
+                            legitButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mFirebaseMethods.updateResponder(mPhoto, finalResponder_id,true);
                                 }
                             });
                         }

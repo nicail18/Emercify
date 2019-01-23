@@ -31,6 +31,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -185,15 +186,20 @@ public class PhotoFragment extends Fragment implements
             }
             Location location = (Location) lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-            LatLng latlng = new LatLng(location.getLatitude(),location.getLongitude());
-            latitude = latlng.latitude;
-            longitude = latlng.longitude;
-            mImageAddress = getCompleteAddressString(latitude,longitude);
-            String filename = getRealPathFromURI(data.getData());
-            geoTag(filename,latlng);
-            Log.d(TAG, "onActivityResult: address" + mImageAddress);
-            Log.d(TAG, "onActivityResult: " + exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
-            Log.d(TAG, "onActivityResult: " + exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
+            try{
+                LatLng latlng = new LatLng(location.getLatitude(),location.getLongitude());
+                latitude = latlng.latitude;
+                longitude = latlng.longitude;
+                mImageAddress = getCompleteAddressString(latitude,longitude);
+                String filename = getRealPathFromURI(data.getData());
+                geoTag(filename,latlng);
+                Log.d(TAG, "onActivityResult: address" + mImageAddress);
+                Log.d(TAG, "onActivityResult: " + exif.getAttribute(ExifInterface.TAG_GPS_LATITUDE));
+                Log.d(TAG, "onActivityResult: " + exif.getAttribute(ExifInterface.TAG_GPS_LONGITUDE));
+            }catch(NullPointerException e){
+                Toast.makeText(getActivity(), "Please Improve Location Accuracy", Toast.LENGTH_LONG).show();
+                getActivity().finish();
+            }
 
 
             if(isRootTask()){
