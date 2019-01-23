@@ -21,8 +21,8 @@
         android:layout_height="50dp"
         android:layout_above="@+id/nonetcon1"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/ic_no_wifi"
-        android:backgroundTint="@color/black"/>
+        android:background="@drawable/ic_nonet"
+        android:backgroundTint="@color/darkRed"/>
 
     <TextView
         android:id="@+id/nonetcon1"
@@ -30,6 +30,7 @@
         android:layout_height="wrap_content"
         android:textSize="15sp"
         android:text="No Internet Connection"
+        android:fontFamily="sans-serif-condensed"
         android:layout_centerInParent="true"/>
 
 </RelativeLayout>

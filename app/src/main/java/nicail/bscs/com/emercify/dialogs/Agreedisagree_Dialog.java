@@ -14,9 +14,12 @@ import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import nicail.bscs.com.emercify.R;
 
@@ -46,8 +49,8 @@ public class Agreedisagree_Dialog extends Dialog{
         CheckBox checkbox1 = (CheckBox) findViewById(R.id.checkbox1);
         RelativeLayout box1 = (RelativeLayout)findViewById(R.id.agreement_box1);
         RelativeLayout box2 = (RelativeLayout) findViewById(R.id.agreediagree_button);
-        Button agreebutton = (Button) findViewById(R.id.agreeButton);
-        Button disagreebutton = (Button) findViewById(R.id.disagreeButton);
+        TextView agreebutton = (TextView) findViewById(R.id.agreeButton);
+        TextView disagreebutton = (TextView) findViewById(R.id.disagreeButton);
         TextView textagreement = (TextView) findViewById(R.id.textagreement);
         checkbox1.setAlpha(.5f);
         agreebutton.setAlpha(.5f);
@@ -73,18 +76,36 @@ public class Agreedisagree_Dialog extends Dialog{
                     agreebutton.setEnabled(true);
                     disagreebutton.setEnabled(true);
                     textagreement.setEnabled(true);
+                    if(checkbox1.isChecked()){
+                        agreebutton.setEnabled(true);
+                        agreebutton.setAlpha(1f);
+                    } else {
+                        agreebutton.setEnabled(false);
+                        agreebutton.setAlpha(.5f);
+                    }
                 } else {
                     //scroll view is not at bottom
-                    checkbox1.setAlpha(1f);
+                   /*checkbox1.setAlpha(1f);
                     agreebutton.setAlpha(1f);
                     disagreebutton.setAlpha(1f);
                     textagreement.setAlpha(1f);
                     checkbox1.setEnabled(true);
                     agreebutton.setEnabled(true);
                     disagreebutton.setEnabled(true);
-                    textagreement.setEnabled(true);
+                    textagreement.setEnabled(true);*/
                 }
-
+            }
+        });
+        checkbox1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(checkbox1.isChecked()){
+                    agreebutton.setEnabled(true);
+                    agreebutton.setAlpha(1f);
+                }else{
+                    agreebutton.setEnabled(false);
+                    agreebutton.setAlpha(.5f);
+                }
             }
         });
 

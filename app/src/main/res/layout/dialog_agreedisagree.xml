@@ -81,7 +81,7 @@
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 android:fontFamily="sans-serif-condensed"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="15dp"
                 android:layout_width="wrap_content"
                 android:text="I have read this Agreement and agree to the terms and conditions"
@@ -94,31 +94,32 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp">
-            <Button
+            <TextView
                 android:id="@+id/agreeButton"
-                style="@style/com_facebook_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="17dp"
-                android:background="@drawable/rounded_border_blue"
-                android:fontFamily="sans-serif-condensed"
-                android:text="I AGREE"
-                android:textSize="12sp" />
-            <Button
-                android:id="@+id/disagreeButton"
+                android:layout_toLeftOf="@+id/disagreeButton"
+                android:layout_marginEnd="20dp"
+                android:layout_below="@+id/kindofpost"
+                android:clickable="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-condensed"
-                android:text="I DISAGREE"
-                android:textSize="12sp"
-                android:background="@drawable/rounded_border_blue"
-                android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:layout_marginEnd="17sp"
-                style="@style/com_facebook_button"
-                android:layout_marginRight="10dp"
-                />
+                android:text="Agree"
+                android:textColor="@drawable/text_changecolor"
+                android:textSize="16sp"/>
+            <TextView
+                android:id="@+id/disagreeButton"
+                android:layout_below="@+id/kindofpost"
+                android:clickable="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-condensed"
+                android:layout_centerVertical="true"
+                android:text="Disagree"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="10dp"
+                android:textColor="@drawable/text_changecolor"
+                android:textSize="16sp"/>
         </RelativeLayout>
     </RelativeLayout>
 </RelativeLayout>
