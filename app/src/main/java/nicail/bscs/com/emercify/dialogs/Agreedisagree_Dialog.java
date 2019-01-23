@@ -27,6 +27,16 @@ public class Agreedisagree_Dialog extends Dialog{
         super(context);
     }
 
+    public interface OnAgreeClickListener{
+        void onAgreeClickListener();
+    }
+
+    public OnAgreeClickListener onAgreeClickListener;
+
+    public void setSetAgreeClickListener(OnAgreeClickListener listener){
+        onAgreeClickListener = listener;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +85,21 @@ public class Agreedisagree_Dialog extends Dialog{
                     textagreement.setEnabled(true);
                 }
 
+            }
+        });
+
+        agreebutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onAgreeClickListener.onAgreeClickListener();
+                dismiss();
+            }
+        });
+
+        disagreebutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
             }
         });
     }

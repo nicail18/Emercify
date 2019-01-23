@@ -52,6 +52,7 @@ import nicail.bscs.com.emercify.Home.HomeActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.Emercify;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
+import nicail.bscs.com.emercify.dialogs.Agreedisagree_Dialog;
 
 public class LoginActivity extends AppCompatActivity{
 
@@ -70,6 +71,8 @@ public class LoginActivity extends AppCompatActivity{
     private EditText mEmail, mPassword;
     private TextView mPleaseWait;
     private ProgressDialog progressDialog;
+    private LoginResult mLoginResult;
+    private boolean isGoogle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -118,6 +121,25 @@ public class LoginActivity extends AppCompatActivity{
         }
     }
 
+    private void openDialog(){
+        Agreedisagree_Dialog agreedisagree_dialog = new Agreedisagree_Dialog(LoginActivity.this);
+        agreedisagree_dialog.setSetAgreeClickListener(new Agreedisagree_Dialog.OnAgreeClickListener() {
+            @Override
+            public void onAgreeClickListener() {
+                if(isGoogle){
+                    Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+                    startActivityForResult(signInIntent, 101);
+                }
+                else{
+                    handleFacebookAccessToken(mLoginResult.getAccessToken());
+                }
+            }
+        });
+        agreedisagree_dialog.setCancelable(false);
+        agreedisagree_dialog.show();
+
+    }
+
     //Firebase Section
     private void init(){
 
@@ -127,8 +149,8 @@ public class LoginActivity extends AppCompatActivity{
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-                startActivityForResult(signInIntent, 101);
+                isGoogle = true;
+                openDialog();
             }
         });
 
@@ -138,7 +160,9 @@ public class LoginActivity extends AppCompatActivity{
                 loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                        handleFacebookAccessToken(loginResult.getAccessToken());
+                        mLoginResult = loginResult;
+                        isGoogle = false;
+                        openDialog();
                     }
 
                     @Override

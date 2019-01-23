@@ -45,16 +45,16 @@
 
 
         <ImageView
-            android:id="@+id/ic_report"
+            android:id="@+id/ic_download"
             android:layout_below="@id/view_text"
             android:layout_marginTop="15dp"
             android:layout_width="15dp"
             android:layout_height="15dp"
-            android:layout_toStartOf="@id/report_text"
+            android:layout_toStartOf="@id/download_text"
             android:layout_marginRight="5dp"
             android:background="@drawable/ic_reportdialog1"/>
         <TextView
-            android:id="@+id/report_text"
+            android:id="@+id/download_text"
             android:layout_below="@+id/view_text"
             android:clickable="true"
             android:layout_marginTop="10dp"
@@ -64,12 +64,12 @@
             android:textSize="18sp"
             android:layout_centerHorizontal="true"
             android:textColor="@drawable/text_changecolor"
-            android:text="Report" />
+            android:text="Save Photo" />
 
 
          <ImageView
              android:id="@+id/ic_delete"
-             android:layout_below="@+id/report_text"
+             android:layout_below="@+id/download_text"
              android:layout_marginTop="15dp"
              android:layout_width="15dp"
              android:layout_height="15dp"
@@ -78,7 +78,7 @@
              android:background="@drawable/ic_deletedialog1"/>
          <TextView
              android:id="@+id/delete_text"
-             android:layout_below="@id/report_text"
+             android:layout_below="@id/download_text"
              android:clickable="true"
              android:layout_marginTop="10dp"
              android:textColor="@drawable/text_changecolor"
