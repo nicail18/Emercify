@@ -19,6 +19,12 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
+import com.facebook.login.LoginManager;
+
 import org.w3c.dom.Text;
 
 import nicail.bscs.com.emercify.R;
@@ -120,6 +126,16 @@ public class Agreedisagree_Dialog extends Dialog{
         disagreebutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AccessToken accessToken = AccessToken.getCurrentAccessToken();
+                if(accessToken != null && !accessToken.isExpired()){
+                    new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/permissions/",
+                            null, HttpMethod.DELETE, new GraphRequest.Callback() {
+                        @Override
+                        public void onCompleted(GraphResponse response) {
+                            LoginManager.getInstance().logOut();
+                        }
+                    }).executeAsync();
+                }
                 dismiss();
             }
         });

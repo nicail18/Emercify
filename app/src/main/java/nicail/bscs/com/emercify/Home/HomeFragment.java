@@ -167,7 +167,8 @@ public class HomeFragment extends Fragment implements
                 smoothScroller.setTargetPosition(0);
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView
                         .getLayoutManager();
-                if(layoutManager.findFirstCompletelyVisibleItemPosition()==0){
+                if(layoutManager.findFirstCompletelyVisibleItemPosition()==0 ||
+                        layoutManager.findFirstVisibleItemPosition()==0){
                     swipeRefreshLayout.setRefreshing(true);
                     getFollowing();
                 }
@@ -352,9 +353,9 @@ public class HomeFragment extends Fragment implements
 
                 recyclerAdapter = new MainfeedRecyclerAdapter(mPaginatedPhotos,HomeFragment.this);
                 recyclerView.setAdapter(recyclerAdapter);
-                swipeRefreshLayout.setRefreshing(false);
                 manager = new LinearLayoutManager(getActivity());
                 recyclerView.setLayoutManager(manager);
+                swipeRefreshLayout.setRefreshing(false);
                 Drawable dividerDrawable = ContextCompat.getDrawable(getActivity(), R.drawable.line_divider);
                 if(first){
                     recyclerView.addItemDecoration(new RecyclerViewDivider(

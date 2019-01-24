@@ -251,6 +251,7 @@ public class MapActivity extends AppCompatActivity implements
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         for(DataSnapshot ds: dataSnapshot.getChildren()){
+                            Log.d(TAG, "addMapMarkers: in");
                             username = ds.getValue(User.class).getUsername();
                             int avatar = R.mipmap.ic_emercify;
                             if(report){
@@ -265,11 +266,13 @@ public class MapActivity extends AppCompatActivity implements
                                 }
                             }
                             else {
+                                Log.d(TAG, "addMapMarkers: not report");
                                 if (mPhoto.getUser_id().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                                     snippet[0] = "This is your Post";
                                 } else {
                                     snippet[0] = "This is " + ds.getValue(User.class).getUsername() + "'s post";
                                 }
+                                new AsyncImageBitmap().execute(mPhoto.getImage_path());
                             }
                             Log.d(TAG, "onDataChange: " + avatar);
 

@@ -2,9 +2,11 @@ package nicail.bscs.com.emercify.dialogs;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -29,6 +31,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import nicail.bscs.com.emercify.Login.LoginActivity;
+import nicail.bscs.com.emercify.Login.SplashActivity;
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 
@@ -42,6 +45,8 @@ public class SignOutDialog extends Dialog {
     private Context context;
     private GoogleSignInClient googleSignInClient;
 
+    private ProgressDialog progressDialog;
+
     public SignOutDialog(@NonNull Context context) {
         super(context);
         this.context = context;
@@ -54,6 +59,9 @@ public class SignOutDialog extends Dialog {
         Log.d(TAG, "onCreateView: started");
 
         firebaseMethods = new FirebaseMethods(context);
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setTitle("Loading");
+        progressDialog.setMessage("Please Wait...");
 
         FacebookSdk.sdkInitialize(context);
         setupFireBaseAuth();
@@ -117,6 +125,7 @@ public class SignOutDialog extends Dialog {
                     Log.d(TAG, "onAuthStateChanged: signed_out");
 
                     Log.d(TAG, "onAuthStateChanged: navigating back to login screen");
+
                     Intent intent = new Intent(context, LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     context.startActivity(intent);
@@ -125,4 +134,17 @@ public class SignOutDialog extends Dialog {
         };
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
 }

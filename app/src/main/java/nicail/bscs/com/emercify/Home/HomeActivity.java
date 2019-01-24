@@ -152,10 +152,6 @@ public class HomeActivity extends AppCompatActivity implements
             }
         }
     }
-    public void onButtonClick(View v){
-        Intent myIntent = new Intent (getBaseContext(),HomeActivity.class);
-        startActivity(myIntent);
-    }
 
     private boolean checkMapServices(){
         if(isServicesOK()){

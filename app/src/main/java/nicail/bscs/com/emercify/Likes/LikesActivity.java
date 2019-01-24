@@ -98,11 +98,10 @@ public class LikesActivity extends AppCompatActivity implements
     private ImageView nonotifimage,nowifiimage,bcTest;
     private RecyclerView notifsRecyclerView;
     private ProgressDialog progressDialog;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private Handler handler = new Handler();
     private Runnable runnable;
-    private ImageView testingdialog;
-    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +109,6 @@ public class LikesActivity extends AppCompatActivity implements
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_notifs);
 
-        testingdialog = (ImageView) findViewById(R.id.testdialog);
         ivMap = (ImageView) findViewById(R.id.ivMap);
         bcTest = (ImageView) findViewById(R.id.bcTest);
         pbnotif = (ProgressBar) findViewById(R.id.progress_Barnotif);
@@ -127,16 +125,11 @@ public class LikesActivity extends AppCompatActivity implements
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setOnRefreshListener(LikesActivity.this);
         Log.d(TAG, "onCreate: starting.");
-        testingdialog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Agreedisagree_Dialog agreedisagree_dialog = new Agreedisagree_Dialog(LikesActivity.this);
-                agreedisagree_dialog.show();
-            }
-        });
+
         new Task().execute();
         setupFireBaseAuth();
         setupBottomNavigationView();
+
         ivMap.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -181,8 +174,10 @@ public class LikesActivity extends AppCompatActivity implements
                         ManagedTransaction.GAS_PRICE,
                         Contract.GAS_LIMIT
                 );
-                output = contract.getUserReports("hello").send();
-                return output.toString();
+                output = contract.getUserReports(FirebaseAuth.getInstance().getCurrentUser().getUid()).send();
+                BigInteger legit = output.getValue2();
+                BigInteger fake = output.getValue3();
+                return legit + " " + fake;
             } catch (Exception e) {
                 return e.getMessage();
             }

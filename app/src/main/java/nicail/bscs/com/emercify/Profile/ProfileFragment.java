@@ -2,6 +2,7 @@ package nicail.bscs.com.emercify.Profile;
 
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -41,7 +42,15 @@ import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import org.w3c.dom.Text;
+import org.web3j.crypto.Credentials;
+import org.web3j.protocol.Web3j;
+import org.web3j.protocol.Web3jFactory;
+import org.web3j.protocol.http.HttpService;
+import org.web3j.tuples.generated.Tuple3;
+import org.web3j.tx.Contract;
+import org.web3j.tx.ManagedTransaction;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,7 +58,9 @@ import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import nicail.bscs.com.emercify.Likes.LikesActivity;
 import nicail.bscs.com.emercify.R;
+import nicail.bscs.com.emercify.Utils.Emercify;
 import nicail.bscs.com.emercify.Utils.GlideApp;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
@@ -77,15 +88,15 @@ public class ProfileFragment extends Fragment {
     private int mFollowersCount = 0;
     private int mFollowingCount = 0;
     private int mPostsCount = 0;
+    private int verifiedLegit, verifiedFake;
 
-    private TextView mPosts, mFollowers, mFollowing, mDisplayName, mUsername, mWebsite, mDescription;
+    private TextView mPosts, mFollowers, mFollowing, mDisplayName, mUsername, mWebsite, mDescription, mLegitimacy;
     private ProgressBar mProgressBar;
     private CircleImageView mProfilePhoto;
     private GridView gridView;
     private Toolbar toolbar;
     private ImageView profileMenu;
     private BottomNavigationViewEx bottomNavigationView;
-    private ScrollView scrollView;
 
     private Context mContext;
 
@@ -95,17 +106,16 @@ public class ProfileFragment extends Fragment {
     private DatabaseReference myRef;
     private FirebaseMethods mFirebaseMethods;
     private RelativeLayout topLayout,rellayout2;
-    private TextView nonetprof;
+    private TextView nonetprof,editProfile;
     private ImageView nonetimageprof;
-    private static final int MAP_LAYOUT_STATE_CONTRACTED = 0;
-    private static final int MAP_LAYOUT_STATE_EXPANDED = 1;
-    private int mMapLayoutState = 0;
     private int legit = 0, fake = 0;
+    private String legitimacyText;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile,container, false);
+        editProfile = (TextView) view.findViewById(R.id.textEditProfile);
         mDisplayName = (TextView) view.findViewById(R.id.display_name);
         mUsername = (TextView) view.findViewById(R.id.profileName);
         mWebsite = (TextView) view.findViewById(R.id.website);
@@ -121,11 +131,10 @@ public class ProfileFragment extends Fragment {
         profileMenu = (ImageView) view.findViewById(R.id.profileMenu);
         bottomNavigationView = (BottomNavigationViewEx) view.findViewById(R.id.bottomNavViewBar);
         rellayout2 = (RelativeLayout) view.findViewById(R.id.rellayout2);
-        mContext = getActivity();
-        mFirebaseMethods = new FirebaseMethods(mContext);
-        scrollView = (ScrollView) view.findViewById(R.id.scrolllayout);
         nonetprof = (TextView) view.findViewById(R.id.no_netprof);
         nonetimageprof = (ImageView) view.findViewById(R.id.no_netimageprof);
+        mLegitimacy = (TextView) view.findViewById(R.id.legitimacy);
+
         mDisplayName.setVisibility(View.GONE);
         mUsername.setVisibility(View.GONE);
         mWebsite.setVisibility(View.GONE);
@@ -135,50 +144,15 @@ public class ProfileFragment extends Fragment {
         mFollowing.setVisibility(View.GONE);
         mPosts.setVisibility(View.GONE);
 
-        class Task extends AsyncTask<String, Integer, Boolean> {
-            @Override
-            protected void onPreExecute() {
-                mProgressBar.setVisibility(View.VISIBLE);
-                rellayout2.setVisibility(View.GONE);
-                nonetprof.setVisibility(View.GONE);
-                nonetimageprof.setVisibility(View.GONE);
-                //nointernet.setVisibility(View.GONE);
-                //nonotification.setVisibility(View.GONE);
-                super.onPreExecute();
-            }
-            @Override
-            protected void onPostExecute(Boolean result) {
-                ConnectivityManager connMgr = (ConnectivityManager) getActivity()
-                        .getSystemService(Context.CONNECTIVITY_SERVICE);
+        mContext = getActivity();
+        mFirebaseMethods = new FirebaseMethods(mContext);
 
-                NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        setupBottomNavigationView();
+        setupToolBar();
 
-                if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
-                    mProgressBar.setVisibility(View.GONE);
-                    rellayout2.setVisibility(View.VISIBLE);
-                }else{
-                    mProgressBar.setVisibility(View.GONE);
-                    nonetprof.setVisibility(View.VISIBLE);
-                    nonetimageprof.setVisibility(View.VISIBLE);
-                }
-                super.onPostExecute(result);
-            }
-            @Override
-            protected Boolean doInBackground(String... params) {
-
-                try {
-                    Thread.sleep(1000);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        }
         new Task().execute();
 
         Log.d(TAG, "onCreateView: started");
-
-
 
         gridView.setOnTouchListener(new GridView.OnTouchListener() {
             @Override
@@ -202,33 +176,101 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        setupBottomNavigationView();
-        setupToolBar();
-
-        setupFireBaseAuth();
-        setupGridView();
-        getFollowingCount();
-        getFollowersCount();
-        getPostsCount();
-
-        TextView editProfile = (TextView) view.findViewById(R.id.textEditProfile);
-        editProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: navigating to edit profile fragment");
-
-                Intent intent = new Intent(getActivity(),AccountSettingsActivity.class);
-                intent.putExtra(getString(R.string.calling_activity),getString(R.string.profile_activity));
-                startActivity(intent);
-                getActivity().overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
-            }
-        });
-
-
-
         return view;
+    }
 
 
+    private class InitWeb3j extends AsyncTask<String, String, String>{
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String url = strings[0];
+            Tuple3<String, BigInteger, BigInteger> output = null;
+            try {
+                Web3j web3 = Web3jFactory.build(new HttpService(url));
+                Credentials credentials = Credentials.create(getActivity().getString(R.string.private_key));
+                Emercify contract = Emercify.load(
+                        getActivity().getString(R.string.contract_address),
+                        web3, credentials,
+                        ManagedTransaction.GAS_PRICE,
+                        Contract.GAS_LIMIT
+                );
+                output = contract.getUserReports(FirebaseAuth.getInstance().getCurrentUser().getUid()).send();
+                verifiedLegit = output.getValue3().intValue();
+                verifiedFake = output.getValue2().intValue();
+                return legit + " " + fake;
+            } catch (Exception e) {
+                return e.getMessage();
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if(verifiedLegit+verifiedFake > 0){
+                mLegitimacy.setVisibility(View.VISIBLE);
+                mLegitimacy.setText("Verified: " + verifiedLegit + " Fake: " + verifiedFake);
+            }
+        }
+    }
+
+
+    class Task extends AsyncTask<String, Integer, Boolean> {
+        @Override
+        protected void onPreExecute() {
+            mProgressBar.setVisibility(View.VISIBLE);
+            rellayout2.setVisibility(View.GONE);
+            nonetprof.setVisibility(View.GONE);
+            nonetimageprof.setVisibility(View.GONE);
+            //nointernet.setVisibility(View.GONE);
+            //nonotification.setVisibility(View.GONE);
+            super.onPreExecute();
+        }
+        @Override
+        protected void onPostExecute(Boolean result) {
+            ConnectivityManager connMgr = (ConnectivityManager) getActivity()
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+            if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
+
+                setupFireBaseAuth();
+                new InitWeb3j().execute(getActivity().getString(R.string.infura));
+                setupGridView();
+                getFollowingCount();
+                getFollowersCount();
+                getPostsCount();
+
+                editProfile.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(TAG, "onClick: navigating to edit profile fragment");
+
+                        Intent intent = new Intent(getActivity(),AccountSettingsActivity.class);
+                        intent.putExtra(getString(R.string.calling_activity),getString(R.string.profile_activity));
+                        startActivity(intent);
+                        getActivity().overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+                    }
+                });
+            }else{
+                mProgressBar.setVisibility(View.GONE);
+                nonetprof.setVisibility(View.VISIBLE);
+                nonetimageprof.setVisibility(View.VISIBLE);
+            }
+            super.onPostExecute(result);
+        }
+        @Override
+        protected Boolean doInBackground(String... params) {
+
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
     private void getFollowersCount(){
@@ -337,6 +379,10 @@ public class ProfileFragment extends Fragment {
                     .placeholder(R.color.grey)
                     .centerCrop()
                     .into(mProfilePhoto);
+
+
+        mProgressBar.setVisibility(View.GONE);
+        rellayout2.setVisibility(View.VISIBLE);
 
     }
 
@@ -521,53 +567,15 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
+//        mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
     public void onStop(){
         super.onStop();
         if(mAuthListener != null){
-            mAuth.removeAuthStateListener(mAuthListener);
+//            mAuth.removeAuthStateListener(mAuthListener);
         }
-    }
-
-    private void expandMapAnimation(){
-        ViewWeightAnimationWrapper mapAnimationWrapper = new ViewWeightAnimationWrapper(gridView);
-        ObjectAnimator mapAnimation = ObjectAnimator.ofFloat(mapAnimationWrapper,
-                "weight",
-                40,
-                90);
-        mapAnimation.setDuration(800);
-
-        ViewWeightAnimationWrapper recyclerAnimationWrapper = new ViewWeightAnimationWrapper(topLayout);
-        ObjectAnimator recyclerAnimation = ObjectAnimator.ofFloat(recyclerAnimationWrapper,
-                "weight",
-                60,
-                10);
-        recyclerAnimation.setDuration(800);
-
-        recyclerAnimation.start();
-        mapAnimation.start();
-    }
-
-    private void contractMapAnimation(){
-        ViewWeightAnimationWrapper mapAnimationWrapper = new ViewWeightAnimationWrapper(gridView);
-        ObjectAnimator mapAnimation = ObjectAnimator.ofFloat(mapAnimationWrapper,
-                "weight",
-                90,
-                40);
-        mapAnimation.setDuration(800);
-
-        ViewWeightAnimationWrapper recyclerAnimationWrapper = new ViewWeightAnimationWrapper(topLayout);
-        ObjectAnimator recyclerAnimation = ObjectAnimator.ofFloat(recyclerAnimationWrapper,
-                "weight",
-                10,
-                60);
-        recyclerAnimation.setDuration(800);
-
-        recyclerAnimation.start();
-        mapAnimation.start();
     }
 
 }

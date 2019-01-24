@@ -616,7 +616,7 @@ public class FirebaseMethods {
                 .child(responder_id)
                 .setValue(responder);
         myRef.child(mContext.getString(R.string.dbname_user_photos))
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child(photo.getUser_id())
                 .child(photo.getPhoto_id())
                 .child("responder")
                 .child(responder_id)
@@ -627,7 +627,6 @@ public class FirebaseMethods {
         String responderID = myRef.push().getKey();
         Responder responder = new Responder();
         responder.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
 
         myRef.child(mContext.getString(R.string.dbname_photos))
                 .child(photo.getPhoto_id())

@@ -2,6 +2,7 @@ package nicail.bscs.com.emercify.Utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,6 +30,15 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
+import org.web3j.crypto.Credentials;
+import org.web3j.protocol.Web3j;
+import org.web3j.protocol.Web3jFactory;
+import org.web3j.protocol.http.HttpService;
+import org.web3j.tuples.generated.Tuple3;
+import org.web3j.tx.Contract;
+import org.web3j.tx.ManagedTransaction;
+
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,7 +68,8 @@ public class ViewProfileFragment extends Fragment {
     private static final int ACTIVITY_NUM = 4;
     private int legit = 0, fake = 0;
 
-    private TextView mPosts, mFollowers, mFollowing, mDisplayName, mUsername, mWebsite, mDescription, mFollow, mUnfollow;
+    private TextView mPosts, mFollowers, mFollowing, mDisplayName,
+            mUsername, mWebsite, mDescription, mFollow, mUnfollow, mLegitimacy;
     private ProgressBar mProgressBar;
     private CircleImageView mProfilePhoto;
     private GridView gridView;
@@ -78,6 +89,7 @@ public class ViewProfileFragment extends Fragment {
     private int mFollowersCount = 0;
     private int mFollowingCount = 0;
     private int mPostsCount = 0;
+    private int verifiedLegit,verifiedFake;
     private String token, message;
 
     @Nullable
@@ -99,6 +111,8 @@ public class ViewProfileFragment extends Fragment {
         mUnfollow = (TextView) view.findViewById(R.id.unfollow);
         editProfile = (TextView) view.findViewById(R.id.textEditProfile);
         mBackArrow = (ImageView) view.findViewById(R.id.backArrow);
+        mLegitimacy = (TextView) view.findViewById(R.id.legitimacy);
+
         mContext = getActivity();
 
         Log.d(TAG, "onCreateView: started");
@@ -114,6 +128,8 @@ public class ViewProfileFragment extends Fragment {
 
         setupBottomNavigationView();
         setupFireBaseAuth();
+
+        new InitWeb3j().execute(getActivity().getString(R.string.infura));
 
         isFollowing();
         getFollowingCount();
@@ -191,6 +207,41 @@ public class ViewProfileFragment extends Fragment {
         return view;
 
 
+    }
+
+    private class InitWeb3j extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String url = strings[0];
+            Tuple3<String, BigInteger, BigInteger> output = null;
+            try {
+                Web3j web3 = Web3jFactory.build(new HttpService(url));
+                Credentials credentials = Credentials.create(getActivity().getString(R.string.private_key));
+                Emercify contract = Emercify.load(
+                        getActivity().getString(R.string.contract_address),
+                        web3, credentials,
+                        ManagedTransaction.GAS_PRICE,
+                        Contract.GAS_LIMIT
+                );
+                output = contract.getUserReports(mUser.getUser_id()).send();
+                verifiedLegit = output.getValue3().intValue();
+                verifiedFake = output.getValue2().intValue();
+                return legit + " " + fake;
+            } catch (Exception e) {
+                return e.getMessage();
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            if(verifiedLegit+verifiedFake > 0){
+                mLegitimacy.setVisibility(View.VISIBLE);
+                mLegitimacy.setText("Verified: " + verifiedLegit + " Fake: " + verifiedFake);
+            }
+        }
     }
 
     private void init(){
@@ -482,8 +533,6 @@ public class ViewProfileFragment extends Fragment {
         });
 
     }
-
-
 
     @Override
     public void onAttach(Context context) {

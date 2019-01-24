@@ -1,6 +1,7 @@
 package nicail.bscs.com.emercify.Utils;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -35,6 +37,12 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 import org.json.JSONObject;
+import org.web3j.crypto.Credentials;
+import org.web3j.protocol.Web3j;
+import org.web3j.protocol.Web3jFactory;
+import org.web3j.protocol.http.HttpService;
+import org.web3j.tx.Contract;
+import org.web3j.tx.ManagedTransaction;
 
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -102,6 +110,7 @@ public class ViewPostFragment extends Fragment {
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
     private FirebaseMethods mFirebaseMethods;
+    private ProgressDialog progressDialog;
 
     @Nullable
     @Override
@@ -129,6 +138,7 @@ public class ViewPostFragment extends Fragment {
         viewpost1 = (ProgressBar) view.findViewById(R.id.progress_Barviewpost);
         emergencyIcon = (ImageView) view.findViewById(R.id.emergency_icon);
         mContext = getActivity();
+        progressDialog = new ProgressDialog(getActivity());
 
         mFirebaseMethods = new FirebaseMethods(getActivity());
 
@@ -187,6 +197,7 @@ public class ViewPostFragment extends Fragment {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         boolean respondedByUser = false;
+                        boolean legitFound = false;
                         String responder_id = "";
                         for(DataSnapshot ds: dataSnapshot.getChildren()){
                             Log.d(TAG, "onDataChange: " + ds.child("user_id").getValue().toString());
@@ -196,7 +207,14 @@ public class ViewPostFragment extends Fragment {
                                 respondedByUser = true;
                                 Log.d(TAG, "onDataChange: " + true);
                                 responder_id = ds.child("responder_id").getValue().toString();
-                                break;
+                                if(ds.child("legit").getValue() != null){
+                                    Log.d(TAG, "onDataChange: legit");
+                                    legitFound = true;
+                                    break;
+                                }
+                                else{
+                                    break;
+                                }
                             }
                         }
                         if(!dataSnapshot.exists() || !respondedByUser){
@@ -233,57 +251,68 @@ public class ViewPostFragment extends Fragment {
                             });
                         }
                         else{
-                            fakeButton.setVisibility(View.VISIBLE);
-                            legitButton.setVisibility(View.VISIBLE);
-                            String finalResponder_id = responder_id;
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            legitButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    builder.setTitle("We assume that you really are in the destination. ");
-                                    builder.setMessage("Do you still want to mark this post as legit?");
-                                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            mFirebaseMethods.updateResponder(mPhoto, finalResponder_id,true);
-                                            dialog.dismiss();
-                                        }
-                                    }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-                                    AlertDialog dialog = builder.create();
-                                    dialog.show();
-                                }
-                            });
-                            fakeButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    builder.setTitle("We assume that you really are in the destination.");
-                                    builder.setMessage("Once you marked this post as fake. You will receive the location of the user. " +
-                                            "\nDo you still want to mark this post as fake?");
-                                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            mFirebaseMethods.updateResponder(mPhoto, finalResponder_id,false);
-                                            dialog.dismiss();
-                                            Intent intent = new Intent(getActivity(), MapActivity.class);
-                                            intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
-                                            intent.putExtra("REPORT PHOTO",getPhotoFromBundle());
-                                            startActivity(intent);
-                                        }
-                                    }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-                                    AlertDialog dialog = builder.create();
-                                    dialog.show();
-                                }
-                            });
+                            respondButton.setVisibility(View.GONE);
+//                            if(!legitFound){
+                                fakeButton.setVisibility(View.VISIBLE);
+                                legitButton.setVisibility(View.VISIBLE);
+                                String finalResponder_id = responder_id;
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                legitButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        builder.setTitle("We assume that you really are in the destination. ");
+                                        builder.setMessage("Do you still want to mark this post as legit?");
+                                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                mFirebaseMethods.updateResponder(mPhoto, finalResponder_id,true);
+                                                new InitWeb3j(mPhoto.getUser_id(),mPhoto.getPhoto_id(),"verify",true)
+                                                        .execute(getActivity().getString(R.string.infura));
+                                                dialog.dismiss();
+                                                progressDialog.setTitle("Loading");
+                                                progressDialog.setMessage("Please Wait...");
+                                                progressDialog.setCancelable(false);
+                                                progressDialog.show();
+                                            }
+                                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                        AlertDialog dialog = builder.create();
+                                        dialog.show();
+                                    }
+                                });
+                                fakeButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        builder.setTitle("We assume that you really are in the destination.");
+                                        builder.setMessage("Once you marked this post as fake. You will receive the location of the user. " +
+                                                "\nDo you still want to mark this post as fake?");
+                                        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                mFirebaseMethods.updateResponder(mPhoto, finalResponder_id,false);
+                                                new InitWeb3j(mPhoto.getUser_id(),mPhoto.getPhoto_id(),"fake",false)
+                                                        .execute(getActivity().getString(R.string.infura));
+                                                dialog.dismiss();
+                                                progressDialog.setTitle("Loading");
+                                                progressDialog.setMessage("Please Wait...");
+                                                progressDialog.setCancelable(false);
+                                                progressDialog.show();
+                                            }
+                                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                        AlertDialog dialog = builder.create();
+                                        dialog.show();
+                                    }
+                                });
+//                            }
                         }
                     }
 
@@ -793,6 +822,56 @@ public class ViewPostFragment extends Fragment {
                 }
             }
         };
+    }
+
+    private class InitWeb3j extends AsyncTask<String, String, String> {
+
+        String user_id, post_id,type;
+        boolean isFake;
+
+        public InitWeb3j(String user_id, String post_id, String type, boolean isFake) {
+            this.user_id = user_id;
+            this.post_id = post_id;
+            this.type = type;
+            this.isFake = isFake;
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String url = strings[0];
+            try {
+                Web3j web3 = Web3jFactory.build(new HttpService(url));
+                Credentials credentials = Credentials.create(getString(R.string.private_key));
+                Emercify contract = Emercify.load(
+                        getString(R.string.contract_address),
+                        web3, credentials,
+                        ManagedTransaction.GAS_PRICE,
+                        Contract.GAS_LIMIT
+                );
+                contract.reportPost(
+                        this.user_id,
+                        this.post_id,
+                        this.isFake
+                ).send();
+                return "success";
+            } catch (Exception e) {
+                return e.getMessage();
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            Toast.makeText(mContext, "Successfully Marked", Toast.LENGTH_LONG).show();
+            if(type.equals("fake")){
+                Intent intent = new Intent(getActivity(), MapActivity.class);
+                intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
+                intent.putExtra("REPORT PHOTO",getPhotoFromBundle());
+                startActivity(intent);
+            }
+            progressDialog.dismiss();
+        }
     }
 
     @Override
