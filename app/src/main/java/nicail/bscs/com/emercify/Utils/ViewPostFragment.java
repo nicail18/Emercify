@@ -180,7 +180,7 @@ public class ViewPostFragment extends Fragment {
         try{
             mPhoto = getPhotoFromBundle();
             GlideApp
-                    .with(mContext)
+                    .with(mContext.getApplicationContext())
                     .load(getPhotoFromBundle().getImage_path())
                     .placeholder(R.color.grey)
                     .centerCrop()
@@ -344,7 +344,7 @@ public class ViewPostFragment extends Fragment {
                         newPhoto.setImage_path(objectMap.get("image_path").toString());
                         newPhoto.setAddress(objectMap.get("address").toString());
                         GlideApp
-                                .with(mContext)
+                                .with(mContext.getApplicationContext())
                                 .load(newPhoto.getImage_path())
                                 .placeholder(R.color.grey)
                                 .centerCrop()
@@ -588,7 +588,7 @@ public class ViewPostFragment extends Fragment {
                 for(DataSnapshot singleSnapshot: dataSnapshot.getChildren()) {
                     mUserAccountSettings = singleSnapshot.getValue(UserAccountSettings.class);
                     GlideApp
-                            .with(mContext)
+                            .with(mContext.getApplicationContext())
                             .load(singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo())
                             .placeholder(R.color.grey)
                             .centerCrop()

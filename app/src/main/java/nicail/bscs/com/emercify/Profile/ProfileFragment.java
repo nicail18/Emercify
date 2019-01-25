@@ -247,9 +247,7 @@ public class ProfileFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         Log.d(TAG, "onClick: navigating to edit profile fragment");
-
-                        Intent intent = new Intent(getActivity(),AccountSettingsActivity.class);
-                        intent.putExtra(getString(R.string.calling_activity),getString(R.string.profile_activity));
+                        Intent intent = new Intent(getActivity(),EditProfileActivity.class);
                         startActivity(intent);
                     }
                 });
@@ -366,14 +364,14 @@ public class ProfileFragment extends Fragment {
         mProgressBar.setVisibility(View.GONE);
         if(settings.getProfile_photo().equals("")) {
             GlideApp
-                    .with(mContext)
+                    .with(mContext.getApplicationContext())
                     .load(R.drawable.ic_profile)
                     .placeholder(R.color.grey)
                     .centerCrop()
                     .into(mProfilePhoto);
         }else
             GlideApp
-                    .with(mContext)
+                    .with(mContext.getApplicationContext())
                     .load(settings.getProfile_photo())
                     .placeholder(R.color.grey)
                     .centerCrop()

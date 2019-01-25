@@ -136,7 +136,7 @@ public class MainfeedRecyclerAdapter extends RecyclerView.Adapter<MainfeedRecycl
         //imageLoader.displayImage(photos.get(position).getImage_path(),holder.image);
         Log.d(TAG, "onBindViewHolder: " +photos.get(position).getImage_path());
         GlideApp
-                .with(mContext)
+                .with(mContext.getApplicationContext())
                 .load(photos.get(position).getImage_path())
                 .placeholder(R.color.grey)
                 .centerCrop()
@@ -158,14 +158,20 @@ public class MainfeedRecyclerAdapter extends RecyclerView.Adapter<MainfeedRecycl
                         @Override
                         public void onClick(View v) {
                             Log.d(TAG, "onClick: navigating to profile of that user");
-                            Intent intent = new Intent(mContext, ProfileActivity.class);
-                            intent.putExtra(mContext.getString(R.string.calling_activity),mContext.getString(R.string.home_activity));
-                            intent.putExtra(mContext.getString(R.string.intent_user),((ViewHolder)holder).user);
-                            mContext.startActivity(intent);
+                            if(((ViewHolder)holder).user.getUser_id()
+                                    .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                Intent intent = new Intent(mContext, ProfileActivity.class);
+                                mContext.startActivity(intent);
+                            }else{
+                                Intent intent = new Intent(mContext, ProfileActivity.class);
+                                intent.putExtra(mContext.getString(R.string.calling_activity),mContext.getString(R.string.home_activity));
+                                intent.putExtra(mContext.getString(R.string.intent_user),((ViewHolder)holder).user);
+                                mContext.startActivity(intent);
+                            }
                         }
                     });
                     GlideApp
-                            .with(mContext)
+                            .with(mContext.getApplicationContext())
                             .load(singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo())
                             .placeholder(R.color.grey)
                             .centerCrop()

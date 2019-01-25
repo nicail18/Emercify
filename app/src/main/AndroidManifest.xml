@@ -80,6 +80,7 @@
         <activity android:name=".Likes.MapActivity" />
         <activity android:name=".Share.ShareActivity" />
         <activity android:name=".Profile.AccountSettingsActivity" />
+        <activity android:name=".Profile.EditProfileActivity" />
         <activity android:name=".Login.LoginActivity" />
         <activity android:name=".Login.RegisterActivity" />
         <activity android:name=".Share.NextActivity" />

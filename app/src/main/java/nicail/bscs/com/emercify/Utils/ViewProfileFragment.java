@@ -259,7 +259,7 @@ public class ViewProfileFragment extends Fragment {
                     settings.setSettings(singleSnapshot.getValue(UserAccountSettings.class));
 
                     GlideApp
-                            .with(mContext)
+                            .with(mContext.getApplicationContext())
                             .load(singleSnapshot.getValue(UserAccountSettings.class).toString())
                             .placeholder(R.color.grey)
                             .centerCrop()
@@ -512,7 +512,20 @@ public class ViewProfileFragment extends Fragment {
         //User user = userSettings.getUser();
         UserAccountSettings settings = userSettings.getSettings();
 
-        UniversalImageLoader.setImage(settings.getProfile_photo(),mProfilePhoto, null,"");
+        if(settings.getProfile_photo().equals("")) {
+            GlideApp
+                    .with(mContext.getApplicationContext())
+                    .load(R.drawable.ic_profile)
+                    .placeholder(R.color.grey)
+                    .centerCrop()
+                    .into(mProfilePhoto);
+        }else
+            GlideApp
+                    .with(mContext.getApplicationContext())
+                    .load(settings.getProfile_photo())
+                    .placeholder(R.color.grey)
+                    .centerCrop()
+                    .into(mProfilePhoto);
         mDisplayName.setText(settings.getDisplay_name());
         mUsername.setText(settings.getUsername());
         mWebsite.setText(settings.getWebsite());

@@ -579,7 +579,7 @@ public class GalleryFragment extends Fragment implements
         Log.d(TAG, "setImage: setting image");
 
         GlideApp
-                .with(getActivity())
+                .with(getActivity().getApplicationContext())
                 .load(imgURL)
                 .placeholder(R.color.grey)
                 .centerCrop()

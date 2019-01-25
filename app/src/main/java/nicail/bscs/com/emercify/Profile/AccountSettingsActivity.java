@@ -31,6 +31,7 @@ import nicail.bscs.com.emercify.dialogs.SignOutDialog;
 
 public class AccountSettingsActivity extends AppCompatActivity {
     private static final String TAG = "AccountSettingsActivity";
+
     private static final int ACTIVITY_NUM = 4;
     private Context mContext;
     public SectionsStatePagerAdapater pagerAdapater;
@@ -54,7 +55,6 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
         setupSettingsList();
         setupBottomNavigationView();
-        setupFragments();
         getIncomingIntent();
 
         //Setup the backarrow for navigating back to "ProfileActivity"
@@ -95,21 +95,13 @@ public class AccountSettingsActivity extends AppCompatActivity {
 
         if(intent.hasExtra(getString(R.string.calling_activity))){
             Log.d(TAG, "getIncomingIntent: received incoming intent from " + getString(R.string.profile_activity));
-            setViewPager(pagerAdapater.getFragmentNumber(getString(R.string.edit_profile_fragment)));
+            goToEditProfile();
         }
     }
 
-    private void setupFragments(){
-        pagerAdapater = new SectionsStatePagerAdapater(getSupportFragmentManager());
-        pagerAdapater.addFragment(new EditProfileFragment(),getString(R.string.edit_profile_fragment));
-        pagerAdapater.addFragment(new SignOutFragment(),getString(R.string.sign_out_fragment));
-    }
-
-    public void setViewPager(int fragmentNumber){
-        mRelativeLayout.setVisibility(View.GONE);
-        Log.d(TAG, "setmViewPager: navigation to fragment #:" + fragmentNumber);
-        mViewPager.setAdapter(pagerAdapater);
-        mViewPager.setCurrentItem(fragmentNumber);
+    public void goToEditProfile(){
+        Intent intent = new Intent(AccountSettingsActivity.this, EditProfileActivity.class);
+        startActivity(intent);
     }
 
     private void setupSettingsList(){
@@ -129,7 +121,7 @@ public class AccountSettingsActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d(TAG, "onItemClick: navigating to fragment#:" + position);
                 if(position == 0){
-                    setViewPager(position);
+                    goToEditProfile();
                 }
                 else{
                     SignOutDialog signOutDialog = new SignOutDialog(AccountSettingsActivity.this);

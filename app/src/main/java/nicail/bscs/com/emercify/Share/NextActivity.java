@@ -168,7 +168,7 @@ public class NextActivity extends AppCompatActivity {
 //            Log.d(TAG, "setImage: got new image url " + imgUrl);
 //            UniversalImageLoader.setImage(intent.getStringExtra(getString(R.string.selected_image)),image,null,mAppend);
             GlideApp
-                    .with(this)
+                    .with(getApplicationContext())
                     .load(intent.getStringExtra(getString(R.string.selected_image)))
                     .placeholder(R.color.grey)
                     .centerCrop()
@@ -189,7 +189,7 @@ public class NextActivity extends AppCompatActivity {
 //            Log.d(TAG, "setImage: got new bitmap " + bitmap);
 //            image.setImageBitmap(bitmap);
             GlideApp
-                    .with(this)
+                    .with(getApplicationContext())
                     .load(bitmap)
                     .placeholder(R.color.grey)
                     .centerCrop()

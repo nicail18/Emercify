@@ -67,7 +67,7 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
                 for(DataSnapshot singleSnapshot: dataSnapshot.getChildren()) {
                     ((ViewHolder)holder).username.setText(singleSnapshot.getValue(UserAccountSettings.class).getUsername());
                     GlideApp
-                            .with(mContext)
+                            .with(mContext.getApplicationContext())
                             .load( singleSnapshot.getValue(UserAccountSettings.class).getProfile_photo())
                             .placeholder(R.color.grey)
                             .centerCrop()

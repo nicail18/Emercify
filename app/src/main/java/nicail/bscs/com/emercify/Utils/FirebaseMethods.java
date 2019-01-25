@@ -196,11 +196,7 @@ public class FirebaseMethods {
                             progressDialog.dismiss();
                         }
                     });
-                    ((AccountSettingsActivity)mContext).setViewPager(
-                            ((AccountSettingsActivity)mContext).pagerAdapater
-                                    .getFragmentNumber(mContext.getString(R.string.edit_profile_fragment))
-                    );
-
+                    ((AccountSettingsActivity)mContext).goToEditProfile();
 
                 }
             }).addOnFailureListener(new OnFailureListener() {

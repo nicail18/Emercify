@@ -41,7 +41,8 @@
                         android:id="@+id/ivMap"
                         android:src="@drawable/ic_map"
                         android:padding="3dp"
-                        android:background="@drawable/circle_shape"/>
+                        android:background="@drawable/circle_shape"
+                        android:visibility="gone"/>
 
                     <ImageView
                         android:layout_width="40dp"
@@ -50,7 +51,8 @@
                         android:layout_centerVertical="true"
                         android:layout_toLeftOf="@+id/ivMap"
                         android:layout_marginRight="10dp"
-                        android:id="@+id/bcTest"/>
+                        android:id="@+id/bcTest"
+                        android:visibility="gone"/>
                     
                 </RelativeLayout>
                 

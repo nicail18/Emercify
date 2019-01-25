@@ -58,7 +58,7 @@ public class GridImageAdapter extends ArrayAdapter<String>{
 
         String imgURL = getItem(position);
         GlideApp
-                .with(mContext)
+                .with(mContext.getApplicationContext())
                 .load(imgURL)
                 .placeholder(R.color.grey)
                 .centerCrop()

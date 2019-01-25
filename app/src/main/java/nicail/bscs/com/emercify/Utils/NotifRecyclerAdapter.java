@@ -76,7 +76,7 @@ public class NotifRecyclerAdapter extends RecyclerView.Adapter<NotifRecyclerAdap
                     ((ViewHolder)holder).username.setText(ds.getValue(UserAccountSettings.class).getUsername());
 
                     GlideApp
-                            .with(mContext)
+                            .with(mContext.getApplicationContext())
                             .load(ds.getValue(UserAccountSettings.class).getProfile_photo())
                             .placeholder(R.color.grey)
                             .centerCrop()
