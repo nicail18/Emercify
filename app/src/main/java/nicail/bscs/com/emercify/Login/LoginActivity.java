@@ -79,6 +79,7 @@ public class LoginActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_login);
+        overridePendingTransition(R.anim.splash_fade_in, R.anim.splash_fade_out);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
         mPleaseWait = (TextView) findViewById(R.id.pleaseWait);
         mEmail = (EditText) findViewById(R.id.input_email);

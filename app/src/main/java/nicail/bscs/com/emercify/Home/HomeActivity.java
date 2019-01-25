@@ -128,6 +128,7 @@ public class HomeActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        overridePendingTransition(R.anim.splash_fade_in, R.anim.splash_fade_out);
         setContentView(R.layout.activity_home);
         Log.d(TAG, "onCreate: starting.");
         emercifyhome = findViewById(R.id.emercify_text);
