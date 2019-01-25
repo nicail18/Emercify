@@ -3,15 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ProgressBar
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:id="@+id/progress_Barviewpost"
-        android:indeterminateTint="@color/emercifycolor"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="10dp"/>
-
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -27,7 +18,17 @@
         android:id="@+id/rellayout2"
         android:layout_below="@+id/rellayout1">
 
+
         <include layout="@layout/layout_view_post" />
+
+        <ProgressBar
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/progress_Barviewpost"
+            android:indeterminateTint="@color/black"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="10dp"/>
 
     </RelativeLayout>
 

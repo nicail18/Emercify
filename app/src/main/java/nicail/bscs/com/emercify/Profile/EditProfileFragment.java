@@ -241,15 +241,14 @@ public class EditProfileFragment extends Fragment implements ConfirmPasswordDial
 
     private void setProfileWidgets(UserSettings userSettings){
         Log.d(TAG, "setProfileWidgets: settings widgets with data retrieved from firebase database " + userSettings.toString());
-
+        Log.d(TAG, "setProfileWidgets: " + mContext);
         User user = userSettings.getUser();
         UserAccountSettings settings = userSettings.getSettings();
 
         mUserSettings = userSettings;
 
-//        UniversalImageLoader.setImage(settings.getProfile_photo(),mProfilePhoto, null,"");
         GlideApp
-                .with(this)
+                .with(mContext)
                 .load(settings.getProfile_photo())
                 .placeholder(R.color.grey)
                 .centerCrop()

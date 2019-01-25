@@ -60,11 +60,11 @@ public class Agreedisagree_Dialog extends Dialog{
         TextView textagreement = (TextView) findViewById(R.id.textagreement);
         checkbox1.setAlpha(.5f);
         agreebutton.setAlpha(.5f);
-        disagreebutton.setAlpha(.5f);
+        disagreebutton.setAlpha(1f);
         textagreement.setAlpha(.5f);
         checkbox1.setEnabled(false);
         agreebutton.setEnabled(false);
-        disagreebutton.setEnabled(false);
+        disagreebutton.setEnabled(true);
         textagreement.setEnabled(false);
         scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
@@ -91,14 +91,8 @@ public class Agreedisagree_Dialog extends Dialog{
                     }
                 } else {
                     //scroll view is not at bottom
-                   /*checkbox1.setAlpha(1f);
-                    agreebutton.setAlpha(1f);
-                    disagreebutton.setAlpha(1f);
-                    textagreement.setAlpha(1f);
-                    checkbox1.setEnabled(true);
-                    agreebutton.setEnabled(true);
-                    disagreebutton.setEnabled(true);
-                    textagreement.setEnabled(true);*/
+                   disagreebutton.setEnabled(true);
+                   disagreebutton.setAlpha(1f);
                 }
             }
         });
