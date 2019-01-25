@@ -27,7 +27,7 @@
             android:id="@+id/profileProgressBar"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:indeterminateTint="@color/emercifycolor"
+            android:indeterminateTint="@color/black"
             android:layout_marginTop="100dp"/>
 
         <include layout="@layout/layout_bottom_navigation_view"/>
