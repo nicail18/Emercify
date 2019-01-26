@@ -143,6 +143,7 @@ public class ProfileFragment extends Fragment {
         mFollowers.setVisibility(View.GONE);
         mFollowing.setVisibility(View.GONE);
         mPosts.setVisibility(View.GONE);
+        profileMenu.setVisibility(View.GONE);
 
         mContext = getActivity();
         mFirebaseMethods = new FirebaseMethods(mContext);
@@ -380,6 +381,7 @@ public class ProfileFragment extends Fragment {
 
         mProgressBar.setVisibility(View.GONE);
         rellayout2.setVisibility(View.VISIBLE);
+        profileMenu.setVisibility(View.VISIBLE);
 
     }
 

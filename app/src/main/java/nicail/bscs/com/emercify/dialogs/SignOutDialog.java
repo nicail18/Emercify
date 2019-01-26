@@ -71,10 +71,10 @@ public class SignOutDialog extends Dialog {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: Signing Out");
+                progressDialog.show();
                 firebaseMethods.updateOnlineStatus(false);
                 mAuth.signOut();
                 signOut();
-                dismiss();
             }
         });
     }
@@ -125,7 +125,8 @@ public class SignOutDialog extends Dialog {
                     Log.d(TAG, "onAuthStateChanged: signed_out");
 
                     Log.d(TAG, "onAuthStateChanged: navigating back to login screen");
-
+                    progressDialog.dismiss();
+                    dismiss();
                     Intent intent = new Intent(context, LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     context.startActivity(intent);

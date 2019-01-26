@@ -216,19 +216,16 @@ public class ProfileActivity extends AppCompatActivity implements
     public void onResume() {
         super.onResume();
         startNotificationRunnable();
-        firebaseMethods.updateOnlineStatus(true);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        firebaseMethods.updateOnlineStatus(false);
         stopNotificationRunnable();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        firebaseMethods.updateOnlineStatus(false);
     }
 }

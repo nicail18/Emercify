@@ -30,6 +30,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -72,7 +73,8 @@ public class HomeFragment extends Fragment implements
         file_download(photo.getImage_path());
     }
 
-    public void file_download(String url) {
+    public void file_download(String url)
+    {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
         Date now = new Date();
         String date = simpleDateFormat.format(now);
@@ -98,6 +100,8 @@ public class HomeFragment extends Fragment implements
                 .setDestinationInExternalPublicDir("/Emercify", "EMERCIFY_IMG_"+date+".jpg");
 
         mgr.enqueue(request);
+
+        Toast.makeText(getActivity(), "Photo Saved", Toast.LENGTH_SHORT).show();
 
     }
 

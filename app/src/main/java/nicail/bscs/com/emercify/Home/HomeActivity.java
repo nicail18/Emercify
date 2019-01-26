@@ -64,12 +64,14 @@ import nicail.bscs.com.emercify.Likes.LikesActivity;
 import nicail.bscs.com.emercify.Likes.MapActivity;
 import nicail.bscs.com.emercify.Login.LoginActivity;
 import nicail.bscs.com.emercify.R;
+import nicail.bscs.com.emercify.Share.ShareActivity;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
 import nicail.bscs.com.emercify.Utils.CheckInternet;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.MainfeedListAdapter;
 import nicail.bscs.com.emercify.Utils.MainfeedRecyclerAdapter;
 import nicail.bscs.com.emercify.Utils.Notify;
+import nicail.bscs.com.emercify.Utils.Permissions;
 import nicail.bscs.com.emercify.Utils.SectionsPagerAdapter;
 import nicail.bscs.com.emercify.Utils.UniversalImageLoader;
 import nicail.bscs.com.emercify.Utils.ViewCommentsFragment;
@@ -193,18 +195,56 @@ public class HomeActivity extends AppCompatActivity implements
          * device. The result of the permission request is handled by a callback,
          * onRequestPermissionsResult.
          */
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
+        if(checkPermissionsArray()){
             mLocationPermissionGranted = true;
             initImageLoader();
             setupBottomNavigationView();
             setupViewPager();
-        } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
+        else{
+            verifyPermissions(Permissions.PERMISSIONS);
+        }
+//        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+//                android.Manifest.permission.ACCESS_FINE_LOCATION)
+//                == PackageManager.PERMISSION_GRANTED) {
+//            mLocationPermissionGranted = true;
+//            initImageLoader();
+//            setupBottomNavigationView();
+//            setupViewPager();
+//        } else {
+//            ActivityCompat.requestPermissions(this,
+//                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+//                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+//        }
+    }
+
+    public boolean checkPermissionsArray(){
+        String[] permissions = Permissions.PERMISSIONS;
+        for(int i = 0; i< permissions.length; i++){
+            String check = permissions[i];
+            if(!checkPermissions(check)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean checkPermissions(String permission){
+        Log.d(TAG, "checkPermissions: checking permission: " + permission);
+
+        int permissionRequest = ActivityCompat.checkSelfPermission(HomeActivity.this,permission);
+        if(permissionRequest != PackageManager.PERMISSION_GRANTED){
+            Log.d(TAG, "checkPermissions: Permission is not granted for " + permission);
+            return false;
+        }
+        else{
+            Log.d(TAG, "checkPermissions: Permission is granted for " + permission);
+            return true;
+        }
+    }
+
+    public void verifyPermissions(String[] permissions){
+        ActivityCompat.requestPermissions(HomeActivity.this,permissions,PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
     }
 
     public boolean isServicesOK(){
@@ -236,12 +276,19 @@ public class HomeActivity extends AppCompatActivity implements
         switch (requestCode) {
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
+                Log.d(TAG, "onRequestPermissionsResult: granResults " + grantResults.toString());
                 if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[2] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[3] == PackageManager.PERMISSION_GRANTED) {
                     initImageLoader();
                     setupBottomNavigationView();
                     setupViewPager();
                     mLocationPermissionGranted = true;
+                }
+                else{
+                    getLocationPermission();
                 }
             }
         }
