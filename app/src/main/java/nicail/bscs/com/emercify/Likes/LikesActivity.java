@@ -629,13 +629,17 @@ public class LikesActivity extends AppCompatActivity implements
     @Override
     public void onResume() {
         super.onResume();
-        mFirebaseMethods.updateOnlineStatus(true);
-        startNotificationRunnable();
+        if(mAuth.getCurrentUser().getUid() != null){
+            mFirebaseMethods.updateOnlineStatus(true);
+            startNotificationRunnable();
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mFirebaseMethods.updateOnlineStatus(false);
+        if(mAuth != null){
+            mFirebaseMethods.updateOnlineStatus(false);
+        }
     }
 }

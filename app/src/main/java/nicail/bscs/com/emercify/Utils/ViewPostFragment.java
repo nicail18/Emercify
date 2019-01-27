@@ -112,10 +112,17 @@ public class ViewPostFragment extends Fragment {
     private FirebaseMethods mFirebaseMethods;
     private ProgressDialog progressDialog;
 
+    private LayoutInflater inflater;
+    private ViewGroup container;
+    private Bundle savedInstanceState;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_view_post,container,false);
+        this.inflater = inflater;
+        this.container = container;
+        this.savedInstanceState = savedInstanceState;
         mPostImage = (SquareImageView) view.findViewById(R.id.post_image);
         bottomNavigationView = (BottomNavigationViewEx) view.findViewById(R.id.bottomNavViewBar);
         mBackArrow = (ImageView) view.findViewById(R.id.backArrow);
@@ -178,6 +185,9 @@ public class ViewPostFragment extends Fragment {
 
     private void init(){
         try{
+            respondButton.setVisibility(View.GONE);
+            fakeButton.setVisibility(View.GONE);
+            legitButton.setVisibility(View.GONE);
             mPhoto = getPhotoFromBundle();
             GlideApp
                     .with(mContext.getApplicationContext())
@@ -251,8 +261,7 @@ public class ViewPostFragment extends Fragment {
                             });
                         }
                         else{
-                            respondButton.setVisibility(View.GONE);
-//                            if(!legitFound){
+                            if(!legitFound){
                                 fakeButton.setVisibility(View.VISIBLE);
                                 legitButton.setVisibility(View.VISIBLE);
                                 String finalResponder_id = responder_id;
@@ -260,8 +269,7 @@ public class ViewPostFragment extends Fragment {
                                 legitButton.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        builder.setTitle("We assume that you really are in the destination. ");
-                                        builder.setMessage("Do you still want to mark this post as legit?");
+                                        builder.setTitle("Do you still want to mark this post as verified?");
                                         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
@@ -287,8 +295,7 @@ public class ViewPostFragment extends Fragment {
                                 fakeButton.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        builder.setTitle("We assume that you really are in the destination.");
-                                        builder.setMessage("Once you marked this post as fake. You will receive the location of the user. " +
+                                        builder.setTitle("Once you marked this post as fake. You will receive the location of the user. " +
                                                 "\nDo you still want to mark this post as fake?");
                                         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             @Override
@@ -312,7 +319,7 @@ public class ViewPostFragment extends Fragment {
                                         dialog.show();
                                     }
                                 });
-//                            }
+                            }
                         }
                     }
 
@@ -864,13 +871,16 @@ public class ViewPostFragment extends Fragment {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             Toast.makeText(mContext, "Successfully Marked", Toast.LENGTH_LONG).show();
+            progressDialog.dismiss();
             if(type.equals("fake")){
                 Intent intent = new Intent(getActivity(), MapActivity.class);
                 intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
                 intent.putExtra("REPORT PHOTO",getPhotoFromBundle());
                 startActivity(intent);
             }
-            progressDialog.dismiss();
+            else{
+                init();
+            }
         }
     }
 

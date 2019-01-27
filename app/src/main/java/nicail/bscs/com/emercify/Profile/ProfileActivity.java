@@ -215,13 +215,17 @@ public class ProfileActivity extends AppCompatActivity implements
     @Override
     public void onResume() {
         super.onResume();
-        startNotificationRunnable();
+        if(FirebaseAuth.getInstance().getCurrentUser().getUid() != null){
+            startNotificationRunnable();
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        stopNotificationRunnable();
+        if(FirebaseAuth.getInstance().getCurrentUser().getUid() != null){
+            stopNotificationRunnable();
+        }
     }
 
     @Override

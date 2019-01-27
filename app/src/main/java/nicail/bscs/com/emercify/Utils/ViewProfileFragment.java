@@ -40,6 +40,7 @@ import org.web3j.tx.ManagedTransaction;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -477,6 +478,7 @@ public class ViewProfileFragment extends Fragment {
     }
 
     private void setupImageGrid(final ArrayList<Photo> photos){
+        Collections.reverse(photos);
         int gridWidth = getResources().getDisplayMetrics().widthPixels;
         int imageWidth = gridWidth/NUM_GRID_COLUMNS;
         gridView.setColumnWidth(imageWidth);
