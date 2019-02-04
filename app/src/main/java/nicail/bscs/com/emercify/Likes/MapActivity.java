@@ -28,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -513,28 +514,38 @@ public class MapActivity extends AppCompatActivity implements
             public void onComplete(@NonNull Task<android.location.Location> task) {
                 if(task.isSuccessful()){
                     Location location = task.getResult();
-                    lat = location.getLatitude();
-                    lon = location.getLongitude();
-                    Log.d(TAG, "onComplete: latitude: " + lat + "\n" + "longitude" + lon);
-                    Intent intent = getIntent();
-                    if(intent.hasExtra("PHOTO")){
-                        addMapMarkers();
-                    }
-                    else if(intent.hasExtra("INTENT PHOTO")){
-                        mGoogleMap.addMarker(new MarkerOptions()
-                                .position(new LatLng(lat,lon))
-                                .title("Your Location"));
-                        String url = getUrl(new LatLng(lat,lon),new LatLng(latitude,longitude),"driving");
-                        new FetchURL(MapActivity.this).execute(url,"driving");
-                        addMapMarkers();
+                    if(location != null){
+                        Log.d(TAG, "onComplete: Location Found");
+                        Toast.makeText(mContext, "Location Found", Toast.LENGTH_SHORT).show();
+                        lat = location.getLatitude();
+                        lon = location.getLongitude();
+                        Log.d(TAG, "onComplete: latitude: " + lat + "\n" + "longitude" + lon);
+                        Intent intent = getIntent();
+                        if(intent.hasExtra("PHOTO")){
+                            addMapMarkers();
+                        }
+                        else if(intent.hasExtra("INTENT PHOTO")){
+                            mGoogleMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(lat,lon))
+                                    .title("Your Location"));
+                            String url = getUrl(new LatLng(lat,lon),new LatLng(latitude,longitude),"driving");
+                            new FetchURL(MapActivity.this).execute(url,"driving");
+                            addMapMarkers();
+                        }
+                        else{
+                            latitude = lat;
+                            longitude = lon;
+                            setCameraView();
+                            progressDialog.dismiss();
+                        }
+                        startLocationService();
                     }
                     else{
-                        latitude = lat;
-                        longitude = lon;
-                        setCameraView();
+                        Log.d(TAG, "onComplete: Location Not Found");
+                        Toast.makeText(mContext, "Please click on the Upper Right Button " +
+                                "Repeatedly to get your location", Toast.LENGTH_SHORT).show();
                         progressDialog.dismiss();
                     }
-                    startLocationService();
                 }
             }
         });
@@ -640,6 +651,8 @@ public class MapActivity extends AppCompatActivity implements
                     .build();
         }
         progressDialog.show();
+
+
     }
 
     //Bottom Navigation View Setup
@@ -697,6 +710,13 @@ public class MapActivity extends AppCompatActivity implements
         }
         map.setMyLocationEnabled(true);
         mGoogleMap = map;
+        mGoogleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+            @Override
+            public boolean onMyLocationButtonClick() {
+                getLastKnownLocation();
+                return true;
+            }
+        });
         checkIntent();
     }
 

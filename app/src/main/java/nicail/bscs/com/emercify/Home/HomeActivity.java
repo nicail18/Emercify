@@ -468,12 +468,19 @@ public class HomeActivity extends AppCompatActivity implements
             public void onComplete(@NonNull Task<Location> task) {
                 if(task.isSuccessful()){
                     Location location = task.getResult();
-                    latitude = location.getLatitude();
-                    longitude = location.getLongitude();
-                    firebaseMethods.updateLocation(latitude,longitude);
-                    firebaseMethods.updateDevice_token(
-                            FirebaseInstanceId.getInstance().getToken());
-                    firebaseMethods.updateOnlineStatus(true);
+                    if(location != null){
+                        latitude = location.getLatitude();
+                        longitude = location.getLongitude();
+                        firebaseMethods.updateLocation(latitude,longitude);
+                        firebaseMethods.updateDevice_token(
+                                FirebaseInstanceId.getInstance().getToken());
+                        firebaseMethods.updateOnlineStatus(true);
+                    }
+                    else{
+                        Toast.makeText(mContext, "Can't find your Location.\nOpening Google Maps", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(HomeActivity.this,MapActivity.class);
+                        startActivity(intent);
+                    }
 
                     Log.d(TAG, "onComplete: latitude: " + latitude + "\n" + "longitude" + longitude);
                 }

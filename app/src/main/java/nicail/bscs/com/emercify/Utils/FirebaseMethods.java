@@ -124,10 +124,14 @@ public class FirebaseMethods {
             String user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
             final StorageReference storageReference = mStorageReference
                     .child(filePaths.FIREBASE_IMAGE_STORAGE+"/"+ user_id+"/photo"+ (count + 1));
+            byte[] bytes;
             if(bm == null) {
                 bm = ImageManager.getBitmap(imgUrl);
+                bytes = ImageManager.getBytesFromBitmap(bm,40);
             }
-            byte[] bytes = ImageManager.getBytesFromBitmap(bm,40);
+            else{
+                bytes = ImageManager.getBytesFromBitmap(bm,70);
+            }
             UploadTask uploadTask = null;
             uploadTask = storageReference.putBytes(bytes);
 
@@ -176,10 +180,14 @@ public class FirebaseMethods {
             String user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
             final StorageReference storageReference = mStorageReference
                     .child(filePaths.FIREBASE_IMAGE_STORAGE+"/"+ user_id+"/profile_photo");
+            byte[] bytes;
             if(bm == null) {
                 bm = ImageManager.getBitmap(imgUrl);
+                bytes = ImageManager.getBytesFromBitmap(bm,40);
             }
-            byte[] bytes = ImageManager.getBytesFromBitmap(bm,100);
+            else{
+                bytes = ImageManager.getBytesFromBitmap(bm,70);
+            }
             UploadTask uploadTask = null;
             uploadTask = storageReference.putBytes(bytes);
 
@@ -300,6 +308,9 @@ public class FirebaseMethods {
         if(type.equals("emergency")){
             new InitWeb3j(newPhotoKey,FirebaseAuth.getInstance().getCurrentUser().getUid(),caption)
                     .execute(mContext.getString(R.string.infura));
+            progressDialog.dismiss();
+            Intent intent = new Intent(mContext, HomeActivity.class);
+            mContext.startActivity(intent);
         }
         else{
             Toast.makeText(mContext, "Successfully Uploaded ", Toast.LENGTH_SHORT).show();
@@ -307,6 +318,7 @@ public class FirebaseMethods {
             Intent intent = new Intent(mContext, HomeActivity.class);
             mContext.startActivity(intent);
         }
+
 
 
 
@@ -681,11 +693,23 @@ public class FirebaseMethods {
     private class InitWeb3j extends AsyncTask<String, String, String> {
 
         String photo_id, user_id, caption;
-
+        
         public InitWeb3j(String photo_id, String user_id, String caption) {
             this.photo_id = photo_id;
             this.user_id = user_id;
             this.caption = caption;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            Log.d(TAG, "onProgressUpdate: BlockChain: "+values);
+        }
+
+        @Override
+        protected void onCancelled(String s) {
+            super.onCancelled(s);
+            Log.d(TAG, "onCancelled: BlockChain: error");
         }
 
         @Override
@@ -715,10 +739,8 @@ public class FirebaseMethods {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            Log.d(TAG, "onPostExecute: BlockChain: Success");
             Toast.makeText(mContext, "Successfully Uploaded ", Toast.LENGTH_SHORT).show();
-            progressDialog.dismiss();
-            Intent intent = new Intent(mContext, HomeActivity.class);
-            mContext.startActivity(intent);
         }
     }
 }
