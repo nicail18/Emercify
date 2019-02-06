@@ -241,9 +241,10 @@ public class ViewProfileFragment extends Fragment {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             if(verifiedLegit+verifiedFake > 0){
+                mlegitcount.setVisibility(View.VISIBLE);
                 mfakecount.setVisibility(View.VISIBLE);
                 mlegitcount.setText((String.valueOf(verifiedLegit)));
-                mfakecount.setText((String.valueOf(verifiedLegit)));
+                mfakecount.setText((String.valueOf(verifiedFake)));
             }
         }
     }
