@@ -46,6 +46,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -74,11 +75,15 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import nicail.bscs.com.emercify.R;
 import nicail.bscs.com.emercify.Utils.BottomNavigationViewHelper;
@@ -89,7 +94,9 @@ import nicail.bscs.com.emercify.Utils.LocationService;
 import nicail.bscs.com.emercify.Utils.MyClusterManagerRenderer;
 import nicail.bscs.com.emercify.Utils.Notify;
 import nicail.bscs.com.emercify.Utils.TaskLoadedCallback;
+import nicail.bscs.com.emercify.dialogs.StatusDialog;
 import nicail.bscs.com.emercify.models.ClusterMarker;
+import nicail.bscs.com.emercify.models.Comment;
 import nicail.bscs.com.emercify.models.Photo;
 import nicail.bscs.com.emercify.models.User;
 import nicail.bscs.com.emercify.models.UserAccountSettings;
@@ -121,10 +128,11 @@ public class MapActivity extends AppCompatActivity implements
     private GeoApiContext geoApiContext = null;
     private Polyline polyline;
     private ProgressDialog progressDialog;
-    private UserAccountSettings settings;
+    private UserAccountSettings settings, userSetings;
     private boolean report = false;
     private Handler handler = new Handler();
     private Runnable runnable;
+    private String responderID;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -171,6 +179,7 @@ public class MapActivity extends AppCompatActivity implements
             mPhoto = intent.getParcelableExtra("INTENT PHOTO");
             latitude = mPhoto.getLatitude();
             longitude = mPhoto.getLongitude();
+            responderID = intent.getStringExtra("resppnder_id");
             getLastKnownLocation();
         }
         else if(intent.hasExtra("REPORT PHOTO")){
@@ -434,6 +443,49 @@ public class MapActivity extends AppCompatActivity implements
                         String message = "You Have Arrived In The Photo's Destination";
                         Log.d(TAG, "onDataChange: You Have Arrived In The Photo's Destination");
                         stopUserLocationRunnable();
+                        StatusDialog statusDialog = new StatusDialog(MapActivity.this);
+                        statusDialog.setOnComfirmListener(new StatusDialog.OnConfirmListener() {
+                            @Override
+                            public void onConfirm(String status) {
+                                Log.d(TAG, "onConfirm: " + status);
+                                String newStatus = "STATUS: "+status;
+                                firebaseMethods.updateResponderStatus(mPhoto,
+                                        responderID,
+                                        newStatus);
+//                                DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
+//                                String commentID = myRef.push().getKey();
+//                                Comment comment = new Comment();
+//                                comment.setComment(status);
+//                                comment.setDate_created(getTimeStamp());
+//                                comment.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
+//
+//                                myRef.child(getString(R.string.dbname_photos))
+//                                        .child(mPhoto.getPhoto_id())
+//                                        .child("comments")
+//                                        .child(commentID)
+//                                        .setValue(comment);
+//
+//                                myRef.child(getString(R.string.dbname_user_photos))
+//                                        .child(mPhoto.getUser_id())
+//                                        .child(mPhoto.getPhoto_id())
+//                                        .child("comments")
+//                                        .child(commentID)
+//                                        .setValue(comment);
+//
+//                                String user_id = mPhoto.getUser_id();
+//                                String from_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+//                                String type = "comment";
+//                                String token = settings.getDevice_token();
+//                                String message = userSetings.getUsername() +
+//                                        " commented on your post \"" +
+//                                        mPhoto.getCaption() + "\"";
+//
+//                                firebaseMethods.addNotification(user_id,from_id,type,message,mPhoto.getPhoto_id());
+//                                new Notify(token,message).execute();
+                            }
+                        });
+                        statusDialog.show();
+
                         new Notify(FirebaseInstanceId.getInstance().getToken(),message).execute();
                         try {
                             firebaseMethods.addNewResponder(mPhoto);
@@ -449,6 +501,12 @@ public class MapActivity extends AppCompatActivity implements
 
             }
         });
+    }
+
+    private String getTimeStamp(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
+        sdf.setTimeZone(TimeZone.getTimeZone("Etc/GMT+8"));
+        return sdf.format(new Date());
     }
 
     private void startNotificationRunnable(){
