@@ -70,7 +70,7 @@ public class ViewProfileFragment extends Fragment {
     private int legit = 0, fake = 0;
 
     private TextView mPosts, mFollowers, mFollowing, mDisplayName,
-            mUsername, mWebsite, mDescription, mFollow, mUnfollow, mLegitimacy;
+            mUsername, mWebsite, mDescription, mFollow, mUnfollow, mLegitimacy, mlegitcount, mfakecount;
     private ProgressBar mProgressBar;
     private CircleImageView mProfilePhoto;
     private GridView gridView;
@@ -113,6 +113,8 @@ public class ViewProfileFragment extends Fragment {
         editProfile = (TextView) view.findViewById(R.id.textEditProfile);
         mBackArrow = (ImageView) view.findViewById(R.id.backArrow);
         mLegitimacy = (TextView) view.findViewById(R.id.legitimacy);
+        mlegitcount = (TextView) view.findViewById(R.id.legitcount);
+        mfakecount = (TextView) view.findViewById(R.id.fakecount);
 
         mContext = getActivity();
 
@@ -239,8 +241,9 @@ public class ViewProfileFragment extends Fragment {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             if(verifiedLegit+verifiedFake > 0){
-                mLegitimacy.setVisibility(View.VISIBLE);
-                mLegitimacy.setText("Verified: " + verifiedLegit + " Fake: " + verifiedFake);
+                mfakecount.setVisibility(View.VISIBLE);
+                mlegitcount.setText((String.valueOf(verifiedLegit)));
+                mfakecount.setText((String.valueOf(verifiedLegit)));
             }
         }
     }

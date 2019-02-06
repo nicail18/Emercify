@@ -100,17 +100,52 @@
                             android:text="Website"
                             android:layout_marginTop="5dp"/>
 
-                        <TextView
-                            android:layout_width="match_parent"
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/legitimacy"
-                            android:textColor="@color/black"
-                            android:textSize="14sp"
-                            android:text="Extra Text"
-                            android:layout_marginTop="5dp"
-                            android:visibility="gone"/>
+                            android:layout_marginTop="5dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/legitimacy"
+                                android:textColor="@color/black"
+                                android:textSize="14sp"
+                                android:text="Extra Text"
+                                android:visibility="gone"/>
+
+                            <TextView
+                                android:id="@+id/legitcount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="5"
+                                android:textColor="@color/white"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:layout_centerVertical="true"
+                                android:gravity="center"
+                                android:background="@drawable/legit_shape"
+                                android:visibility="visible"/>
+
+                            <TextView
+                                android:id="@+id/fakecount"
+                                android:layout_toEndOf="@id/legitcount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:text="5"
+                                android:textColor="@color/white"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:layout_centerVertical="true"
+                                android:gravity="center"
+                                android:background="@drawable/fake_shape"
+                                android:visibility="visible"/>
+
+                        </RelativeLayout>
 
                     </LinearLayout>
+
                 </RelativeLayout>
 
                 <RelativeLayout
