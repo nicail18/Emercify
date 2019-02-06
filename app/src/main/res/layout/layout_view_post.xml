@@ -156,6 +156,7 @@
                     android:fontFamily="sans-serif-condensed"
                     android:text="FAKE"
                     android:textColor="@color/white"
+                    android:textStyle="bold"
                     android:textSize="14sp"
                     android:visibility="gone" />
 
@@ -168,8 +169,9 @@
                     android:layout_toLeftOf="@+id/fakeButton"
                     android:background="@drawable/verify_button"
                     android:fontFamily="sans-serif-condensed"
-                    android:text="VERIFY"
+                    android:text="REAL"
                     android:textColor="@color/white"
+                    android:textStyle="bold"
                     android:textSize="14sp"
                     android:visibility="gone" />
 

@@ -90,7 +90,7 @@ public class ProfileFragment extends Fragment {
     private int mPostsCount = 0;
     private int verifiedLegit, verifiedFake;
 
-    private TextView mPosts, mFollowers, mFollowing, mDisplayName, mUsername, mWebsite, mDescription, mLegitimacy;
+    private TextView mPosts, mFollowers, mFollowing, mDisplayName, mUsername, mWebsite, mDescription, mLegitimacy, mlegitcount, mfakecount;
     private ProgressBar mProgressBar;
     private CircleImageView mProfilePhoto;
     private GridView gridView;
@@ -134,6 +134,8 @@ public class ProfileFragment extends Fragment {
         nonetprof = (TextView) view.findViewById(R.id.no_netprof);
         nonetimageprof = (ImageView) view.findViewById(R.id.no_netimageprof);
         mLegitimacy = (TextView) view.findViewById(R.id.legitimacy);
+        mlegitcount = (TextView) view.findViewById(R.id.legitcount);
+        mfakecount = (TextView) view.findViewById(R.id.fakecount);
 
         mDisplayName.setVisibility(View.GONE);
         mUsername.setVisibility(View.GONE);
@@ -210,8 +212,9 @@ public class ProfileFragment extends Fragment {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             if(verifiedLegit+verifiedFake > 0){
-                mLegitimacy.setVisibility(View.VISIBLE);
-                mLegitimacy.setText("Verified: " + verifiedLegit + " Fake: " + verifiedFake);
+                mfakecount.setVisibility(View.VISIBLE);
+                mlegitcount.setText((String.valueOf(verifiedLegit)));
+                mfakecount.setText((String.valueOf(verifiedLegit)));
             }
         }
     }
