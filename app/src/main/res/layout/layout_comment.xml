@@ -37,6 +37,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
+                    android:text="Profile Name"
                     android:textSize="14sp"
                     android:textStyle="bold"
                     android:layout_marginLeft="5dp"
@@ -49,6 +50,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
                     android:textSize="16sp"
+                    android:text="Comment"
                     android:layout_marginTop="3dp"
                     android:layout_marginBottom="3dp"
                     android:layout_marginRight="3dp"
@@ -64,7 +66,8 @@
                     android:layout_marginLeft="5dp"
                     android:textSize="14sp"
                     android:id="@+id/comment_time_posted"
-                    android:layout_below="@+id/comment"/>
+                    android:layout_below="@+id/comment"
+                    android:text="Time"/>
 
                 <TextView
                     android:layout_width="wrap_content"
