@@ -631,6 +631,54 @@ public class FirebaseMethods {
                 .setValue(responder);
     }
 
+    public void updateResponderStatus(Photo photo, String responderID, String status){
+        myRef.child(mContext.getString(R.string.dbname_photos))
+                .child(photo.getPhoto_id())
+                .child("responder")
+                .child(responderID)
+                .child("user_id")
+                .setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        myRef.child(mContext.getString(R.string.dbname_photos))
+                .child(photo.getPhoto_id())
+                .child("responder")
+                .child(responderID)
+                .child("responder_id")
+                .setValue(responderID);
+
+        myRef.child(mContext.getString(R.string.dbname_photos))
+                .child(photo.getPhoto_id())
+                .child("responder")
+                .child(responderID)
+                .child("status")
+                .setValue(status);
+
+
+        myRef.child(mContext.getString(R.string.dbname_user_photos))
+                .child(photo.getUser_id())
+                .child(photo.getPhoto_id())
+                .child("responder")
+                .child(responderID)
+                .child("user_id")
+                .setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        myRef.child(mContext.getString(R.string.dbname_user_photos))
+                .child(photo.getUser_id())
+                .child(photo.getPhoto_id())
+                .child("responder")
+                .child(responderID)
+                .child("responder_id")
+                .setValue(responderID);
+
+        myRef.child(mContext.getString(R.string.dbname_user_photos))
+                .child(photo.getUser_id())
+                .child(photo.getPhoto_id())
+                .child("responder")
+                .child(responderID)
+                .child("status")
+                .setValue(status);
+    }
+
     public void addNewResponder(Photo photo) throws JSONException {
         String responderID = myRef.push().getKey();
         Responder responder = new Responder();

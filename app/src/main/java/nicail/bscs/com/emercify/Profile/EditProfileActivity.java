@@ -39,8 +39,6 @@ import nicail.bscs.com.emercify.Share.ShareActivity;
 import nicail.bscs.com.emercify.Utils.Emercify;
 import nicail.bscs.com.emercify.Utils.FirebaseMethods;
 import nicail.bscs.com.emercify.Utils.GlideApp;
-import nicail.bscs.com.emercify.Utils.UniversalImageLoader;
-import nicail.bscs.com.emercify.dialogs.ConfirmPasswordDialog;
 import nicail.bscs.com.emercify.models.User;
 import nicail.bscs.com.emercify.models.UserAccountSettings;
 import nicail.bscs.com.emercify.models.UserSettings;

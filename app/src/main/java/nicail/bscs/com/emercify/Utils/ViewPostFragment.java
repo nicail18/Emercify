@@ -116,6 +116,8 @@ public class ViewPostFragment extends Fragment {
     private ViewGroup container;
     private Bundle savedInstanceState;
 
+    private ArrayList<Responder> responders;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -145,6 +147,7 @@ public class ViewPostFragment extends Fragment {
         viewpost1 = (ProgressBar) view.findViewById(R.id.progress_Barviewpost);
         emergencyIcon = (ImageView) view.findViewById(R.id.emergency_icon);
         mContext = getActivity();
+        responders = new ArrayList<>();
         progressDialog = new ProgressDialog(getActivity());
 
         mFirebaseMethods = new FirebaseMethods(getActivity());
@@ -229,6 +232,7 @@ public class ViewPostFragment extends Fragment {
                         }
                         if(!dataSnapshot.exists() || !respondedByUser){
                             respondButton.setVisibility(View.VISIBLE);
+                            String finalResponder_id1 = responder_id;
                             respondButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -247,6 +251,7 @@ public class ViewPostFragment extends Fragment {
                                                     Intent intent = new Intent(getActivity(), MapActivity.class);
                                                     intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
                                                     intent.putExtra("INTENT PHOTO",getPhotoFromBundle());
+                                                    intent.putExtra("resppnder_id", finalResponder_id1);
                                                     Log.d(TAG, "onDataChange: " + intent);
                                                     String message = mCurrentUser.getUsername() +
                                                             " is responding to your emergency post";
@@ -269,7 +274,7 @@ public class ViewPostFragment extends Fragment {
                                 legitButton.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        builder.setTitle("Do you still want to mark this post as verified?");
+                                        builder.setMessage("Do you still want to mark this post as verified?");
                                         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
@@ -295,7 +300,7 @@ public class ViewPostFragment extends Fragment {
                                 fakeButton.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                        builder.setTitle("Once you marked this post as fake. You will receive the location of the user. " +
+                                        builder.setMessage("Once you marked this post as fake. You will receive the location of the user. " +
                                                 "\nDo you still want to mark this post as fake?");
                                         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             @Override
@@ -365,6 +370,21 @@ public class ViewPostFragment extends Fragment {
                             comment.setDate_created(dSnapshot.getValue(Comment.class).getDate_created());
                             commentList.add(comment);
                         }
+
+                        for(DataSnapshot ds: singleSnapshot.child("responder").getChildren()){
+                            Responder responder = new Responder();
+                            responder.setResponder_id(ds.getValue(Responder.class).getResponder_id());
+                            responder.setUser_id(ds.getValue(Responder.class).getUser_id());
+                            if(ds.getValue(Responder.class).getStatus() != null){
+                                responder.setStatus(ds.getValue(Responder.class).getStatus());
+                                responder.setLegit(ds.getValue(Responder.class).isLegit());
+                            }
+
+                            responders.add(responder);
+                        }
+
+                        Log.d(TAG, "onDataChange: Responders " + responders.toString());
+
                         newPhoto.setComments(commentList);
                         mPhoto = newPhoto;
 
