@@ -577,7 +577,7 @@ public class ViewPostFragment extends Fragment {
             String from_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
             String type = "like";
             token = mUserAccountSettings.getDevice_token();
-            likeMessage = photoUsername + " liked your post: \"" + mPhoto.getCaption() + "\"";
+            likeMessage = mUserAccountSettings.getUsername() + " liked your post: \"" + mPhoto.getCaption() + "\"";
             mFirebaseMethods.addNotification(user_id,from_id,type,likeMessage, mPhoto.getPhoto_id());
             new Notify(token,likeMessage).execute();
         }

@@ -214,7 +214,7 @@ public class ProfileFragment extends Fragment {
             if(verifiedLegit+verifiedFake > 0){
                 mfakecount.setVisibility(View.VISIBLE);
                 mlegitcount.setText((String.valueOf(verifiedLegit)));
-                mfakecount.setText((String.valueOf(verifiedLegit)));
+                mfakecount.setText((String.valueOf(verifiedFake)));
             }
         }
     }
