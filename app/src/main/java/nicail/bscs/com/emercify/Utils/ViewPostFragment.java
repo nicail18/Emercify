@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -62,6 +63,7 @@ import nicail.bscs.com.emercify.Home.HomeActivity;
 import nicail.bscs.com.emercify.Likes.LikesActivity;
 import nicail.bscs.com.emercify.Likes.MapActivity;
 import nicail.bscs.com.emercify.R;
+import nicail.bscs.com.emercify.dialogs.RespondentsDialog;
 import nicail.bscs.com.emercify.models.Comment;
 import nicail.bscs.com.emercify.models.Like;
 import nicail.bscs.com.emercify.models.Photo;
@@ -86,8 +88,8 @@ public class ViewPostFragment extends Fragment {
 
     private SquareImageView mPostImage;
     private BottomNavigationViewEx bottomNavigationView;
-    private TextView mBackLabel,mCaption,mUsername,mTimeStamp, mLikes, mComments, mAddress;
-    private ImageView mBackArrow, mEllipses, mHeartRed, mHeartWhite, mProfileImage, mComment, emergencyIcon;
+    private TextView mBackLabel,mCaption,mUsername,mTimeStamp, mLikes, mComments, mAddress, fakeCount, legitCount;
+    private ImageView mBackArrow, respondents, mHeartRed, mHeartWhite, mProfileImage, mComment, emergencyIcon;
 
     private Photo mPhoto;
     private int mActivityNumber = 0;
@@ -132,7 +134,7 @@ public class ViewPostFragment extends Fragment {
         mCaption = (TextView) view.findViewById(R.id.image_caption);
         mUsername = (TextView) view.findViewById(R.id.username);
         mTimeStamp = (TextView) view.findViewById(R.id.image_time_posted);
-        mEllipses = (ImageView) view.findViewById(R.id.ivEllipses);
+        respondents = (ImageView) view.findViewById(R.id.respondents);
         mHeartRed = (ImageView) view.findViewById(R.id.image_heart_red);
         mHeartWhite = (ImageView) view.findViewById(R.id.image_heart);
         mProfileImage = (ImageView) view.findViewById(R.id.profile_photo);
@@ -146,6 +148,8 @@ public class ViewPostFragment extends Fragment {
         legitButton = (Button) view.findViewById(R.id.legitButton);
         viewpost1 = (ProgressBar) view.findViewById(R.id.progress_Barviewpost);
         emergencyIcon = (ImageView) view.findViewById(R.id.emergency_icon);
+        fakeCount = (TextView) view.findViewById(R.id.fakecount);
+        legitCount = (TextView) view.findViewById(R.id.legitcount);
         mContext = getActivity();
         responders = new ArrayList<>();
         progressDialog = new ProgressDialog(getActivity());
@@ -202,6 +206,9 @@ public class ViewPostFragment extends Fragment {
             String photo_id = getPhotoFromBundle().getPhoto_id();
             if(getEmergencyFromBundle() != null){
                 emergencyIcon.setVisibility(View.VISIBLE);
+                fakeCount.setVisibility(View.VISIBLE);
+                legitCount.setVisibility(View.VISIBLE);
+                respondents.setVisibility(View.VISIBLE);
                 Query query = myRef
                         .child(getActivity().getString(R.string.dbname_photos))
                         .child(mPhoto.getPhoto_id())
@@ -218,8 +225,8 @@ public class ViewPostFragment extends Fragment {
                             if(ds.getValue(Responder.class).getUser_id()
                                     .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                                 respondedByUser = true;
-                                Log.d(TAG, "onDataChange: " + true);
                                 responder_id = ds.child("responder_id").getValue().toString();
+                                Log.d(TAG, "onDataChange: " + true);
                                 if(ds.child("legit").getValue() != null){
                                     Log.d(TAG, "onDataChange: legit");
                                     legitFound = true;
@@ -232,7 +239,6 @@ public class ViewPostFragment extends Fragment {
                         }
                         if(!dataSnapshot.exists() || !respondedByUser){
                             respondButton.setVisibility(View.VISIBLE);
-                            String finalResponder_id1 = responder_id;
                             respondButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -251,7 +257,6 @@ public class ViewPostFragment extends Fragment {
                                                     Intent intent = new Intent(getActivity(), MapActivity.class);
                                                     intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
                                                     intent.putExtra("INTENT PHOTO",getPhotoFromBundle());
-                                                    intent.putExtra("resppnder_id", finalResponder_id1);
                                                     Log.d(TAG, "onDataChange: " + intent);
                                                     String message = mCurrentUser.getUsername() +
                                                             " is responding to your emergency post";
@@ -334,6 +339,12 @@ public class ViewPostFragment extends Fragment {
                     }
                 });
 
+                respondents.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        openDialog();
+                    }
+                });
             }
             Query query = FirebaseDatabase.getInstance().getReference()
                     .child(getString(R.string.dbname_photos))
@@ -372,15 +383,16 @@ public class ViewPostFragment extends Fragment {
                         }
 
                         for(DataSnapshot ds: singleSnapshot.child("responder").getChildren()){
-                            Responder responder = new Responder();
-                            responder.setResponder_id(ds.getValue(Responder.class).getResponder_id());
-                            responder.setUser_id(ds.getValue(Responder.class).getUser_id());
-                            if(ds.getValue(Responder.class).getStatus() != null){
-                                responder.setStatus(ds.getValue(Responder.class).getStatus());
-                                responder.setLegit(ds.getValue(Responder.class).isLegit());
-                            }
-
-                            responders.add(responder);
+                             if(ds.exists()) {
+                                 Responder responder = new Responder();
+                                 responder.setResponder_id(ds.getValue(Responder.class).getResponder_id());
+                                 responder.setUser_id(ds.getValue(Responder.class).getUser_id());
+                                 if (ds.getValue(Responder.class).getStatus() != null) {
+                                     responder.setStatus(ds.getValue(Responder.class).getStatus());
+                                     responder.setLegit(ds.getValue(Responder.class).isLegit());
+                                 }
+                                 responders.add(responder);
+                             }
                         }
 
                         Log.d(TAG, "onDataChange: Responders " + responders.toString());
@@ -401,6 +413,15 @@ public class ViewPostFragment extends Fragment {
         }catch(NullPointerException e){
             Log.e(TAG, "onCreateView: NullPointerException" + e.getMessage());
         }
+    }
+
+    private void openDialog(){
+        RespondentsDialog respondentsDialog = new RespondentsDialog();
+        Bundle args = new Bundle();
+        args.putParcelableArrayList("RESPONDERS",responders);
+        respondentsDialog.setArguments(args);
+        respondentsDialog.show(((FragmentActivity)mContext).getSupportFragmentManager(),"RespondentsDialog");
+        respondentsDialog.setTargetFragment(this,1);
     }
 
     @Override

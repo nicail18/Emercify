@@ -43,19 +43,11 @@ public class StatusDialog extends Dialog {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_confirm_password);
+        setCancelable(false);
 
         mStatus = (TextView) findViewById(R.id.confirm_password);
 
         Log.d(TAG, "onCreateView: started");
-
-        TextView cancelDialog = (TextView) findViewById(R.id.dialogCancel);
-        cancelDialog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: closing the dialog");
-                dismiss();
-            }
-        });
 
         TextView confirmDialog = (TextView) findViewById(R.id.dialogConfirm);
         confirmDialog.setOnClickListener(new View.OnClickListener() {

@@ -679,7 +679,7 @@ public class FirebaseMethods {
                 .setValue(status);
     }
 
-    public void addNewResponder(Photo photo) throws JSONException {
+    public String addNewResponder(Photo photo) throws JSONException {
         String responderID = myRef.push().getKey();
         Responder responder = new Responder();
         responder.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -713,6 +713,8 @@ public class FirebaseMethods {
                 .child(responderID)
                 .child("responder_id")
                 .setValue(responderID);
+
+        return responderID;
     }
 
     public void addNotification(String user_id, String from_id, String type, String message,String activity_id){

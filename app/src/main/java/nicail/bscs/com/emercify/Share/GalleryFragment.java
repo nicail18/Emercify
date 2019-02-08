@@ -236,7 +236,7 @@ public class GalleryFragment extends Fragment implements
             }
             @Override
             protected void onPostExecute(Boolean result) {
-                ConnectivityManager connMgr = (ConnectivityManager) getActivity()
+                ConnectivityManager connMgr = (ConnectivityManager) getActivity().getApplicationContext()
                         .getSystemService(Context.CONNECTIVITY_SERVICE);
 
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();

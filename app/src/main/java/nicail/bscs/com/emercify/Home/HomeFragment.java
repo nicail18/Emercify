@@ -1,9 +1,7 @@
 package nicail.bscs.com.emercify.Home;
 
-import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -24,7 +22,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -32,7 +29,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,7 +38,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,11 +47,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import nicail.bscs.com.emercify.R;
-import nicail.bscs.com.emercify.Utils.FirebaseMethods;
-import nicail.bscs.com.emercify.Utils.MainfeedListAdapter;
 import nicail.bscs.com.emercify.Utils.MainfeedRecyclerAdapter;
 import nicail.bscs.com.emercify.Utils.RecyclerViewDivider;
-import nicail.bscs.com.emercify.Utils.ViewPostFragment;
 import nicail.bscs.com.emercify.dialogs.View_Delete_Dialog;
 import nicail.bscs.com.emercify.models.Comment;
 import nicail.bscs.com.emercify.models.Photo;

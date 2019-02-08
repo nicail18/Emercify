@@ -179,7 +179,6 @@ public class MapActivity extends AppCompatActivity implements
             mPhoto = intent.getParcelableExtra("INTENT PHOTO");
             latitude = mPhoto.getLatitude();
             longitude = mPhoto.getLongitude();
-            responderID = intent.getStringExtra("resppnder_id");
             getLastKnownLocation();
         }
         else if(intent.hasExtra("REPORT PHOTO")){
@@ -440,6 +439,11 @@ public class MapActivity extends AppCompatActivity implements
                     Log.d(TAG, "onDataChange: retrieveUserlocation user " + userLat);
                     Log.d(TAG, "onDataChange: retrieveUserlocation user " + userLong);
                     if(distance[0] <= 25){
+                        try {
+                            responderID = firebaseMethods.addNewResponder(mPhoto);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         String message = "You Have Arrived In The Photo's Destination";
                         Log.d(TAG, "onDataChange: You Have Arrived In The Photo's Destination");
                         stopUserLocationRunnable();
@@ -487,11 +491,6 @@ public class MapActivity extends AppCompatActivity implements
                         statusDialog.show();
 
                         new Notify(FirebaseInstanceId.getInstance().getToken(),message).execute();
-                        try {
-                            firebaseMethods.addNewResponder(mPhoto);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
                     }
                 }
             }
