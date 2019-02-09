@@ -42,10 +42,12 @@ import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.Web3jFactory;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.tuples.generated.Tuple3;
 import org.web3j.tx.Contract;
 import org.web3j.tx.ManagedTransaction;
 
 import java.io.OutputStreamWriter;
+import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.ParseException;
@@ -209,6 +211,7 @@ public class ViewPostFragment extends Fragment {
                 fakeCount.setVisibility(View.VISIBLE);
                 legitCount.setVisibility(View.VISIBLE);
                 respondents.setVisibility(View.VISIBLE);
+                new InitWeb3j(null,mPhoto.getPhoto_id(),null,false,true).execute(getActivity().getString(R.string.infura));
                 Query query = myRef
                         .child(getActivity().getString(R.string.dbname_photos))
                         .child(mPhoto.getPhoto_id())
@@ -284,7 +287,7 @@ public class ViewPostFragment extends Fragment {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 mFirebaseMethods.updateResponder(mPhoto, finalResponder_id,true);
-                                                new InitWeb3j(mPhoto.getUser_id(),mPhoto.getPhoto_id(),"verify",true)
+                                                new InitWeb3j(mPhoto.getUser_id(),mPhoto.getPhoto_id(),"verify",true,false)
                                                         .execute(getActivity().getString(R.string.infura));
                                                 dialog.dismiss();
                                                 progressDialog.setTitle("Loading");
@@ -311,7 +314,7 @@ public class ViewPostFragment extends Fragment {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 mFirebaseMethods.updateResponder(mPhoto, finalResponder_id,false);
-                                                new InitWeb3j(mPhoto.getUser_id(),mPhoto.getPhoto_id(),"fake",false)
+                                                new InitWeb3j(mPhoto.getUser_id(),mPhoto.getPhoto_id(),"fake",false, false)
                                                         .execute(getActivity().getString(R.string.infura));
                                                 dialog.dismiss();
                                                 progressDialog.setTitle("Loading");
@@ -876,12 +879,15 @@ public class ViewPostFragment extends Fragment {
 
         String user_id, post_id,type;
         boolean isFake;
+        boolean isGet;
+        private int fake,real;
 
-        public InitWeb3j(String user_id, String post_id, String type, boolean isFake) {
+        public InitWeb3j(String user_id, String post_id, String type, boolean isFake, boolean isGet) {
             this.user_id = user_id;
             this.post_id = post_id;
             this.type = type;
             this.isFake = isFake;
+            this.isGet = isGet;
         }
 
         @Override
@@ -896,11 +902,18 @@ public class ViewPostFragment extends Fragment {
                         ManagedTransaction.GAS_PRICE,
                         Contract.GAS_LIMIT
                 );
-                contract.reportPost(
-                        this.user_id,
-                        this.post_id,
-                        this.isFake
-                ).send();
+                if(isGet){
+                    Tuple3<String, BigInteger, BigInteger> output = contract.getEmergencyPostReports(this.post_id).send();
+                    real = output.getValue2().intValue();
+                    fake = output.getValue3().intValue();
+                }
+                else{
+                    contract.reportPost(
+                            this.user_id,
+                            this.post_id,
+                            this.isFake
+                    ).send();
+                }
                 return "success";
             } catch (Exception e) {
                 return e.getMessage();
@@ -912,15 +925,21 @@ public class ViewPostFragment extends Fragment {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             Toast.makeText(mContext, "Successfully Marked", Toast.LENGTH_LONG).show();
-            progressDialog.dismiss();
-            if(type.equals("fake")){
-                Intent intent = new Intent(getActivity(), MapActivity.class);
-                intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
-                intent.putExtra("REPORT PHOTO",getPhotoFromBundle());
-                startActivity(intent);
+            if(isGet){
+                fakeCount.setText(String.valueOf(fake));
+                legitCount.setText(String.valueOf(real));
             }
             else{
-                init();
+                progressDialog.dismiss();
+                if(type.equals("fake")){
+                    Intent intent = new Intent(getActivity(), MapActivity.class);
+                    intent.putExtra(getString(R.string.calling_activity),"Likes Activity");
+                    intent.putExtra("REPORT PHOTO",getPhotoFromBundle());
+                    startActivity(intent);
+                }
+                else{
+                    init();
+                }
             }
         }
     }

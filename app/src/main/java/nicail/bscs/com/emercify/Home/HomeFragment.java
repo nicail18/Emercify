@@ -194,17 +194,11 @@ public class HomeFragment extends Fragment implements
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
                 if (networkInfo != null && networkInfo.isConnectedOrConnecting()) {
-                    //internet is connected do something
-                    //displayfeed();
-                    //mViewPager.setVisibility(View.VISIBLE);
-                    //setupViewPager();
-                    //nopost.setVisibility(View.GONE);
                     getFollowing();
                 } else {
                     pb.setVisibility(View.GONE);
                     nonet.setVisibility(View.VISIBLE);
                     nonetimage.setVisibility(View.VISIBLE);
-                    //noposts.setVisibility(View.GONE);
                 }
                 super.onPostExecute(result);
             }
