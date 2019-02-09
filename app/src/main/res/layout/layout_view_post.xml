@@ -54,6 +54,42 @@
                         android:text="Location"
                         android:textSize="12sp" />
 
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="10dp">
+
+                        <TextView
+                            android:id="@+id/legitcount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:layout_centerVertical="true"
+                            android:gravity="center"
+                            android:background="@drawable/legit_shape"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/fakecount"
+                            android:layout_toEndOf="@id/legitcount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:text="0"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:layout_centerVertical="true"
+                            android:gravity="center"
+                            android:background="@drawable/fake_shape"
+                            android:visibility="gone"/>
+
+                    </RelativeLayout>
 
                 </RelativeLayout>
 
@@ -147,32 +183,32 @@
 
                 <Button
                     android:id="@+id/fakeButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="35dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
-                    android:background="@drawable/unfollow_button"
+                    android:background="@drawable/fake_shape"
                     android:fontFamily="sans-serif-condensed"
                     android:text="FAKE"
                     android:textColor="@color/white"
                     android:textStyle="bold"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:visibility="gone" />
 
                 <Button
                     android:id="@+id/legitButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="35dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="10dp"
                     android:layout_toLeftOf="@+id/fakeButton"
-                    android:background="@drawable/verify_button"
+                    android:background="@drawable/legit_shape"
                     android:fontFamily="sans-serif-condensed"
                     android:text="REAL"
                     android:textColor="@color/white"
                     android:textStyle="bold"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:visibility="gone"/>
 
                 <ImageView
