@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
 
     <RelativeLayout
         android:id="@+id/rell2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp">
         <RelativeLayout
             android:id="@+id/solidcolorrel"
             android:layout_width="match_parent"
@@ -22,40 +23,67 @@
                 android:background="@drawable/emer" />
         </RelativeLayout>
 
-
-        <RelativeLayout
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="15dp"
-            android:layout_width="wrap_content"
+        <ScrollView
+            android:id="@+id/resscroll"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/solidcolorrel">
 
-            <TextView
-                android:id="@+id/kindofpost"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="RESPONDENTS"
-                android:layout_centerHorizontal="true"
-                android:gravity="center_horizontal"
-                android:fontFamily="sans-serif-condensed"
-                android:layout_marginBottom="20dp"
-                android:textSize="22sp"
-                android:textColor="@color/black"/>
-
             <RelativeLayout
-                android:id="@+id/normal"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/kindofpost">
+                android:layout_height="wrap_content">
 
-                <android.support.v7.widget.RecyclerView
+                <TextView
+                    android:id="@+id/kindofpost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="RESPONDENTS"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center_horizontal"
+                    android:fontFamily="sans-serif-condensed"
+                    android:layout_marginBottom="20dp"
+                    android:textSize="22sp"
+                    android:textColor="@color/black"/>
+
+                <RelativeLayout
+                    android:id="@+id/normal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id="@+id/listViewrespondents">
+                    android:layout_below="@+id/kindofpost">
 
-                </android.support.v7.widget.RecyclerView>
+                    <android.support.v7.widget.RecyclerView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/listViewrespondents">
+
+                    </android.support.v7.widget.RecyclerView>
+
+                </RelativeLayout>
 
             </RelativeLayout>
+
+        </ScrollView>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="10dp"
+            android:layout_below="@+id/resscroll">
+
+            <Button
+                android:id="@+id/closebtn"
+                style="@style/com_facebook_button"
+                android:layout_width="55dp"
+                android:layout_height="30dp"
+                android:background="@drawable/rounded_border_blue"
+                android:text="CLOSE"
+                android:textSize="12dp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                />
 
         </RelativeLayout>
 
