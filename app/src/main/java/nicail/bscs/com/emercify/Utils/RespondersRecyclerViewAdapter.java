@@ -67,7 +67,7 @@ public class RespondersRecyclerViewAdapter extends RecyclerView.Adapter<Responde
 
                     ((ViewHolder)holder).username.setText(ds.getValue(UserAccountSettings.class).getUsername());
 
-                    if(responders.get(position).getStatus()!= null || responders.get(position).getStatus() != ""){
+                    if(responders.get(position).getStatus()!= null && responders.get(position).getStatus() != ""){
                         ((ViewHolder)holder).status.setText(responders.get(position).getStatus());
                     }
                     else{

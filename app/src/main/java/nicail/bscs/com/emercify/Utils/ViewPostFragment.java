@@ -222,6 +222,7 @@ public class ViewPostFragment extends Fragment {
                         boolean respondedByUser = false;
                         boolean legitFound = false;
                         String responder_id = "";
+                        String status = "";
                         for(DataSnapshot ds: dataSnapshot.getChildren()){
                             Log.d(TAG, "onDataChange: " + ds.child("user_id").getValue().toString());
                             Log.d(TAG, "onDataChange: " + FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -229,6 +230,9 @@ public class ViewPostFragment extends Fragment {
                                     .equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                                 respondedByUser = true;
                                 responder_id = ds.child("responder_id").getValue().toString();
+                                if(ds.child("status").getValue() != null){
+                                    status = ds.child("status").getValue().toString();
+                                }
                                 Log.d(TAG, "onDataChange: " + true);
                                 if(ds.child("legit").getValue() != null){
                                     Log.d(TAG, "onDataChange: legit");
@@ -277,8 +281,9 @@ public class ViewPostFragment extends Fragment {
                             if(!legitFound){
                                 fakeButton.setVisibility(View.VISIBLE);
                                 legitButton.setVisibility(View.VISIBLE);
-                                String finalResponder_id = responder_id;
                                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                String finalResponder_id = responder_id;
+                                String finalStatus = status;
                                 legitButton.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
@@ -286,7 +291,8 @@ public class ViewPostFragment extends Fragment {
                                         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                mFirebaseMethods.updateResponder(mPhoto, finalResponder_id,true);
+                                                mFirebaseMethods.updateResponder(mPhoto, finalResponder_id,
+                                                        true, finalStatus);
                                                 new InitWeb3j(mPhoto.getUser_id(),mPhoto.getPhoto_id(),"verify",true,false)
                                                         .execute(getActivity().getString(R.string.infura));
                                                 dialog.dismiss();
@@ -313,7 +319,8 @@ public class ViewPostFragment extends Fragment {
                                         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                mFirebaseMethods.updateResponder(mPhoto, finalResponder_id,false);
+                                                mFirebaseMethods.updateResponder(mPhoto, finalResponder_id,
+                                                        false,finalStatus);
                                                 new InitWeb3j(mPhoto.getUser_id(),mPhoto.getPhoto_id(),"fake",false, false)
                                                         .execute(getActivity().getString(R.string.infura));
                                                 dialog.dismiss();
@@ -924,12 +931,12 @@ public class ViewPostFragment extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            Toast.makeText(mContext, "Successfully Marked", Toast.LENGTH_LONG).show();
             if(isGet){
                 fakeCount.setText(String.valueOf(fake));
                 legitCount.setText(String.valueOf(real));
             }
             else{
+                Toast.makeText(mContext, "Successfully Marked", Toast.LENGTH_LONG).show();
                 progressDialog.dismiss();
                 if(type.equals("fake")){
                     Intent intent = new Intent(getActivity(), MapActivity.class);

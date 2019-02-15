@@ -613,11 +613,12 @@ public class FirebaseMethods {
                 .child(user_id).child(photo_id).removeValue();
     }
 
-    public void updateResponder(Photo photo, String responder_id, boolean isLegit){
+    public void updateResponder(Photo photo, String responder_id, boolean isLegit, String status){
         Responder responder = new Responder();
         responder.setUser_id(FirebaseAuth.getInstance().getCurrentUser().getUid());
         responder.setResponder_id(responder_id);
         responder.setLegit(isLegit);
+        responder.setStatus(status);
         myRef.child(mContext.getString(R.string.dbname_photos))
                 .child(photo.getPhoto_id())
                 .child("responder")
